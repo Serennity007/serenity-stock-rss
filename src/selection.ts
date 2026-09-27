@@ -46,6 +46,7 @@ export class SelectionCapture {
     const rect = selection.getRangeAt(0).getBoundingClientRect();
     const viewport = this.doc.documentElement;
     const popup = this.doc.body.createDiv({ cls: 'qrs-selection-popup' }); this.popup = popup;
+    popup.dataset.qrsTheme = this.reader().closest<HTMLElement>('.qrs-root')?.dataset.qrsTheme ?? 'auto';
     for (const action of save) {
       const button = popup.createEl('button');
       setIcon(button, action.icon);

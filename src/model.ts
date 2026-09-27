@@ -7,6 +7,8 @@ export type Mode = z.infer<typeof modeSchema>;
 export function modeLabel(mode: Mode): string {
   return t(mode === 'rewrite' ? 'mode.rewrite' : mode === 'translation' ? 'mode.translation' : 'mode.original');
 }
+export const readingThemeSchema = z.enum(['auto', 'light', 'paper', 'sage', 'mist', 'dark', 'black']);
+export type ReadingTheme = z.infer<typeof readingThemeSchema>;
 export const readingFontSchema = z.enum(['serif', 'sans', 'sourceHanSerif', 'sourceHanSans', 'wenkai', 'zhenkai', 'fangsong', 'custom']);
 export type ReadingFont = z.infer<typeof readingFontSchema>;
 const optionalText = z.string().nullish();
@@ -56,12 +58,13 @@ export const stateSchema = z.object({
   settings: z.object({
     baseUrl: z.string().default('https://rss.qiaomu.ai'), folder: z.string().default('Qiaomu RSS'),
     defaultMode: modeSchema.default('rewrite'), remoteImages: z.boolean().default(true), listWidth: z.number().min(220).max(520).default(300),
+    readingTheme: readingThemeSchema.catch('auto').default('auto'),
     fontSize: z.number().int().min(14).max(32).default(19), customFont: z.string().max(200).catch('').default(''), fontFamily: readingFontSchema.default('fangsong'),
     lineHeight: z.number().min(1.5).max(2.4).default(1.9), lineWidth: z.union([z.literal(28), z.literal(36), z.literal(44)]).default(36),
     selectionPopup: z.boolean().default(true), markdownFolders: z.array(z.string()).default([]), followedPodcasts: z.array(z.string()).default([]), podcastNames: z.record(z.string(), z.string()).default({}),
     lastSource: z.string().max(300).default(''), articleFolder: z.string().default('Qiaomu RSS/文章'), pdfDirectory: z.string().default(''),
   }).default({ baseUrl: 'https://rss.qiaomu.ai', folder: 'Qiaomu RSS', articleFolder: 'Qiaomu RSS/文章', pdfDirectory: '', defaultMode: 'rewrite', remoteImages: true, listWidth: 300,
-    fontSize: 19, fontFamily: 'fangsong', customFont: '', lineHeight: 1.9, lineWidth: 36, lastSource: '', selectionPopup: true, markdownFolders: [], followedPodcasts: [], podcastNames: {} }),
+    readingTheme: 'auto', fontSize: 19, fontFamily: 'fangsong', customFont: '', lineHeight: 1.9, lineWidth: 36, lastSource: '', selectionPopup: true, markdownFolders: [], followedPodcasts: [], podcastNames: {} }),
   readIds: z.array(z.string()).default([]), favorites: z.record(z.string(), bundleSchema).default({}),
   entries: z.array(entrySchema).default([]), sources: z.array(sourceSchema).default([]),
   subscriptions: z.array(subscriptionSchema).default([]),

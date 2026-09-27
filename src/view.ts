@@ -17,7 +17,7 @@ import { cleanExcerpt } from './excerpt';
 import { AudioDock, pauseVideos, renderMedia, stopMedia, youtubeEmbedUrl } from './media';
 import { sameRemoteContent, uniqueRemoteEntries, wechatArticleKey, xiaoyuzhouEpisodeKey } from './wechat-articles';
 import { featuredXiaoyuzhouPodcasts, mergeFeaturedPodcasts, qiaomuChannelDivider, qiaomuDividerIcons, qiaomuDividers, qiaomuFeaturedEntries, readerChannelSources } from './discovery';
-import { articleNoteKey, modeLabel, modeSchema, podcastDefaultMode, readingFontSchema, safeUrl, titleOf, type ChannelState, type Bundle, type Entry, type Mode } from './model';
+import { articleNoteKey, modeLabel, modeSchema, podcastDefaultMode, readingFontSchema, readingThemeSchema, safeUrl, titleOf, type ChannelState, type Bundle, type Entry, type Mode } from './model';
 import { dividerLabel, relativeTime, t } from './i18n';
 import { agentAvailable, articleSnapshot, askAgent } from './agent-bridge';
 import { notifyContextChanged, type ContextSnapshot } from './qiaomu-context';
@@ -230,7 +230,14 @@ export class ReaderView extends ItemView {
     setIcon(button, icon); button.createSpan({ cls: 'qrs-visually-hidden', text: label }); button.addEventListener('click', action); return button;
   }
   refreshPreferences() { this.selectionCapture?.clear(); this.applyAppearance(); if (this.appearanceOpen) this.renderReader(true); }
+  refreshReadingTheme() {
+    this.contentEl.dataset.qrsTheme = this.plugin.state.settings.readingTheme;
+    for (const select of this.contentEl.querySelectorAll<HTMLSelectElement>('select[data-qrs-reading-theme]')) select.value = this.plugin.state.settings.readingTheme;
+    this.channelPicker?.close();
+    this.selectionCapture?.clear();
+  }
   private applyAppearance() {
+    this.refreshReadingTheme();
     const settings = this.plugin.state.settings;
     this.contentEl.dataset.readingFont = settings.fontFamily;
     const font = readingFonts.find(font => font.id === settings.fontFamily)!;
@@ -830,6 +837,11 @@ export class ReaderView extends ItemView {
     const header = panel.createDiv('qrs-reading-settings-head'); header.createEl('strong', { text: t('reader.readingSettings'), attr: { id: headingId } });
     const fields = panel.createDiv('qrs-reading-settings-fields');
     const row = (label: string) => { const el = fields.createEl('label', { cls: 'qrs-reading-setting' }); el.createSpan({ text: label }); return el; };
+    const themeRow = row(t('appearance.theme'));
+    const theme = themeRow.createEl('select', { attr: { 'data-qrs-reading-theme': '' } });
+    for (const value of readingThemeSchema.options) theme.createEl('option', { value, text: t(`appearance.theme.${value}`) });
+    theme.value = settings.readingTheme;
+    theme.onchange = () => { settings.readingTheme = readingThemeSchema.parse(theme.value); this.plugin.refreshReadingTheme(); this.run(() => this.plugin.persist()); };
     const fontRow = row(t('appearance.font'));
     const font = fontRow.createEl('select', { attr: { 'data-qrs-field': t('appearance.font') } });
     for (const choice of selectableFonts.concat(readingFonts.filter(f => f.id === settings.fontFamily && !selectableFonts.includes(f)))) font.createEl('option', { value: choice.id, text: fontName(choice.id) });
