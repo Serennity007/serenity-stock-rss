@@ -590,3 +590,37 @@
  .qrs-root .qrs-audio-title { flex:1 1 0; }
  .qrs-audio-dock audio { order:3; flex:1 0 100%; }
 }
+
+/* Explicit reading palettes stay inside RSS, including its detached reading popups.
+   Auto leaves the host theme untouched. Keep these after the host-theme defaults. */
+:is(.qrs-root,.qrs-channel-picker,.qrs-selection-popup)[data-qrs-theme="light"] {
+  color-scheme:light;
+  --qrs-fg:#292929; --qrs-muted:#626262; --qrs-faint:#737373; --qrs-bg:#fff; --qrs-subtle:#f7f7f7; --qrs-hover:#efefef; --qrs-border:#dedede; --qrs-border-strong:#bdbdbd; --qrs-ring:rgba(0,0,0,.12); --qrs-error:#b42332;
+  --qrs-row-hover:#f5f5f5; --qrs-row-selected:#e9e9e9; --qrs-row-selected-hover:#e1e1e1;
+  --text-selection:rgba(0,0,0,.12); --text-on-accent:#fff; --text-on-accent-inverted:#fff;
+}
+:is(.qrs-root,.qrs-channel-picker,.qrs-selection-popup)[data-qrs-theme="paper"] {
+  color-scheme:light;
+  --qrs-fg:#403b32; --qrs-muted:#706657; --qrs-faint:#7e7260; --qrs-bg:#f5efdf; --qrs-subtle:#eee5d2; --qrs-hover:#e8ddc7; --qrs-border:#d8ccb4; --qrs-border-strong:#baab90; --qrs-ring:rgba(64,59,50,.14); --qrs-error:#a42e35;
+  --qrs-row-hover:#eee5d2; --qrs-row-selected:#e5d8be; --qrs-row-selected-hover:#ddceb0;
+  --text-selection:rgba(110,83,36,.18); --text-on-accent:#f5efdf; --text-on-accent-inverted:#f5efdf;
+}
+:is(.qrs-root,.qrs-channel-picker,.qrs-selection-popup)[data-qrs-theme="dark"] {
+  color-scheme:dark;
+  --qrs-fg:#d4d1c9; --qrs-muted:#aba89f; --qrs-faint:#99968e; --qrs-bg:#202120; --qrs-subtle:#272827; --qrs-hover:#323432; --qrs-border:#3c3e3b; --qrs-border-strong:#575a54; --qrs-ring:rgba(212,209,201,.16); --qrs-error:#ff939b;
+  --qrs-row-hover:#2a2c29; --qrs-row-selected:#353831; --qrs-row-selected-hover:#40443b;
+  --text-selection:rgba(212,209,201,.2); --text-on-accent:#202120; --text-on-accent-inverted:#202120;
+}
+:is(.qrs-root,.qrs-channel-picker,.qrs-selection-popup):is([data-qrs-theme="light"],[data-qrs-theme="paper"],[data-qrs-theme="dark"]) {
+  --background-primary:var(--qrs-bg); --background-primary-alt:var(--qrs-subtle); --background-secondary:var(--qrs-subtle); --background-secondary-alt:var(--qrs-subtle);
+  --background-modifier-hover:var(--qrs-hover); --background-modifier-border:var(--qrs-border); --background-modifier-border-hover:var(--qrs-border-strong); --background-modifier-form-field:var(--qrs-bg);
+  --text-normal:var(--qrs-fg); --text-muted:var(--qrs-muted); --text-faint:var(--qrs-faint); --text-error:var(--qrs-error);
+  --h1-color:var(--qrs-fg); --h2-color:var(--qrs-fg); --h3-color:var(--qrs-fg); --h4-color:var(--qrs-fg); --h5-color:var(--qrs-fg); --h6-color:var(--qrs-fg);
+  --bold-color:var(--qrs-fg); --italic-color:var(--qrs-fg); --code-normal:var(--qrs-fg); --code-background:var(--qrs-subtle); --blockquote-color:var(--qrs-muted);
+  --icon-color:var(--qrs-muted); --icon-color-hover:var(--qrs-fg); --icon-color-active:var(--qrs-fg); --icon-color-focused:var(--qrs-fg);
+  --interactive-normal:var(--qrs-bg); --interactive-hover:var(--qrs-hover); --interactive-accent-hover:var(--qrs-muted); --color-accent-2:var(--qrs-muted); --checkbox-color-hover:var(--qrs-muted);
+  --dropdown-background:var(--qrs-subtle); --dropdown-background-hover:var(--qrs-hover); --input-placeholder-color:var(--qrs-faint);
+  --slider-track-background:var(--qrs-border-strong); --slider-thumb-background:var(--qrs-fg); --slider-thumb-background-hover:var(--qrs-fg); --slider-thumb-border-color:var(--qrs-border); --slider-fill-background:var(--qrs-muted);
+  --qrs-row-text:var(--qrs-fg); --qrs-row-muted:var(--qrs-muted);
+  color:var(--qrs-fg); background:var(--qrs-bg);
+}

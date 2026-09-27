@@ -3,7 +3,7 @@ import { EditorView } from '@codemirror/view';
 import { MarkdownView, Notice, Plugin, PluginSettingTab, TFile, type App, type SettingDefinitionItem, type SettingGroupItem } from 'obsidian';
 import { requestUrl } from 'obsidian';
 import { RssApi } from './api';
-import { folderPath, initialState, renameArticleNotes, modeLabel, modeSchema, readingFontSchema, type Bundle, type Entry, type Mode, type State } from './model';
+import { folderPath, initialState, renameArticleNotes, modeLabel, modeSchema, readingFontSchema, readingThemeSchema, type Bundle, type Entry, type Mode, type State } from './model';
 import { cleanCaptureMarkers, repairArticleLinks, appendDailyNoteLink, dailyNotePath, readDailyNoteSettings, renderDailyNoteTemplate } from './daily-note';
 import { ReaderView, VIEW_TYPE } from './view';
 import { contextProvider } from './agent-bridge';
@@ -344,6 +344,11 @@ export default class QiaomuRssPlugin extends Plugin {
     const path = `${folder}/subscriptions-${Date.now()}.opml`;
     await this.app.vault.create(path, content); return path;
   }
+  refreshReadingTheme() {
+    for (const leaf of this.app.workspace.getLeavesOfType(VIEW_TYPE)) {
+      if (leaf.view instanceof ReaderView) leaf.view.refreshReadingTheme();
+    }
+  }
   refreshPreferences() {
     for (const leaf of this.app.workspace.getLeavesOfType(VIEW_TYPE)) {
       if (leaf.view instanceof ReaderView) leaf.view.refreshPreferences();
@@ -375,6 +380,10 @@ class RssSettings extends PluginSettingTab {
         { name: t('settings.selectionPopup.name'), desc: t('settings.selectionPopup.desc'), render: setting => {
           setting.addToggle(toggle => toggle.setValue(settings.selectionPopup).onChange(async value => { settings.selectionPopup = value; await saveReading(); }));
         } },
+        { name: t('appearance.theme'), render: setting => { setting.addDropdown(drop => {
+          for (const value of readingThemeSchema.options) drop.addOption(value, t(`appearance.theme.${value}`));
+          drop.setValue(settings.readingTheme).onChange(async value => { settings.readingTheme = readingThemeSchema.parse(value); this.plugin.refreshReadingTheme(); await this.plugin.persist(); });
+        }); } },
         { name: t('settings.fontFamily'), render: setting => { setting.addDropdown(drop => {
           for (const font of selectableFonts.concat(readingFonts.filter(f => f.id === settings.fontFamily && !selectableFonts.includes(f)))) drop.addOption(font.id, fontName(font.id));
           drop.setValue(settings.fontFamily).onChange(async value => { settings.fontFamily = readingFontSchema.parse(value); await saveReading(); this.update(); });

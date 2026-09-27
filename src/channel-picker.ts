@@ -25,6 +25,7 @@ export class ChannelPicker extends Component {
     const mobile = Platform.isMobileApp || win.innerWidth <= 600;
     if (mobile) { this.backdrop = doc.body.createDiv('qrs-channel-backdrop'); this.backdrop.onclick = () => this.close(); }
     this.panel = doc.body.createDiv({ cls: 'qrs-channel-picker' + (mobile ? ' is-sheet' : ''), attr: { role: 'dialog', 'aria-modal': String(mobile), tabindex: '-1' } });
+    this.panel.dataset.qrsTheme = this.anchor.closest<HTMLElement>('.qrs-root')?.dataset.qrsTheme ?? 'auto';
     const titleId = `qrs-channels-${crypto.randomUUID()}`;
     this.panel.setAttribute('aria-labelledby', titleId);
     const handle = this.panel.createDiv('qrs-channel-handle');
