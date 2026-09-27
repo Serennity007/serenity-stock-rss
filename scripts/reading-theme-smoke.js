@@ -26,14 +26,14 @@ try {
   const readingItem = [...document.querySelectorAll('.menu-item')].find(el => /阅读设置|Reading settings/.test(el.textContent));
   check('Existing reading settings menu entry', !!readingItem); readingItem.click(); await pause();
   const select = view.contentEl.querySelector('select[data-qrs-reading-theme]');
-  check('Four color options in existing settings', select && select.options.length === 4);
+  check('Seven color options in existing settings', select && select.options.length === 7);
   const article = view.contentEl.querySelector('.qrs-article');
   const reader = view.contentEl.querySelector('.qrs-reader');
   const bodyStyle = document.body.getAttribute('style');
-  const expected = { light: 'rgb(255, 255, 255)', paper: 'rgb(245, 239, 223)', dark: 'rgb(32, 33, 32)' };
+  const expected = { light: 'rgb(255, 255, 255)', paper: 'rgb(248, 245, 238)', sage: 'rgb(237, 242, 236)', mist: 'rgb(243, 245, 248)', dark: 'rgb(23, 28, 36)', black: 'rgb(0, 0, 0)' };
   for (const host of ['theme-light', 'theme-dark']) {
     document.body.classList.remove('theme-light', 'theme-dark'); document.body.classList.add(host);
-    for (const mode of ['light', 'paper', 'dark', 'auto']) {
+    for (const mode of ['light', 'paper', 'sage', 'mist', 'dark', 'black', 'auto']) {
       reader.scrollTop = 280;
       const beforeTop = reader.scrollTop;
       select.value = mode; select.dispatchEvent(new Event('change', { bubbles: true })); await p.persist(); await pause();

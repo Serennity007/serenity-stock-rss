@@ -7,7 +7,7 @@ export type Mode = z.infer<typeof modeSchema>;
 export function modeLabel(mode: Mode): string {
   return t(mode === 'rewrite' ? 'mode.rewrite' : mode === 'translation' ? 'mode.translation' : 'mode.original');
 }
-export const readingThemeSchema = z.enum(['auto', 'light', 'paper', 'dark']);
+export const readingThemeSchema = z.enum(['auto', 'light', 'paper', 'sage', 'mist', 'dark', 'black']);
 export type ReadingTheme = z.infer<typeof readingThemeSchema>;
 export const readingFontSchema = z.enum(['serif', 'sans', 'sourceHanSerif', 'sourceHanSans', 'wenkai', 'zhenkai', 'fangsong', 'custom']);
 export type ReadingFont = z.infer<typeof readingFontSchema>;

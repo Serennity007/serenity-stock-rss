@@ -609,17 +609,35 @@
 }
 :is(.qrs-root,.qrs-channel-picker,.qrs-selection-popup)[data-qrs-theme="paper"] {
   color-scheme:light;
-  --qrs-fg:#403b32; --qrs-muted:#706657; --qrs-faint:#7e7260; --qrs-bg:#f5efdf; --qrs-subtle:#eee5d2; --qrs-hover:#e8ddc7; --qrs-border:#d8ccb4; --qrs-border-strong:#baab90; --qrs-ring:rgba(64,59,50,.14); --qrs-error:#a42e35;
-  --qrs-row-hover:#eee5d2; --qrs-row-selected:#e5d8be; --qrs-row-selected-hover:#ddceb0;
-  --text-selection:rgba(110,83,36,.18); --text-on-accent:#f5efdf; --text-on-accent-inverted:#f5efdf;
+  --qrs-fg:#2e2a24; --qrs-muted:#6b6358; --qrs-faint:#7d7468; --qrs-bg:#f8f5ee; --qrs-subtle:#f1ece2; --qrs-hover:#eae4d8; --qrs-border:#e2dace; --qrs-border-strong:#c9bfae; --qrs-ring:rgba(46,42,36,.12); --qrs-error:#a42e35;
+  --qrs-row-hover:#ece6da; --qrs-row-selected:#e6dfd1; --qrs-row-selected-hover:#ded6c6;
+  --text-selection:rgba(120,96,56,.16); --text-on-accent:#f8f5ee; --text-on-accent-inverted:#f8f5ee;
+}
+:is(.qrs-root,.qrs-channel-picker,.qrs-selection-popup)[data-qrs-theme="sage"] {
+  color-scheme:light;
+  --qrs-fg:#27322c; --qrs-muted:#56645b; --qrs-faint:#6c7a71; --qrs-bg:#edf2ec; --qrs-subtle:#e4ebe3; --qrs-hover:#dde5dc; --qrs-border:#d3ddd2; --qrs-border-strong:#b5c3b4; --qrs-ring:rgba(39,50,44,.12); --qrs-error:#a42e35;
+  --qrs-row-hover:#dfe7de; --qrs-row-selected:#d6e0d5; --qrs-row-selected-hover:#ccd8cb;
+  --text-selection:rgba(60,110,80,.16); --text-on-accent:#edf2ec; --text-on-accent-inverted:#edf2ec;
+}
+:is(.qrs-root,.qrs-channel-picker,.qrs-selection-popup)[data-qrs-theme="mist"] {
+  color-scheme:light;
+  --qrs-fg:#1f2933; --qrs-muted:#52606d; --qrs-faint:#6b7785; --qrs-bg:#f3f5f8; --qrs-subtle:#eaeef3; --qrs-hover:#e2e7ee; --qrs-border:#d9dfe7; --qrs-border-strong:#b9c2ce; --qrs-ring:rgba(31,41,51,.12); --qrs-error:#b42332;
+  --qrs-row-hover:#e3e8ef; --qrs-row-selected:#dde3eb; --qrs-row-selected-hover:#d3dae4;
+  --text-selection:rgba(55,90,140,.14); --text-on-accent:#f3f5f8; --text-on-accent-inverted:#f3f5f8;
 }
 :is(.qrs-root,.qrs-channel-picker,.qrs-selection-popup)[data-qrs-theme="dark"] {
   color-scheme:dark;
-  --qrs-fg:#d4d1c9; --qrs-muted:#aba89f; --qrs-faint:#99968e; --qrs-bg:#202120; --qrs-subtle:#272827; --qrs-hover:#323432; --qrs-border:#3c3e3b; --qrs-border-strong:#575a54; --qrs-ring:rgba(212,209,201,.16); --qrs-error:#ff939b;
-  --qrs-row-hover:#2a2c29; --qrs-row-selected:#353831; --qrs-row-selected-hover:#40443b;
-  --text-selection:rgba(212,209,201,.2); --text-on-accent:#202120; --text-on-accent-inverted:#202120;
+  --qrs-fg:#d5dce6; --qrs-muted:#98a3b3; --qrs-faint:#7a8595; --qrs-bg:#171c24; --qrs-subtle:#1d232d; --qrs-hover:#262d38; --qrs-border:#2a313c; --qrs-border-strong:#414a58; --qrs-ring:rgba(213,220,230,.16); --qrs-error:#ff939b;
+  --qrs-row-hover:#232a35; --qrs-row-selected:#29313d; --qrs-row-selected-hover:#323b48;
+  --text-selection:rgba(150,180,220,.22); --text-on-accent:#171c24; --text-on-accent-inverted:#171c24;
 }
-:is(.qrs-root,.qrs-channel-picker,.qrs-selection-popup):is([data-qrs-theme="light"],[data-qrs-theme="paper"],[data-qrs-theme="dark"]) {
+:is(.qrs-root,.qrs-channel-picker,.qrs-selection-popup)[data-qrs-theme="black"] {
+  color-scheme:dark;
+  --qrs-fg:#c8c8c8; --qrs-muted:#8e8e8e; --qrs-faint:#6e6e6e; --qrs-bg:#000; --qrs-subtle:#0d0d0d; --qrs-hover:#1a1a1a; --qrs-border:#222; --qrs-border-strong:#3a3a3a; --qrs-ring:rgba(200,200,200,.16); --qrs-error:#ff939b;
+  --qrs-row-hover:#151515; --qrs-row-selected:#1c1c1c; --qrs-row-selected-hover:#242424;
+  --text-selection:rgba(255,255,255,.18); --text-on-accent:#000; --text-on-accent-inverted:#000;
+}
+:is(.qrs-root,.qrs-channel-picker,.qrs-selection-popup):is([data-qrs-theme="light"],[data-qrs-theme="paper"],[data-qrs-theme="sage"],[data-qrs-theme="mist"],[data-qrs-theme="dark"],[data-qrs-theme="black"]) {
   --background-primary:var(--qrs-bg); --background-primary-alt:var(--qrs-subtle); --background-secondary:var(--qrs-subtle); --background-secondary-alt:var(--qrs-subtle);
   --background-modifier-hover:var(--qrs-hover); --background-modifier-border:var(--qrs-border); --background-modifier-border-hover:var(--qrs-border-strong); --background-modifier-form-field:var(--qrs-bg);
   --text-normal:var(--qrs-fg); --text-muted:var(--qrs-muted); --text-faint:var(--qrs-faint); --text-error:var(--qrs-error);

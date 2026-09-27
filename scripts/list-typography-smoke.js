@@ -14,7 +14,7 @@ try {
     {id:'list-qa-podcast',sourceId:'podscribe-qa',sourceName:'Podcast 播客',title:'带播放数据的播客日期也在最右侧',summaryZh:'这是播客简介，也应当支持两行显示。'.repeat(6),podcastViews:1234,podcastDurationSeconds:3600,publishedTs:1790467200000,image}
   ];
   p.state.readIds.push('list-qa-plain');v.renderList();await new Promise(r=>setTimeout(r,300));
-  for(const mode of ['light','paper','dark','auto']) {
+  for(const mode of ['light','paper','sage','mist','dark','black','auto']) {
     p.state.settings.readingTheme=mode;p.refreshReadingTheme();
     const rows=[...v.contentEl.querySelectorAll('.qrs-entry')];
     const dates=rows.map(r=>r.querySelector('.qrs-date').getBoundingClientRect().right);

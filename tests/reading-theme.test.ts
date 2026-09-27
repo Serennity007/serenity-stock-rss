@@ -11,7 +11,7 @@ describe('reading color upgrade', () => {
     expect(next.readIds).toEqual(previous.readIds);
     expect(next.articleNotes).toEqual(previous.articleNotes);
   });
-  it.each(['auto', 'light', 'paper', 'dark'])('preserves %s through save and reload', readingTheme => {
+  it.each(['auto', 'light', 'paper', 'sage', 'mist', 'dark', 'black'])('preserves %s through save and reload', readingTheme => {
     const state = initialState({ settings: { readingTheme } });
     expect(initialState(JSON.parse(JSON.stringify(state))).settings.readingTheme).toBe(readingTheme);
   });
