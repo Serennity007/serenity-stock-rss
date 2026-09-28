@@ -650,3 +650,10 @@
   --qrs-row-text:var(--qrs-fg); --qrs-row-muted:var(--qrs-muted);
   color:var(--qrs-fg); background:var(--qrs-bg);
 }
+
+/* Hide note metadata only while this plugin owns the active view; no Home dependency. */
+body:has(.workspace-leaf.mod-active > .workspace-leaf-content:is(
+  [data-type="qiaomu-ai-rss-reader"]
+)) .status-bar {
+  display: none;
+}
