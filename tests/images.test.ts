@@ -5,6 +5,8 @@ import { requestUrl } from './obsidian-mock';
 import type { Vault } from 'obsidian';
 Object.defineProperty(window.crypto, 'subtle', { value: webcrypto.subtle });
 import { imageMime, LocalImages } from '../src/images';
+import { svgPng } from '../src/svg-image';
+vi.mock('../src/svg-image', () => ({ svgPng: vi.fn().mockResolvedValue(null) }));
 describe('local image validation', () => {
   it('recognizes raster signatures rather than trusting a remote MIME header', () => {
     expect(imageMime(new Uint8Array([137,80,78,71,13,10,26,10]).buffer)).toBe('image/png');
@@ -41,6 +43,29 @@ describe('bounded disk image cache', () => {
     requestUrl.mockRejectedValue(new Error('offline'));
     const blob = await images.load('https://example.com/photo.png');
     expect(blob.type).toBe('image/png'); expect(requestUrl).toHaveBeenCalledTimes(1);
+  });
+  it('converts SVG responses into cached PNGs usable offline without decoding SVG again', async () => {
+    requestUrl.mockReset(); vi.mocked(svgPng).mockClear();
+    const png = new Uint8Array([137,80,78,71,13,10,26,10]).buffer;
+    vi.mocked(svgPng).mockResolvedValueOnce(png);
+    requestUrl.mockResolvedValue({status:200,arrayBuffer:new TextEncoder().encode('<svg/>').buffer});
+    const {images,files}=cache();
+    const blob=await images.load('https://example.com/badge');
+    expect(blob.type).toBe('image/png'); expect([...files.values()][0]).toEqual(png);
+    requestUrl.mockRejectedValue(new Error('offline'));
+    expect((await images.load('https://example.com/badge')).type).toBe('image/png');
+    expect(requestUrl).toHaveBeenCalledTimes(1); expect(svgPng).toHaveBeenCalledTimes(1);
+  });
+  it('refetches on explicit retry instead of repeatedly returning a broken cached image', async () => {
+    requestUrl.mockReset();
+    const png = new Uint8Array([137,80,78,71,13,10,26,10]).buffer;
+    requestUrl.mockResolvedValue({status:200,arrayBuffer:png});
+    const {images}=cache();
+    await images.load('https://example.com/image');
+    await images.load('https://example.com/image');
+    expect(requestUrl).toHaveBeenCalledTimes(1);
+    await images.load('https://example.com/image',true);
+    expect(requestUrl).toHaveBeenCalledTimes(2);
   });
   it('rejects oversized responses and enforces the file count cap', async () => {
     requestUrl.mockReset(); const oversized = new Uint8Array(9*1024*1024); oversized.set([137,80,78,71]);

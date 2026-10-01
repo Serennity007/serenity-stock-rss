@@ -715,20 +715,24 @@ export class ReaderView extends ItemView {
   }
   private prepareImages(fragment: DocumentFragment) {
     const version = this.renderVersion;
-    const load = async (img: HTMLImageElement, url: string, holder: HTMLElement) => {
+    const load = async (img: HTMLImageElement, url: string, holder: HTMLElement, refresh = false) => {
       holder.querySelector('button')?.remove();
-      try {
-        const blob = await this.plugin.images.load(url);
-        if (this.closed || version !== this.renderVersion) return;
-        enableImageDrag(img, blob);
-        const local = URL.createObjectURL(blob); this.blobUrls.push(local); img.src = local;
-        img.onload = () => holder.removeClass('is-loading');
-      } catch {
+      holder.addClass('is-loading');
+      const failed = () => {
         if (this.closed || version !== this.renderVersion) return;
         holder.removeClass('is-loading');
+        holder.querySelector('button')?.remove();
         const button = holder.createEl('button', { text: t('notice.imageRetry'), cls: 'qrs-image-retry' });
-        button.onclick = () => { void load(img, url, holder); };
-      }
+        button.onclick = () => { void load(img, url, holder, true); };
+      };
+      try {
+        const blob = await this.plugin.images.load(url, refresh);
+        if (this.closed || version !== this.renderVersion) return;
+        enableImageDrag(img, blob);
+        const local = URL.createObjectURL(blob); this.blobUrls.push(local);
+        img.onload = () => holder.removeClass('is-loading');
+        img.onerror = failed; img.src = local;
+      } catch { failed(); }
     };
     this.imageObserver = new IntersectionObserver(items => {
       for (const item of items) {
