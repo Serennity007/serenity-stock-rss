@@ -3,9 +3,13 @@ import type QiaomuRssPlugin from './main';
 import { t } from './i18n';
 
 export class LabSettingsModal extends Modal {
-  constructor(app: App, private plugin: QiaomuRssPlugin) { super(app); }
+  constructor(app: App, private plugin: QiaomuRssPlugin, private adminOnly = false) { super(app); }
   onOpen() {
     this.modalEl.addClass('qrs-modal', 'qrs-lab-settings');
+    if (this.adminOnly) {
+      this.modalEl.addClass('qrs-lab-admin-dialog'); this.setTitle(t('lab.advanced'));
+      this.renderAdmin(this.contentEl); this.contentEl.querySelector<HTMLInputElement>('input[type=email]')?.focus(); return;
+    }
     this.setTitle(t('lab.collection'));
     const settings = this.plugin.state.settings;
     new Setting(this.contentEl).setName(t('lab.enable')).setDesc(t('lab.shortDescription')).addToggle(toggle => toggle.setValue(settings.labCollection).onChange(async value => {
@@ -35,11 +39,6 @@ export class LabSettingsModal extends Modal {
     const advanced = this.contentEl.createEl('details', { cls: 'qrs-lab-advanced' });
     advanced.hidden = !this.plugin.collectionAdminAvailable();
     advanced.open = !advanced.hidden;
-    let clicks = 0, lastClick = 0;
-    this.titleEl.onclick = () => {
-      const now = Date.now(); clicks = now - lastClick < 3000 ? clicks + 1 : 1; lastClick = now;
-      if (clicks === 4) { advanced.hidden = false; advanced.open = true; clicks = 0; }
-    };
     advanced.createEl('summary', { text: t('lab.advanced') });
     const panel = advanced.createDiv();
     this.renderAdmin(panel);
@@ -78,5 +77,5 @@ export class LabSettingsModal extends Modal {
     });
     for (const row of [mail, secret]) { row.nameEl.id = 'qrs-lab-field-' + crypto.randomUUID(); row.controlEl.querySelector('input')?.setAttribute('aria-labelledby', row.nameEl.id); }
   }
-  onClose() { this.titleEl.onclick = null; for (const input of this.contentEl.querySelectorAll<HTMLInputElement>('input[type=password]')) input.value = ''; this.contentEl.empty(); }
+  onClose() { for (const input of this.contentEl.querySelectorAll<HTMLInputElement>('input[type=password]')) input.value = ''; this.contentEl.empty(); }
 }

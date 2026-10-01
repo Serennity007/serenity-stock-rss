@@ -174,7 +174,7 @@ export default class QiaomuRssPlugin extends Plugin {
     await this.openReader(); const view = this.app.workspace.getLeavesOfType(VIEW_TYPE)[0]?.view;
     if (view instanceof ReaderView) view.showPersonalSource(all ? '@collection-all' : '@collection');
   }
-  openCollectionSettings() { this.labSettings?.close(); this.labSettings = new LabSettingsModal(this.app, this); this.labSettings.open(); return this.labSettings; }
+  openCollectionSettings(adminOnly = false) { this.labSettings?.close(); this.labSettings = new LabSettingsModal(this.app, this, adminOnly); this.labSettings.open(); return this.labSettings; }
   async openCollectionResult(baseUrl: string, id: string) {
     if (baseUrl !== this.state.settings.baseUrl) { window.open(`${baseUrl}/?entry=${encodeURIComponent(id)}`, '_blank', 'noopener'); return; }
     try { const result = await this.api().article(id); await this.openReader(); const view = this.app.workspace.getLeavesOfType(VIEW_TYPE)[0]?.view; if (view instanceof ReaderView) view.showSavedArticle(result.bundle, 'rewrite'); } catch { new Notice(t('lab.unavailable')); }
@@ -590,7 +590,16 @@ class RssSettings extends PluginSettingTab {
         setting.settingEl.addClass('qrs-settings-qr');
         setting.controlEl.createEl('img', { attr: { src: 'https://radio.qiaomu.ai/assets/qiaomu_wechat_public_account_qr.jpg', alt: t('about.followAlt'), loading: 'lazy', width: '160', height: '160' } });
       } },
-      { name: t('about.license'), desc: t('about.license.desc') }],
+      { name: t('about.license'), desc: t('about.license.desc') },
+      { name: '', searchable: false, render: setting => {
+        setting.settingEl.addClass('qrs-about-admin');
+        setting.addButton(button => {
+          button.setIcon('shield').onClick(() => this.plugin.openCollectionSettings(true));
+          const label = button.buttonEl.createSpan({ cls: 'qrs-visually-hidden', text: t('lab.advanced') });
+          label.id = 'qrs-about-admin-' + crypto.randomUUID(); button.buttonEl.setAttribute('aria-labelledby', label.id);
+          button.buttonEl.addClass('qrs-about-admin-button');
+        });
+      } }],
     };
     const tabLabels: Record<string, string> = { reading: t('settings.tab.reading'), sources: t('settings.tab.sources'), excerpt: t('settings.tab.excerpt'), lab: t('settings.tab.lab'), about: t('settings.tab.about') };
     return [{ name: 'Qiaomu AI RSS', searchable: false, render: setting => {

@@ -682,3 +682,9 @@ body:has(.workspace-leaf.mod-active > .workspace-leaf-content:is(
 .qrs-modal.qrs-lab-settings .qrs-lab-admin-form .setting-item { border:0; padding:10px 0; }
 .qrs-modal.qrs-lab-settings .qrs-lab-admin-form .qrs-lab-admin-actions { padding:8px 0 0; }
 .qrs-lab-settings .qrs-subscription-error:empty { display:none; }
+
+.qrs-settings .qrs-about-admin { border:0; padding:8px 0 0; min-height:32px; }
+.qrs-settings .qrs-about-admin-button { width:32px; height:32px; padding:7px; border:0; box-shadow:none; background:transparent; color:var(--qrs-faint); }
+.qrs-settings .qrs-about-admin-button:hover { background:var(--qrs-hover); color:var(--qrs-muted); }
+.qrs-settings .qrs-about-admin-button:focus-visible { outline:1px solid var(--qrs-muted); outline-offset:2px; }
+.qrs-lab-admin-dialog { width:440px; max-width:calc(100vw - 32px); }
