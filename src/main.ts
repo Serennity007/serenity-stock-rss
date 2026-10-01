@@ -1,5 +1,5 @@
 import { LabSettingsModal } from './lab-settings';
-import { CollectionClient, type CollectionItem } from './collection';
+import { CollectionClient, syncCollectionTitles, type CollectionItem } from './collection';
 import { migrateLibrary, moveSources, registerSource } from './personal-library';
 import { EditorView } from '@codemirror/view';
 import { MarkdownView, Notice, Plugin, PluginSettingTab, TFile, type App, type SettingDefinitionItem, type SettingGroupItem } from 'obsidian';
@@ -167,7 +167,9 @@ export default class QiaomuRssPlugin extends Plugin {
       catch (error) { if (error instanceof Error && error.message === t('lab.adminDenied')) { this.adminSession = undefined; this.state.collectionAdminSession = null; await this.persist(); this.refreshPersonalViews(); } throw error; }
     }
     await this.ensureCollectionVerified();
-    return this.collectionClient().list(cursor);
+    const baseUrl = this.state.settings.baseUrl, page = await this.collectionClient(baseUrl).list(cursor);
+    if (syncCollectionTitles(this.state.collectionJobs, page.jobs, baseUrl)) await this.persist();
+    return page;
   }
   collectionLocalItems(): CollectionItem[] { return this.state.collectionJobs.filter(job => job.baseUrl === this.state.settings.baseUrl).map(job => ({ ...job })); }
   async openCollectionChannel(all = false) {
@@ -590,14 +592,13 @@ class RssSettings extends PluginSettingTab {
         setting.settingEl.addClass('qrs-settings-qr');
         setting.controlEl.createEl('img', { attr: { src: 'https://radio.qiaomu.ai/assets/qiaomu_wechat_public_account_qr.jpg', alt: t('about.followAlt'), loading: 'lazy', width: '160', height: '160' } });
       } },
-      { name: t('about.license'), desc: t('about.license.desc') },
-      { name: '', searchable: false, render: setting => {
-        setting.settingEl.addClass('qrs-about-admin');
+      { name: t('about.license'), desc: t('about.license.desc'), render: setting => {
         setting.addButton(button => {
           button.setIcon('shield').onClick(() => this.plugin.openCollectionSettings(true));
           const label = button.buttonEl.createSpan({ cls: 'qrs-visually-hidden', text: t('lab.advanced') });
           label.id = 'qrs-about-admin-' + crypto.randomUUID(); button.buttonEl.setAttribute('aria-labelledby', label.id);
           button.buttonEl.addClass('qrs-about-admin-button');
+          setting.descEl.append(button.buttonEl);
         });
       } }],
     };

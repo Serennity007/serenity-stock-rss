@@ -1,6 +1,6 @@
 // @vitest-environment jsdom
 import { describe, expect, it, vi } from 'vitest';
-import { CollectionClient } from '../src/collection';
+import { CollectionClient, syncCollectionTitles } from '../src/collection';
 import { initialState, withServiceOrigin } from '../src/model';
 import { todayLabel } from '../src/daily-note';
 
@@ -40,6 +40,18 @@ describe('collection protocol and calendar dates', () => {
 });
 
 describe('verified collection access', () => {
+  it('persists remote Chinese titles for already notified jobs without changing notification or other services', () => {
+    const state = initialState({collectionJobs:[
+      {id:'job',url:'https://example.com',baseUrl:'https://rss.qiaomu.ai',title:'English title',status:'complete',entryId:'entry',createdAt:1,notified:true},
+      {id:'job',url:'https://other.example.com',baseUrl:'https://other.example.com',title:'Other title',createdAt:1},
+    ]});
+    const jobs = [{id:'job',url:'https://example.com',title:'中文标题',originalTitle:'English title',status:'complete' as const,entryId:'entry',createdAt:1}];
+    expect(syncCollectionTitles(state.collectionJobs,jobs,'https://rss.qiaomu.ai')).toBe(true);
+    const restored = initialState(JSON.parse(JSON.stringify(state)));
+    expect(restored.collectionJobs[0]).toMatchObject({title:'中文标题',originalTitle:'English title',notified:true,status:'complete'});
+    expect(restored.collectionJobs[1].title).toBe('Other title');
+    expect(syncCollectionTitles(restored.collectionJobs,jobs,'https://rss.qiaomu.ai')).toBe(false);
+  });
   it('verifies without submitting and sends per-client credentials on personal lists', async () => {
     const identity = { id: 'client-id', key: 'client-secret' };
     const transport = vi.fn().mockResolvedValueOnce({status:200,text:'{"verified":true}'}).mockResolvedValueOnce({status:200,text:'{"jobs":[],"hasMore":false,"nextCursor":""}'});

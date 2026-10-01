@@ -1,12 +1,25 @@
 import { z } from 'zod';
 import { serviceUrl, safeUrl } from './model';
 import { t } from './i18n';
+import type { CollectionJob } from './model';
 
 const resultSchema = z.object({ status: z.enum(['queued', 'running', 'complete', 'failed']), title: z.string().default(''), originalTitle: z.string().optional(), entryId: z.string().optional() });
 export const collectionItemSchema = resultSchema.extend({ id: z.string(), url: z.string(), createdAt: z.number(), submitter: z.string().optional() });
 const pageSchema = z.object({ jobs: z.array(collectionItemSchema), hasMore: z.boolean(), nextCursor: z.string() });
 export type CollectionItem = z.infer<typeof collectionItemSchema>;
 export type CollectionIdentity = { id: string; key: string };
+export function syncCollectionTitles(saved: CollectionJob[], jobs: CollectionItem[], baseUrl: string) {
+  const titles = new Map(jobs.map(job => [job.id, job]));
+  let changed = false;
+  for (const job of saved) {
+    const remote = titles.get(job.id);
+    if (job.baseUrl !== baseUrl || !remote?.title) continue;
+    if (job.title !== remote.title || job.originalTitle !== remote.originalTitle) {
+      job.title = remote.title; job.originalTitle = remote.originalTitle; changed = true;
+    }
+  }
+  return changed;
+}
 type Request = { url: string; method: string; headers: Record<string, string>; body?: string };
 export class CollectionClient {
   private base: string;
