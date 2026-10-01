@@ -1,0 +1,15 @@
+// Mount after JSON parsing and before routes. Uses QMReader's existing SSRF/redirect checks.
+require('./lib/lab-collection').mountLabCollection(app, {
+  adminAuth: store,
+  directory: path.join(__dirname, 'data'),
+  validateUrl: value => fetcher.__test.validateSubmittedUrlShape(value),
+  processLink: async url => {
+    const existing = typeof fetcher.getSubmittedEntryByUrl === 'function' ? fetcher.getSubmittedEntryByUrl(url) : null;
+    const entry = existing || await fetcher.submitLink(url, { displayName: '乔木 RSS 实验室' });
+    const localized = await require('./lib/lab-title').collectionTitle(entry, { deepseek, fetcher });
+    const prepared = await prepareEntryForAiAsset(entry, 'Lab link rewrite');
+    const result = await deepseek.rewriteEntry(prepared.entry, { author: '向阳乔木', temperature: 0.6, maxTokens: 9000 });
+    if (!result.rewrite?.body) throw new Error('Rewrite not ready');
+    return { entryId: entry.id, ...localized };
+  },
+});

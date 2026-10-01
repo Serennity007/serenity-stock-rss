@@ -4,7 +4,11 @@ import { fail, t } from './i18n';
 
 export interface DailyNoteSettings { folder: string; format: string; template: string }
 export interface DateFormatter { format(pattern: string): string }
-const currentMoment = () => (moment as unknown as () => DateFormatter)();
+export const captureMoment = (now = new Date()) => (moment as unknown as (date: Date) => DateFormatter)(now);
+const currentMoment = captureMoment;
+export function todayLabel(now = new Date()): string {
+  return `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')}`;
+}
 
 function cleanPath(value: string): string {
   const path = normalizePath(value.trim().replace(/^\/+|\/+$/g, ''));

@@ -1,10 +1,12 @@
+import { LabSettingsModal } from './lab-settings';
+import { CollectionClient, syncCollectionTitles, type CollectionItem } from './collection';
 import { migrateLibrary, moveSources, registerSource } from './personal-library';
 import { EditorView } from '@codemirror/view';
 import { MarkdownView, Notice, Plugin, PluginSettingTab, TFile, type App, type SettingDefinitionItem, type SettingGroupItem } from 'obsidian';
 import { requestUrl } from 'obsidian';
 import { RssApi } from './api';
 import { folderPath, initialState, renameArticleNotes, modeLabel, modeSchema, readingFontSchema, readingThemeSchema, type Bundle, type Entry, type Mode, type State } from './model';
-import { cleanCaptureMarkers, repairArticleLinks, appendDailyNoteLink, dailyNotePath, readDailyNoteSettings, renderDailyNoteTemplate } from './daily-note';
+import { cleanCaptureMarkers, repairArticleLinks, appendDailyNoteLink, captureMoment, dailyNotePath, readDailyNoteSettings, renderDailyNoteTemplate } from './daily-note';
 import { ReaderView, VIEW_TYPE } from './view';
 import { contextProvider } from './agent-bridge';
 import { createHomeProvider } from './home';
@@ -28,6 +30,12 @@ export default class QiaomuRssPlugin extends Plugin {
   qiaomuContext = contextProvider(leaf => leaf.view instanceof ReaderView ? leaf.view.agentSnapshot() : null);
   /** Shows the newest unread articles on Qiaomu Home; see qiaomu-home.ts. */
   qiaomuHome = createHomeProvider(this);
+  private labSettings?: LabSettingsModal;
+  private collectionVerified = '';
+  private adminSession?: { token: string; expiresAt: number; name: string; baseUrl: string };
+  private collectionBusy = false;
+  private collectionSubmitting = new Set<string>();
+  private collectionStopped = false;
   private lastNote: TFile | null = null;
   private libraryEdits: Promise<void> = Promise.resolve();
   private saving: Promise<void> = Promise.resolve();
@@ -42,6 +50,7 @@ export default class QiaomuRssPlugin extends Plugin {
     const data: unknown = await this.loadData();
     try { this.state = initialState(data); }
     catch { new Notice(t('notice.dataUnreadable')); throw new Error('Incompatible RSS data'); }
+    this.adminSession = this.state.collectionAdminSession ?? undefined;
     if (data && typeof data === 'object' && !('libraryVersion' in data)) {
       const backup = `${this.app.vault.configDir}/plugins/${this.manifest.id}/data-before-library-v1.json`;
       if (!await this.app.vault.adapter.exists(backup)) await this.app.vault.adapter.write(backup, JSON.stringify(data));
@@ -58,6 +67,8 @@ export default class QiaomuRssPlugin extends Plugin {
     this.addCommand({ id: 'explore-subscriptions', name: t('cmd.exploreSubscriptions'), callback: () => { void this.openDiscovery(); } });
     this.addRibbonIcon('rss', t('cmd.openReader'), () => { void this.openReader(); });
     this.addCommand({ id: 'open-reader', name: t('cmd.openReader'), callback: () => { void this.openReader(); } });
+    this.registerInterval(window.setInterval(() => { void this.checkCollectionJobs(); }, 15000));
+    void this.checkCollectionJobs();
     this.addSettingTab(new RssSettings(this.app, this));
     this.registerEvent(this.app.vault.on('rename', (file, oldPath) => {
       if (renameArticleNotes(this.state.articleNotes, oldPath, file.path)) void this.persist();
@@ -112,12 +123,113 @@ export default class QiaomuRssPlugin extends Plugin {
       void this.openSavedArticle(params.article || '', params.mode || 'original').catch(() => new Notice(t('notice.localCopyMissingShort')));
     });
   }
-  onunload() { this.center?.close(); this.fonts.dispose(); }
+  onunload() { this.collectionStopped = true; this.labSettings?.close(); this.center?.close(); this.fonts.dispose(); }
   api(): RssApi {
     return new RssApi(this.state.settings.baseUrl, async url => {
       const response = await requestUrl({ url, method: 'GET', headers: { Accept: 'application/json' }, throw: false });
       return { status: response.status, text: response.text };
     });
+  }
+  private collectionClient(baseUrl = this.state.settings.baseUrl, invite = this.state.settings.labInviteCode) {
+    this.state.collectionIdentity ??= { id: crypto.randomUUID(), key: crypto.randomUUID() + crypto.randomUUID() };
+    return new CollectionClient(baseUrl, invite, async options => {
+      const response = await requestUrl({ ...options, throw: false });
+      return { status: response.status, text: response.text };
+    }, this.state.collectionIdentity);
+  }
+  async verifyCollectionInvite(code: string) {
+    const invite = code.trim();
+    await this.collectionClient(this.state.settings.baseUrl, invite).verify(this.state.collectionJobs.filter(job => job.baseUrl === this.state.settings.baseUrl).map(job => job.id));
+    const previous = { code: this.state.settings.labInviteCode, verified: this.state.settings.labInviteVerified };
+    this.state.settings.labInviteCode = invite; this.state.settings.labInviteVerified = true;
+    this.collectionVerified = this.state.settings.baseUrl + '|' + invite;
+    try { await this.persist(); } catch (error) { this.state.settings.labInviteCode = previous.code; this.state.settings.labInviteVerified = previous.verified; this.collectionVerified = ''; throw error; }
+    this.refreshPersonalViews();
+  }
+  private async ensureCollectionVerified() {
+    if (this.collectionVerified !== this.state.settings.baseUrl + '|' + this.state.settings.labInviteCode) await this.verifyCollectionInvite(this.state.settings.labInviteCode);
+  }
+  collectionAdminAvailable() { return !!this.adminSession && this.adminSession.expiresAt > Date.now() && this.adminSession.baseUrl === this.state.settings.baseUrl; }
+  collectionAdminName() { return this.collectionAdminAvailable() ? this.adminSession!.name : ''; }
+  async verifyCollectionAdmin(email: string, password: string) {
+    const session = await this.collectionClient().adminLogin(email.trim(), password);
+    this.adminSession = { ...session, baseUrl: this.state.settings.baseUrl };
+    this.state.collectionAdminSession = this.adminSession; await this.persist(); this.refreshPersonalViews();
+  }
+  async logoutCollectionAdmin() {
+    const session = this.adminSession; this.adminSession = undefined; this.state.collectionAdminSession = null; await this.persist(); this.refreshPersonalViews();
+    if (session) await this.collectionClient(session.baseUrl).logout(session.token);
+  }
+  async collectionPage(all: boolean, cursor = '') {
+    if (all) {
+      if (!this.collectionAdminAvailable()) throw new Error(t('lab.adminDenied'));
+      try { return await this.collectionClient().listAll(this.adminSession!.token, cursor); }
+      catch (error) { if (error instanceof Error && error.message === t('lab.adminDenied')) { this.adminSession = undefined; this.state.collectionAdminSession = null; await this.persist(); this.refreshPersonalViews(); } throw error; }
+    }
+    await this.ensureCollectionVerified();
+    const baseUrl = this.state.settings.baseUrl, page = await this.collectionClient(baseUrl).list(cursor);
+    if (syncCollectionTitles(this.state.collectionJobs, page.jobs, baseUrl)) await this.persist();
+    return page;
+  }
+  collectionLocalItems(): CollectionItem[] { return this.state.collectionJobs.filter(job => job.baseUrl === this.state.settings.baseUrl).map(job => ({ ...job })); }
+  async openCollectionChannel(all = false) {
+    await this.openReader(); const view = this.app.workspace.getLeavesOfType(VIEW_TYPE)[0]?.view;
+    if (view instanceof ReaderView) view.showPersonalSource(all ? '@collection-all' : '@collection');
+  }
+  openCollectionSettings(adminOnly = false) { this.labSettings?.close(); this.labSettings = new LabSettingsModal(this.app, this, adminOnly); this.labSettings.open(); return this.labSettings; }
+  async openCollectionResult(baseUrl: string, id: string) {
+    if (baseUrl !== this.state.settings.baseUrl) { window.open(`${baseUrl}/?entry=${encodeURIComponent(id)}`, '_blank', 'noopener'); return; }
+    try { const result = await this.api().article(id); await this.openReader(); const view = this.app.workspace.getLeavesOfType(VIEW_TYPE)[0]?.view; if (view instanceof ReaderView) view.showSavedArticle(result.bundle, 'rewrite'); } catch { new Notice(t('lab.unavailable')); }
+  }
+  async submitCollection(url: string) {
+    if (!this.state.settings.labCollection || !this.state.settings.labInviteCode.trim()) {
+      new Notice(t('lab.configure')); this.openSettings(); return;
+    }
+    const baseUrl = this.state.settings.baseUrl;
+    const existing = this.state.collectionJobs.find(job => job.url === url && job.baseUrl === baseUrl && job.status !== 'failed');
+    if (existing?.status === 'complete') { new Notice(t('lab.complete', { title: existing.title || url })); return; }
+    if (this.collectionSubmitting.has(url)) return;
+    this.collectionSubmitting.add(url);
+    const job = existing || { id: crypto.randomUUID(), url, baseUrl, status: 'queued' as const, title: '', notified: false, createdAt: Date.now() };
+    try {
+      await this.ensureCollectionVerified();
+      if (!existing) this.state.collectionJobs.push(job);
+      await this.persist();
+      const result = await this.collectionClient(baseUrl).submit(job.id, url);
+      if (this.collectionStopped) return;
+      Object.assign(job, result);
+      await this.persist(); this.refreshPersonalViews();
+      new Notice(t('lab.submitted'));
+      await this.checkCollectionJobs();
+    } catch (error) { new Notice(error instanceof Error ? error.message : t('lab.unavailable')); }
+    finally { this.collectionSubmitting.delete(url); }
+  }
+  async checkCollectionJobs() {
+    if (this.adminSession && !this.collectionAdminAvailable()) { this.adminSession = undefined; this.state.collectionAdminSession = null; await this.persist(); this.refreshPersonalViews(); }
+    if (this.collectionBusy || this.collectionStopped || !this.state.settings.labCollection || !this.state.settings.labInviteCode.trim()) return;
+    this.collectionBusy = true;
+    try {
+      await this.ensureCollectionVerified();
+      for (const job of this.state.collectionJobs.filter(job => !job.notified)) {
+        try {
+          if (job.status === 'queued' || job.status === 'running') {
+            const client = this.collectionClient(job.baseUrl);
+            try { Object.assign(job, await client.status(job.id)); }
+            catch (error) {
+              if (!(error instanceof Error) || error.message !== 'COLLECTION_NOT_FOUND') throw error;
+              Object.assign(job, await client.submit(job.id, job.url));
+            }
+          }
+          if (this.collectionStopped) return;
+          if (job.status === 'complete' || job.status === 'failed') {
+            await this.persist();
+            new Notice(t(job.status === 'complete' ? 'lab.complete' : 'lab.failed', { title: job.title || job.url }), 10000);
+            job.notified = true;
+          }
+          await this.persist(); this.refreshPersonalViews();
+        } catch { /* Keep the job for reconnection; do not produce repeated offline notices. */ }
+      }
+    } catch { /* Verification retries on reconnection without discarding saved tasks. */ } finally { this.collectionBusy = false; }
   }
   async openReader() {
     try {
@@ -180,6 +292,7 @@ export default class QiaomuRssPlugin extends Plugin {
     return file && this.app.vault.getAbstractFileByPath(file.path) === file ? file : null;
   }
   async appendToDailyNote(entry: Entry, excerpt = '', mode: Mode = 'original', target?: TFile): Promise<{ file: TFile; added: boolean }> {
+    const now = captureMoment();
     let result!: { file: TFile; added: boolean };
     const write = async () => {
       const id = `${entry.origin === 'local' ? 'local' : entry.origin === 'vault' ? 'vault' : this.state.settings.baseUrl}|${entry.id}`;
@@ -189,7 +302,7 @@ export default class QiaomuRssPlugin extends Plugin {
       const options = { vault: this.app.vault.getName(), article: id, mode, excerpt };
       if (target && this.app.vault.getAbstractFileByPath(target.path) !== target) throw new Error(t('error.targetNoteMissing'));
       const settings = target ? { folder: '', format: '', template: '' } : await readDailyNoteSettings(this.app.vault);
-      const path = target?.path ?? dailyNotePath(settings);
+      const path = target?.path ?? dailyNotePath(settings, now);
       let existing = this.app.vault.getAbstractFileByPath(path);
       let added = false;
       if (existing && !(existing instanceof TFile)) throw new Error(t('error.dailyNotePathOccupied'));
@@ -198,7 +311,7 @@ export default class QiaomuRssPlugin extends Plugin {
         let template = '';
         if (settings.template) {
           const templateFile = this.app.vault.getAbstractFileByPath(`${settings.template}.md`);
-          if (templateFile instanceof TFile) template = renderDailyNoteTemplate(await this.app.vault.read(templateFile), path.split('/').at(-1)?.replace(/\.md$/i, '') || '');
+          if (templateFile instanceof TFile) template = renderDailyNoteTemplate(await this.app.vault.read(templateFile), path.split('/').at(-1)?.replace(/\.md$/i, '') || '', now);
         }
         const next = appendDailyNoteLink(template, entry, options); added = next.added;
         try { existing = await this.app.vault.create(path, next.content); }
@@ -361,7 +474,7 @@ export default class QiaomuRssPlugin extends Plugin {
   }
 }
 class RssSettings extends PluginSettingTab {
-  private section: 'reading' | 'sources' | 'excerpt' | 'about' = 'reading';
+  private section: 'reading' | 'sources' | 'excerpt' | 'lab' | 'about' = 'reading';
   constructor(app: App, private plugin: QiaomuRssPlugin) { super(app, plugin); this.containerEl.addClass('qrs-settings'); }
   getSettingDefinitions(): SettingDefinitionItem[] {
     const settings = this.plugin.state.settings;
@@ -457,6 +570,9 @@ class RssSettings extends PluginSettingTab {
       reading: [reading, definitions[4], definitions[5]],
       sources: [definitions[2], definitions[1]],
       excerpt: [definitions[3], excerpt, definitions[7]],
+      lab: [{ name: t('lab.collection'), desc: t('lab.entryDescription'), render: setting => {
+        setting.addButton(button => button.setButtonText(t('lab.manage')).onClick(() => this.plugin.openCollectionSettings()));
+      } }],
       about: [definitions[6], ...([
         [t('about.reportBug'), t('about.reportBug.desc'), 'https://github.com/joeseesun/qiaomu-ai-rss/issues/new'],
         [t('about.email'), 'vista8@gmail.com', 'mailto:vista8@gmail.com'],
@@ -476,9 +592,17 @@ class RssSettings extends PluginSettingTab {
         setting.settingEl.addClass('qrs-settings-qr');
         setting.controlEl.createEl('img', { attr: { src: 'https://radio.qiaomu.ai/assets/qiaomu_wechat_public_account_qr.jpg', alt: t('about.followAlt'), loading: 'lazy', width: '160', height: '160' } });
       } },
-      { name: t('about.license'), desc: t('about.license.desc') }],
+      { name: t('about.license'), desc: t('about.license.desc'), render: setting => {
+        setting.addButton(button => {
+          button.setIcon('shield').onClick(() => this.plugin.openCollectionSettings(true));
+          const label = button.buttonEl.createSpan({ cls: 'qrs-visually-hidden', text: t('lab.advanced') });
+          label.id = 'qrs-about-admin-' + crypto.randomUUID(); button.buttonEl.setAttribute('aria-labelledby', label.id);
+          button.buttonEl.addClass('qrs-about-admin-button');
+          setting.descEl.append(button.buttonEl);
+        });
+      } }],
     };
-    const tabLabels: Record<string, string> = { reading: t('settings.tab.reading'), sources: t('settings.tab.sources'), excerpt: t('settings.tab.excerpt'), about: t('settings.tab.about') };
+    const tabLabels: Record<string, string> = { reading: t('settings.tab.reading'), sources: t('settings.tab.sources'), excerpt: t('settings.tab.excerpt'), lab: t('settings.tab.lab'), about: t('settings.tab.about') };
     return [{ name: 'Qiaomu AI RSS', searchable: false, render: setting => {
       setting.settingEl.addClass('qrs-settings-header');
       // Obsidian reuses the setting row when definitions update.

@@ -55,3 +55,9 @@ Group names that differ only by case, spacing or known aliases (Podcasts/Podcast
 ## Monochrome palette (0.20.0)
 
 Plugin surfaces use Vercel-like neutral tokens (`--qrs-fg`, `--qrs-muted`, `--qrs-faint`, `--qrs-bg`, `--qrs-subtle`, `--qrs-hover`, `--qrs-border`, `--qrs-border-strong`) and override Obsidian's accent variables inside plugin scopes, so no purple appears in buttons, focus rings, checkboxes, toggles or selected rows. Primary actions are black-on-white (inverted in dark mode); red is reserved for errors and destructive actions.
+
+## 转写申请列表与管理员入口（2026-10-01）
+
+申请转写、用户转写复用普通文章列表的行样式：来源与短日期一行，标题 15/22 最多两行，次要状态 12/18，统一边距、分隔线、悬停与选中背景。完成记录支持整行打开、Enter/Space、j/k 翻阅，刷新保持滚动和焦点。设置移到顶部工具栏，不保留空筛选行。
+
+「关于」的开源许可说明句末使用低调的盾牌图标，鼠标点击或键盘激活后直接打开管理员邮箱、密码弹窗；不依赖多次点击标题。实验室内未登录时隐藏高级管理，有效登录期间直接显示并展开。邮箱、密码采用标签在上、输入框等宽的纵向表单，按钮底部右对齐。入口不代替服务器角色验证。管理员登录有效期 365 天，保存登录令牌而不保存密码，退出清除本地令牌并撤销服务器会话。
