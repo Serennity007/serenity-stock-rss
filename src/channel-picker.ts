@@ -4,7 +4,7 @@ import { compareChannelNames } from './channel-order';
 import { qiaomuDividers } from './discovery';
 import { Component, Platform, setIcon } from 'obsidian';
 import { dividerLabel, t } from './i18n';
-export type ChannelSection = '聚合' | '乔木分组' | '订阅分组' | '乔木频道' | '我的订阅源';
+export type ChannelSection = '聚合' | '乔木分组' | '订阅分组' | '乔木频道' | '我的订阅源' | '转写入口';
 export interface ChannelChoice { id: string; name: string; section: ChannelSection; subtitle: string; icon?: string; monogram?: string; group?: string; divider?: string; short?: string; site?: string; url?: string; image?: string; kind?: string }
 export function channelMark(parent: HTMLElement, choice: ChannelChoice) {
   const mark = parent.createSpan('qrs-channel-mark');
@@ -84,6 +84,7 @@ export class ChannelPicker extends Component {
   }
   private where(choice: ChannelChoice) {
     if (choice.section === '乔木频道') return `${t('channel.featured')} · ${dividerLabel(choice.divider || '')}`;
+    if (choice.section === '转写入口') return t('channel.mine');
     if (choice.section === '我的订阅源') return `${t('channel.mine')}${choice.group ? ` · ${this.choices.find(c => c.id === `@group:${choice.group}`)?.name ?? ''}` : ''}`;
     return choice.section === '乔木分组' ? t('channel.featured') : choice.section === '订阅分组' ? t('channel.mine') : '';
   }
@@ -122,6 +123,7 @@ export class ChannelPicker extends Component {
     for (const divider of qiaomuDividers) { const group = this.choices.find(c => c.id === `@qiaomu:${divider}`); if (group && this.children(group).length) row(group, 1); }
     this.rows.createDiv({ cls: 'qrs-channel-section', text: t('channel.mine') });
     this.choices.filter(c => c.id === '@local').forEach(c => row(c));
+    this.choices.filter(c => c.section === '转写入口').forEach(c => row(c, 1));
     this.choices.filter(c => c.section === '订阅分组').forEach(c => row(c, 1));
     this.choices.filter(c => c.section === '我的订阅源' && !c.group).forEach(c => row(c, 1));
   }

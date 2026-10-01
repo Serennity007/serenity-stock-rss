@@ -1,6 +1,6 @@
 {
   "name": "qiaomu-ai-rss",
-  "version": "0.24.2",
+  "version": "0.25.0",
   "description": "Read Qiaomu and personal RSS feeds, then add article links to your Daily Note.",
   "license": "GPL-3.0-only",
   "private": true,
@@ -9,7 +9,7 @@
     "build": "tsc --noEmit && node esbuild.config.mjs",
     "typecheck": "tsc --noEmit",
     "lint": "eslint src",
-    "test": "vitest run",
+    "test": "vitest run && node --test server/*.check.cjs",
     "check": "npm run lint && npm run test && npm run build",
     "test:live": "node scripts/live-api.mjs"
   },
