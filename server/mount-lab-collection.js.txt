@@ -13,3 +13,5 @@ require('./lib/lab-collection').mountLabCollection(app, {
     return { entryId: entry.id, ...localized };
   },
 });
+
+require('./lib/lab-moderation').mountLabModeration(app, { store, deleteEntry: fetcher.deleteEntry });

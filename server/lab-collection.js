@@ -60,6 +60,7 @@ function mountLabCollection(app, { directory, processLink, validateUrl, codes = 
     return res.json({ verified: true });
   });
   const page = (req, list, admin = false) => {
+    list = list.filter(job => !job.entryId || !adminAuth?.isEntryDeleted?.(job.entryId));
     const ordered = [...list].sort((a,b) => b.createdAt - a.createdAt || a.id.localeCompare(b.id));
     const after = String(req.query?.cursor || '');
     const found = after ? ordered.findIndex(job => job.id === after) : -1;

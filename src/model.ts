@@ -71,6 +71,7 @@ export const stateSchema = z.object({
   collectionIdentity: z.object({ id: z.string(), key: z.string() }).nullable().default(null),
   collectionAdminSession: z.object({ token: z.string(), expiresAt: z.number(), name: z.string(), baseUrl: z.string() }).nullable().default(null),
   collectionJobs: z.array(collectionJobSchema).default([]),
+  deletedEntries: z.record(z.string(), z.array(z.string())).default({}),
   readIds: z.array(z.string()).default([]), favorites: z.record(z.string(), bundleSchema).default({}),
   entries: z.array(entrySchema).default([]), sources: z.array(sourceSchema).default([]),
   subscriptions: z.array(subscriptionSchema).default([]),
@@ -136,7 +137,7 @@ export function renameArticleNotes(notes: Record<string, string>, oldPath: strin
   return changed;
 }
 export function withServiceOrigin(state: State, baseUrl: string): State {
-  return initialState({ collectionIdentity: state.collectionIdentity, collectionJobs: state.collectionJobs, savedArticles: state.savedArticles, articleNotes: state.articleNotes, settings: { ...state.settings, baseUrl: serviceUrl(baseUrl) }, subscriptions: state.subscriptions,
+  return initialState({ deletedEntries: state.deletedEntries, collectionIdentity: state.collectionIdentity, collectionJobs: state.collectionJobs, savedArticles: state.savedArticles, articleNotes: state.articleNotes, settings: { ...state.settings, baseUrl: serviceUrl(baseUrl) }, subscriptions: state.subscriptions,
     favorites: Object.fromEntries(Object.entries(state.favorites).filter(([, bundle]) => bundle.entry.origin === 'local' || bundle.entry.origin === 'vault')),
     cache: Object.fromEntries(Object.entries(state.cache).filter(([, bundle]) => bundle.entry.origin === 'local' || bundle.entry.origin === 'vault')),
     readIds: state.readIds.filter(id => id.startsWith('local-') || id.startsWith('vault:')) });
