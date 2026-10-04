@@ -83,7 +83,7 @@ export function featuredXiaoyuzhouPodcasts(sources: Source[]): Source[] {
 }
 export function readerChannelSources(sources: Source[]): Source[] {
   const featuredIds = new Set(featuredXiaoyuzhouPodcasts(sources).map(source => source.id));
-  return sources.filter(source => source.enabled !== false && !hiddenQiaomuChannelIds.has(source.id) &&
+  return sources.filter(source => source.enabled !== false && !hiddenQiaomuChannelIds.has(source.id) && source.category !== 'community' &&
     (!source.id.startsWith('wechat-') || featuredWechatChannelIds.has(source.id)) &&
     (source.category !== 'podcast' || featuredIds.has(source.id)));
 }
@@ -104,6 +104,10 @@ export function qiaomuChannelDivider(source: Source): string {
   if (newsletterSourceIds.has(source.id)) return 'Newsletter';
   if (source.category === 'news') return '资讯';
   return '博客与网站';
+}
+/** Reader-submitted channels live in their own community section, not under Qiaomu picks. The site can hide one. */
+export function communityChannelSources(sources: Source[]): Source[] {
+  return sources.filter(source => source.category === 'community' && source.enabled !== false);
 }
 const entryTime = (entry: Entry) => entry.publishedTs || Date.parse(entry.published || '') || 0;
 /** Newest first; the sort is stable, so undated entries keep their server order among themselves. */

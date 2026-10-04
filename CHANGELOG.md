@@ -1,5 +1,12 @@
 # Changelog
 
+## 0.26.0
+
+- Add a Reader community section beside Qiaomu picks. Reader submissions now live there instead of inside the combined picks list, and the site administrator can show or hide the channel.
+- Narrow the community channel by where a link comes from (YouTube, Bilibili, WeChat, articles). The platform is read from the link; submitters choose nothing.
+- Play Bilibili video links in the reader with Bilibili's own embed.
+- Administrators can delete a server article from the article menu, and deleted articles disappear from lists and caches. SVG article images are sanitized and shown as PNG.
+
 ## 0.23.1
 
 - Keep mobile podcast controls above Obsidian’s floating navigation bar, with touch-sized close and audio controls. Reclaim the extra space when navigation is hidden.

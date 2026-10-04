@@ -59,5 +59,6 @@ export class CollectionClient {
   list(cursor = '') { return this.request(`/api/lab/collection-jobs?cursor=${encodeURIComponent(cursor)}`, pageSchema); }
   adminLogin(email: string, password: string) { return this.request('/api/lab/admin/session', z.object({ token: z.string(), expiresAt: z.number(), name: z.string() }), { email, password }, ''); }
   listAll(token: string, cursor = '') { return this.request(`/api/lab/admin/collection-jobs?cursor=${encodeURIComponent(cursor)}`, pageSchema, undefined, token); }
+  deleteArticle(token: string, entryId: string) { return this.request('/api/lab/admin/delete-entry', z.object({ ok: z.literal(true), entryId: z.string() }), { entryId }, token); }
   logout(token: string) { return this.request('/api/lab/admin/logout', z.object({ verified: z.literal(false) }), {}, token); }
 }
