@@ -1,7 +1,7 @@
 // @vitest-environment jsdom
 import { describe, expect, it, vi } from 'vitest';
 import { RssApi } from '../src/api';
-import { AudioDock, audioUrl, pauseVideos, renderMedia, stopMedia, youtubeEmbedUrl } from '../src/media';
+import { AudioDock, audioUrl, bilibiliEmbedUrl, pauseVideos, renderMedia, stopMedia, youtubeEmbedUrl } from '../src/media';
 import { initialState, type Entry } from '../src/model';
 
 const entry: Entry = { id: 'episode', sourceId: 'podcast', title: 'Episode' };
@@ -27,6 +27,12 @@ describe('media data and source safety', () => {
     expect(youtubeEmbedUrl('https://youtu.be/JtomF4bGxHs')).toBe('https://www.youtube.com/embed/JtomF4bGxHs');
     expect(youtubeEmbedUrl('https://m.youtube.com/shorts/JtomF4bGxHs')).toBe('https://www.youtube.com/embed/JtomF4bGxHs');
     for (const url of ['https://youtube.com.evil.test/watch?v=JtomF4bGxHs', 'https://www.youtube.com/@account', 'http://www.youtube.com/watch?v=JtomF4bGxHs', 'https://www.youtube.com/watch?v=bad']) expect(youtubeEmbedUrl(url)).toBeNull();
+  });
+  it('embeds Bilibili video links with their page number, and nothing else', () => {
+    expect(bilibiliEmbedUrl('https://www.bilibili.com/video/BV1cSec6tEux/?spm_id_from=333&vd_source=x&p=2'))
+      .toBe('https://player.bilibili.com/player.html?isOutside=true&bvid=BV1cSec6tEux&p=2&autoplay=0&high_quality=1&danmaku=0');
+    expect(bilibiliEmbedUrl('https://www.bilibili.com/video/BV1cSec6tEux')).toContain('&p=1&');
+    for (const url of ['https://bilibili.com.evil.test/video/BV1cSec6tEux', 'http://www.bilibili.com/video/BV1cSec6tEux', 'https://www.bilibili.com/read/cv123', 'https://www.bilibili.com/video/bad']) expect(bilibiliEmbedUrl(url)).toBeNull();
   });
   it('shows the YouTube player preview immediately without autoplay or extra copy', () => {
     const article = document.createElement('article');

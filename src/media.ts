@@ -26,6 +26,23 @@ export function youtubeEmbedUrl(link: string | null | undefined): string | null 
   return id && /^[A-Za-z0-9_-]{11}$/.test(id) ? `https://www.youtube.com/embed/${id}` : null;
 }
 
+// Bilibili's own embed. Its page number is kept; tracking parameters in the link are not passed on.
+export function bilibiliEmbedUrl(link: string | null | undefined): string | null {
+  const value = link ? safeUrl(link) : null;
+  if (!value) return null;
+  const url = new URL(value);
+  if (url.protocol !== 'https:' || !['bilibili.com', 'www.bilibili.com', 'm.bilibili.com'].includes(url.hostname.toLowerCase())) return null;
+  const bvid = url.pathname.match(/^\/video\/(BV[0-9A-Za-z]{10})\/?$/)?.[1];
+  if (!bvid) return null;
+  const part = parseInt(url.searchParams.get('p') || '1', 10);
+  return `https://player.bilibili.com/player.html?isOutside=true&bvid=${bvid}&p=${part > 0 ? part : 1}&autoplay=0&high_quality=1&danmaku=0`;
+}
+
+/** The player a video link opens in, for YouTube or Bilibili. */
+export function videoEmbedUrl(link: string | null | undefined): string | null {
+  return youtubeEmbedUrl(link) ?? bilibiliEmbedUrl(link);
+}
+
 export function stopMedia(root: HTMLElement): void {
   for (const audio of root.querySelectorAll('audio')) {
     audio.pause(); audio.removeAttribute('src'); audio.load();
@@ -42,10 +59,11 @@ export function pauseVideos(root: HTMLElement): void {
 
 export function renderMedia(article: HTMLElement, entry: Entry): void {
   if (audioUrl(entry)) return;
-  const embed = youtubeEmbedUrl(entry.videoUrl || entry.link);
+  const link = entry.videoUrl || entry.link;
+  const youtube = youtubeEmbedUrl(link), embed = youtube ?? bilibiliEmbedUrl(link);
   if (!embed) return;
   article.createEl('iframe', { cls: 'qrs-video-frame', attr: {
-    src: `${embed}?autoplay=0&playsinline=1&enablejsapi=1`, allow: 'autoplay; encrypted-media; picture-in-picture',
+    src: youtube ? `${youtube}?autoplay=0&playsinline=1&enablejsapi=1` : embed, allow: 'autoplay; encrypted-media; picture-in-picture',
     sandbox: 'allow-scripts allow-same-origin allow-presentation allow-popups',
     referrerpolicy: 'strict-origin-when-cross-origin', allowfullscreen: '',
     title: t('media.videoPlayer'),
