@@ -63,6 +63,7 @@ export class RssApi {
     } finally { window.clearTimeout(timer); }
   }
   sources() { return this.get('/api/sources', z.object({ sources: z.array(sourceSchema) })); }
+  deletedEntries(ids: string[]) { return this.get('/api/lab/entries/deleted?ids=' + encodeURIComponent(ids.join(',')), z.object({ deletedIds: z.array(z.string()) })); }
   entries(source = '', cursor = '', limit = source ? 40 : 100) {
     const query = new URLSearchParams({ limit: String(limit) });
     if (cursor) query.set('cursor', cursor);

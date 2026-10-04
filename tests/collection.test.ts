@@ -40,6 +40,16 @@ describe('collection protocol and calendar dates', () => {
 });
 
 describe('verified collection access', () => {
+  it('deletes with an administrator session and rejects revoked permissions', async () => {
+    const transport = vi.fn().mockResolvedValueOnce({status:200,text:'{"ok":true,"entryId":"entry"}'}).mockResolvedValueOnce({status:403,text:''});
+    const client = new CollectionClient('https://rss.qiaomu.ai','invite',transport,{id:'client-id',key:'secret'});
+    await client.deleteArticle('admin-session','entry');
+    const request = transport.mock.calls[0][0];
+    expect(request.headers.Authorization).toBe('Bearer admin-session');
+    expect(request.headers['X-Qiaomu-Client-Key']).toBeUndefined();
+    expect(JSON.parse(request.body)).toEqual({entryId:'entry'});
+    await expect(client.deleteArticle('revoked','entry')).rejects.toThrow('管理员');
+  });
   it('persists remote Chinese titles for already notified jobs without changing notification or other services', () => {
     const state = initialState({collectionJobs:[
       {id:'job',url:'https://example.com',baseUrl:'https://rss.qiaomu.ai',title:'English title',status:'complete',entryId:'entry',createdAt:1,notified:true},

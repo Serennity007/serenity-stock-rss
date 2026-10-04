@@ -1,8 +1,9 @@
 import { LabSettingsModal } from './lab-settings';
+import { applyDeletedEntries, remoteEntry } from './moderation';
 import { CollectionClient, syncCollectionTitles, type CollectionItem } from './collection';
 import { migrateLibrary, moveSources, registerSource } from './personal-library';
 import { EditorView } from '@codemirror/view';
-import { MarkdownView, Notice, Plugin, PluginSettingTab, TFile, type App, type SettingDefinitionItem, type SettingGroupItem } from 'obsidian';
+import { MarkdownView, Modal, Notice, Plugin, PluginSettingTab, Setting, TFile, type App, type SettingDefinitionItem, type SettingGroupItem } from 'obsidian';
 import { requestUrl } from 'obsidian';
 import { RssApi } from './api';
 import { folderPath, initialState, renameArticleNotes, modeLabel, modeSchema, readingFontSchema, readingThemeSchema, type Bundle, type Entry, type Mode, type State } from './model';
@@ -171,7 +172,48 @@ export default class QiaomuRssPlugin extends Plugin {
     if (syncCollectionTitles(this.state.collectionJobs, page.jobs, baseUrl)) await this.persist();
     return page;
   }
-  collectionLocalItems(): CollectionItem[] { return this.state.collectionJobs.filter(job => job.baseUrl === this.state.settings.baseUrl).map(job => ({ ...job })); }
+  collectionLocalItems(): CollectionItem[] { return this.state.collectionJobs.filter(job => job.baseUrl === this.state.settings.baseUrl && (!job.entryId || !(this.state.deletedEntries[job.baseUrl] || []).includes(job.entryId))).map(job => ({ ...job })); }
+  articleDeleted(entry: Entry) { return remoteEntry(entry) && (this.state.deletedEntries[this.state.settings.baseUrl] || []).includes(entry.id); }
+  private async applyArticleDeletions(ids: string[], baseUrl: string) {
+    applyDeletedEntries(this.state, ids, baseUrl);
+    if (baseUrl === this.state.settings.baseUrl) for (const leaf of this.app.workspace.getLeavesOfType(VIEW_TYPE)) if (leaf.view instanceof ReaderView) leaf.view.removeDeletedArticles();
+    await this.persist();
+  }
+  async syncDeletedArticles() {
+    const state = this.state, baseUrl = state.settings.baseUrl;
+    const entries = [...state.entries, ...Object.values(state.cache).map(b => b.entry), ...Object.values(state.favorites).map(b => b.entry), ...Object.values(state.savedArticles).map(b => b.entry)];
+    for (const leaf of this.app.workspace.getLeavesOfType(VIEW_TYPE)) if (leaf.view instanceof ReaderView) entries.push(...leaf.view.moderationEntries());
+    for (const [key, channel] of Object.entries(state.channelStates)) if (key.startsWith(JSON.stringify([baseUrl]).slice(0, -1) + ',')) entries.push(...channel.entries, ...(channel.bundle ? [channel.bundle.entry] : []));
+    const ids = [...new Set([...entries.filter(remoteEntry).map(e => e.id), ...state.collectionJobs.filter(j => j.baseUrl === baseUrl && j.entryId).map(j => j.entryId!)])];
+    const deleted: string[] = [];
+    for (let start = 0; start < ids.length; start += 100) {
+      const batch = ids.slice(start, start + 100), result = await this.api().deletedEntries(batch);
+      deleted.push(...result.deletedIds.filter(id => batch.includes(id)));
+    }
+    if (state === this.state && baseUrl === this.state.settings.baseUrl && deleted.length) await this.applyArticleDeletions(deleted, baseUrl);
+  }
+  canDeleteArticle(entry: Entry) { return this.collectionAdminAvailable() && remoteEntry(entry) && !this.articleDeleted(entry); }
+  confirmDeleteArticle(entry: Entry) {
+    if (!this.canDeleteArticle(entry)) return;
+    const baseUrl = this.state.settings.baseUrl, modal = new Modal(this.app);
+    modal.modalEl.addClasses(['qrs-modal', 'qrs-lab-settings']); modal.setTitle(t('moderation.delete'));
+    modal.contentEl.createEl('p', { text: entry.titleZh || entry.title });
+    modal.contentEl.createEl('p', { text: t('moderation.confirm') });
+    const error = modal.contentEl.createDiv('qrs-subscription-error');
+    new Setting(modal.contentEl).addButton(button => button.setButtonText(t('common.cancel')).onClick(() => modal.close())).addButton(button => button.setButtonText(t('moderation.delete')).setCta().onClick(async () => {
+      if (baseUrl !== this.state.settings.baseUrl || !this.canDeleteArticle(entry)) { error.setText(t('lab.adminDenied')); return; }
+      button.setDisabled(true);
+      try {
+        const result = await this.collectionClient().deleteArticle(this.adminSession!.token, entry.id);
+        await this.applyArticleDeletions([result.entryId], baseUrl); modal.close(); new Notice(t('moderation.deleted'));
+      } catch (failure) {
+        error.setText(failure instanceof Error ? failure.message : t('lab.unavailable'));
+        if (failure instanceof Error && failure.message === t('lab.adminDenied')) { this.adminSession = undefined; this.state.collectionAdminSession = null; await this.persist(); this.refreshPersonalViews(); }
+        button.setDisabled(false);
+      }
+    }));
+    modal.open();
+  }
   async openCollectionChannel(all = false) {
     await this.openReader(); const view = this.app.workspace.getLeavesOfType(VIEW_TYPE)[0]?.view;
     if (view instanceof ReaderView) view.showPersonalSource(all ? '@collection-all' : '@collection');
@@ -240,12 +282,14 @@ export default class QiaomuRssPlugin extends Plugin {
     } catch { new Notice(t('notice.cannotOpenReader')); }
   }
   persist(): Promise<void> {
+    if (this.state.deletedEntries[this.state.settings.baseUrl]?.length) applyDeletedEntries(this.state, [], this.state.settings.baseUrl);
     this.saving = this.saving.catch(() => undefined).then(() => this.saveData(this.state));
     // Read state, favorites and fetched entries all persist through here; Home coalesces bursts.
     void this.saving.then(() => notifyHomeChanged(this.app, this.manifest.id), () => undefined);
     return this.saving;
   }
   remember(bundle: Bundle) {
+    if (this.articleDeleted(bundle.entry)) return;
     this.state.cache[bundle.entry.id] = bundle;
     const recent = Object.values(this.state.cache).sort((a, b) => b.fetchedAt - a.fetchedAt).slice(0, 40);
     this.state.cache = Object.fromEntries(recent.map(value => [value.entry.id, value]));
