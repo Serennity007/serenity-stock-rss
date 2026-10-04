@@ -1,3 +1,4 @@
+import { watchPaneDividers } from "./pane-dividers";
 import { LabSettingsModal } from './lab-settings';
 import { applyDeletedEntries, remoteEntry } from './moderation';
 import { CollectionClient, syncCollectionTitles, type CollectionItem } from './collection';
@@ -42,6 +43,7 @@ export default class QiaomuRssPlugin extends Plugin {
   private saving: Promise<void> = Promise.resolve();
   private dailyNoteWrite: Promise<unknown> = Promise.resolve();
   async onload() {
+    watchPaneDividers(this);
     this.lastNote = this.app.workspace.getActiveViewOfType(MarkdownView)?.file ?? null;
     this.registerEvent(this.app.workspace.on('active-leaf-change', leaf => {
       if (leaf?.view instanceof MarkdownView && leaf.view.file) {

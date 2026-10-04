@@ -687,3 +687,8 @@ body:has(.workspace-leaf.mod-active > .workspace-leaf-content:is(
 .qrs-settings .qrs-about-admin-button:hover { background:var(--qrs-hover); color:var(--qrs-muted); }
 .qrs-settings .qrs-about-admin-button:focus-visible { outline:1px solid var(--qrs-muted); outline-offset:2px; }
 .qrs-lab-admin-dialog { width:440px; max-width:calc(100vw - 32px); }
+
+/* Native pane dividers: preserve drag geometry, adapt only owned boundaries. */
+.workspace-leaf-resize-handle.qiaomu-pane-divider { border-color: var(--divider-color); }
+.workspace-leaf-resize-handle.qiaomu-pane-divider:hover,
+.workspace-leaf-resize-handle.qiaomu-pane-divider:active { border-color: var(--divider-color-hover); }
