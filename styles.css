@@ -638,6 +638,7 @@
   --text-selection:rgba(255,255,255,.18); --text-on-accent:#000; --text-on-accent-inverted:#000;
 }
 :is(.qrs-root,.qrs-channel-picker,.qrs-selection-popup):is([data-qrs-theme="light"],[data-qrs-theme="paper"],[data-qrs-theme="sage"],[data-qrs-theme="mist"],[data-qrs-theme="dark"],[data-qrs-theme="black"]) {
+  --setting-items-background:var(--qrs-subtle); --setting-items-border-color:var(--qrs-border);
   --background-primary:var(--qrs-bg); --background-primary-alt:var(--qrs-subtle); --background-secondary:var(--qrs-subtle); --background-secondary-alt:var(--qrs-subtle);
   --background-modifier-hover:var(--qrs-hover); --background-modifier-border:var(--qrs-border); --background-modifier-border-hover:var(--qrs-border-strong); --background-modifier-form-field:var(--qrs-bg);
   --text-normal:var(--qrs-fg); --text-muted:var(--qrs-muted); --text-faint:var(--qrs-faint); --text-error:var(--qrs-error);
