@@ -18,7 +18,8 @@ import { NoteLocationModal } from './note-location';
 import { cleanExcerpt } from './excerpt';
 import { AudioDock, pauseVideos, renderMedia, stopMedia, videoEmbedUrl } from './media';
 import { sameRemoteContent, uniqueRemoteEntries, wechatArticleKey, xiaoyuzhouEpisodeKey } from './wechat-articles';
-import { featuredXiaoyuzhouPodcasts, mergeFeaturedPodcasts, qiaomuChannelDivider, qiaomuDividerIcons, qiaomuDividers, qiaomuFeaturedEntries, readerChannelSources } from './discovery';
+import { platformOf, PLATFORMS, type LinkPlatform } from './platform';
+import { communityChannelSources, featuredXiaoyuzhouPodcasts, mergeFeaturedPodcasts, qiaomuChannelDivider, qiaomuDividerIcons, qiaomuDividers, qiaomuFeaturedEntries, readerChannelSources } from './discovery';
 import { articleNoteKey, modeLabel, modeSchema, podcastDefaultMode, readingFontSchema, readingThemeSchema, safeUrl, titleOf, type ChannelState, type Bundle, type Entry, type Mode } from './model';
 import { dividerLabel, relativeTime, t } from './i18n';
 import { agentAvailable, articleSnapshot, askAgent } from './agent-bridge';
@@ -86,6 +87,7 @@ export class ReaderView extends ItemView {
   private personalLimit = 100;
   private source = '';
   private filter: Filter = 'all';
+  private platform: LinkPlatform | 'all' = 'all';
   private unreadSession = new Set<string>();
   private query = '';
   private cursor = '';
@@ -315,8 +317,14 @@ export class ReaderView extends ItemView {
       const button = this.filters.createEl('button', { text: label, attr: { 'aria-pressed': String(value === this.filter), 'data-filter': value } });
       button.addEventListener('click', () => { this.filter = value; this.unreadSession.clear(); this.renderFilters(); this.renderList(); });
     }
+    // Reader submissions mix video, WeChat and web links, so that channel can be narrowed by where a link comes from.
+    if (this.communityScope()) for (const value of ['all', ...PLATFORMS] as const) {
+      const button = this.filters.createEl('button', { text: value === 'all' ? t('common.all') : t(`platform.${value}`), attr: { 'aria-pressed': String(value === this.platform), 'data-platform': value } });
+      button.addEventListener('click', () => { this.platform = value; this.renderFilters(); this.renderList(); });
+    }
     if (!this.collectionScope()) this.addIconButton(this.filters, 'settings', t('reader.pluginSettings'), () => this.plugin.openSettings()).addClass('qrs-settings-button');
   }
+  private communityScope() { return communityChannelSources(this.plugin.state.sources).some(source => source.id === this.source); }
   private channelChoices(): ChannelChoice[] {
     const sources = personalSources(this.plugin.state), groups = groupsInOrder(this.plugin.state);
     return [
@@ -327,6 +335,7 @@ export class ReaderView extends ItemView {
       ...(this.plugin.collectionAdminAvailable() ? [{ id: '@collection-all', name: t('lab.userRequests'), section: '转写入口' as const, subtitle: t('channel.mine'), icon: 'users' }] : []),
       ...groups.map(group => ({ id: `@group:${group.id}`, name: group.name, section: '订阅分组' as const, subtitle: t('reader.sourceCount', { n: sources.filter(s => s.groupId === group.id).length }), icon: 'folder' })),
       ...readerChannelSources(this.plugin.state.sources).map(source => ({ id: source.id, name: source.name, section: '乔木频道' as const, subtitle: source.category || '', monogram: source.name.trim().slice(0, 1), divider: qiaomuChannelDivider(source) })),
+      ...communityChannelSources(this.plugin.state.sources).map(source => ({ id: source.id, name: source.name, section: '读者社区' as const, subtitle: t('channel.community'), icon: 'users' })),
       ...sources.map(source => ({ id: source.id, name: source.name, section: '我的订阅源' as const, subtitle: source.detail, group: source.groupId, site: source.site, url: source.url, image: source.image, kind: source.kind })),
     ];
   }
@@ -380,7 +389,7 @@ export class ReaderView extends ItemView {
     this.status.setText(''); this.renderChannel();
     const saved = this.plugin.state.channelStates[this.channelKey()];
     if (saved) { this.restoreChannel(saved); if (!this.entries.length && refresh) void this.loadEntries(); return; }
-    this.filter = 'all'; this.query = ''; this.searchInput.value = ''; this.searchBox.addClass('is-hidden'); this.lastListTop = 0; this.lastReaderTop = 0;
+    this.filter = 'all'; this.platform = 'all'; this.query = ''; this.searchInput.value = ''; this.searchBox.addClass('is-hidden'); this.lastListTop = 0; this.lastReaderTop = 0;
     this.renderFilters(); this.renderReader(); this.renderList(); this.list.scrollTop = 0; this.reader.scrollTop = 0;
     if (refresh) void this.loadEntries();
   }
@@ -519,7 +528,7 @@ export class ReaderView extends ItemView {
     return uniqueRemoteEntries(entries, this.bundle?.entry.id).filter(entry => (this.vaultScope() ? entry.origin === 'vault' && entry.sourceId === this.source : this.personalScope()
       ? entry.origin === 'local' && (this.source === '@local' || this.selectedFeeds().some(feed => feed.id === entry.sourceId))
       : entry.origin !== 'local' && entry.origin !== 'vault' && (!this.source || (this.source.startsWith('@qiaomu:') ? group.has(entry.sourceId) : entry.sourceId === this.source))) &&
-      entry.sourceId !== 'levelingup' &&
+      entry.sourceId !== 'levelingup' && (this.platform === 'all' || !this.communityScope() || platformOf(entry.link) === this.platform) &&
       (this.filter !== 'unread' || !this.relatedContentIds(entry).some(id => state.readIds.includes(id)) || this.unreadSession.has(entry.id) || entry.id === this.bundle?.entry.id) &&
       (!query || `${titleOf(entry)} ${entry.title} ${entry.summary || ''} ${this.sourceName(entry)}`.toLocaleLowerCase().includes(query)));
   }
