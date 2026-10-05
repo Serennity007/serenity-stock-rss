@@ -17,6 +17,29 @@ export function locale(): Locale {
 // Columns: key, 简体中文, English, 繁體中文, 日本語, 한국어, Español, Français, Deutsch
 // Exported so tests can assert that every message has all eight translations.
 export const M = [
+  ["pick.title", "筛选乔木精选", "Filter Qiaomu picks", "篩選喬木精選", "Qiaomu のソースを選択", "Qiaomu 소스 선택", "Filtrar fuentes Qiaomu", "Filtrer les sources Qiaomu", "Qiaomu-Quellen filtern"],
+  ["pick.description", "文章拉到本地之后，只保留勾选的源。我的订阅不受影响。", "Keep selected sources after fetching articles. Personal subscriptions are unaffected.", "文章下載到本機後，只保留勾選的來源。我的訂閱不受影響。", "取得した記事から選択したソースのみを残します。個人の購読には影響しません。", "가져온 글에서 선택한 소스만 유지합니다. 개인 구독에는 영향이 없습니다.", "Conserva las fuentes seleccionadas tras descargar artículos. Las suscripciones personales no cambian.", "Conserve les sources choisies après téléchargement. Les abonnements personnels ne changent pas.", "Nach dem Abruf bleiben nur ausgewählte Quellen. Persönliche Abonnements bleiben erhalten."],
+  ["pick.open", "去筛选", "Choose sources", "去篩選", "ソースを選択", "소스 선택", "Elegir fuentes", "Choisir les sources", "Quellen auswählen"],
+  ["pick.note", "默认全选。勾选不超过 36 个时，按源读取最近 12 篇；更多时过滤整包及后续分页。", "All sources are selected initially. Up to 36 picks load 12 recent entries per source; larger selections filter the combined feed and later pages.", "預設全選。選擇不超過 36 個時，逐一讀取最近 12 篇；更多時篩選整包及後續分頁。", "初期状態では全選択。36件以下は各ソースの最新12記事を取得し、それ以上は統合フィードと続きのページを絞り込みます。", "처음에는 모두 선택됩니다. 36개 이하는 소스별 최신 글 12개를 가져오고, 그 이상은 통합 피드와 다음 페이지를 필터링합니다.", "Inicialmente se seleccionan todas. Hasta 36 fuentes cargan 12 artículos recientes por fuente; más fuentes filtran el feed combinado y sus páginas.", "Toutes sont choisies au départ. Jusqu’à 36 sources chargent 12 articles récents par source ; au-delà, le flux combiné et ses pages sont filtrés.", "Anfangs sind alle ausgewählt. Bis zu 36 Quellen laden jeweils 12 aktuelle Artikel; größere Auswahlen filtern den Gesamtfeed und weitere Seiten."],
+  ["pick.search", "搜索名称或网站", "Search names or sites", "搜尋名稱或網站", "名前やサイトを検索", "이름 또는 사이트 검색", "Buscar nombres o sitios", "Rechercher des noms ou sites", "Namen oder Websites suchen"],
+  ["pick.loading", "正在读取源…", "Loading sources…", "正在讀取來源…", "ソースを読み込み中…", "소스 불러오는 중…", "Cargando fuentes…", "Chargement des sources…", "Quellen werden geladen…"],
+  ["pick.select", "全选所列", "Select shown", "全選所列", "表示中をすべて選択", "표시된 항목 모두 선택", "Seleccionar visibles", "Tout sélectionner dans la liste", "Angezeigte auswählen"],
+  ["pick.clear", "清空所列", "Clear shown", "清空所列", "表示中の選択を解除", "표시된 선택 해제", "Desmarcar visibles", "Désélectionner la liste", "Angezeigte abwählen"],
+  ["pick.visibleOnly", "只留频道可见", "Keep visible channels", "只留頻道可見", "表示されるチャンネルのみ", "표시되는 채널만 유지", "Conservar canales visibles", "Garder les canaux visibles", "Sichtbare Kanäle behalten"],
+  ["pick.restore", "恢复全部", "Restore all", "恢復全部", "すべてに戻す", "모두 복원", "Restaurar todas", "Tout rétablir", "Alle wiederherstellen"],
+  ["pick.save", "保存筛选", "Save selection", "儲存篩選", "選択を保存", "선택 저장", "Guardar selección", "Enregistrer la sélection", "Auswahl speichern"],
+  ["pick.empty", "没有匹配的源", "No matching sources", "沒有符合的來源", "一致するソースがありません", "일치하는 소스가 없습니다", "No hay fuentes coincidentes", "Aucune source correspondante", "Keine passenden Quellen"],
+  ["pick.unavailable", "没有读到源，请检查网络后再打开。", "No sources available. Check the connection and reopen.", "沒有讀到來源，請檢查網路後重新開啟。", "ソースを取得できません。接続を確認して開き直してください。", "소스를 불러올 수 없습니다. 연결을 확인하고 다시 여세요.", "No hay fuentes. Comprueba la conexión y vuelve a abrir.", "Aucune source disponible. Vérifiez la connexion et rouvrez.", "Keine Quellen verfügbar. Verbindung prüfen und erneut öffnen."],
+  ["pick.count", "已选 {n} / {total}", "Selected {n} / {total}", "已選 {n} / {total}", "選択済み {n} / {total}", "선택 {n} / {total}", "Seleccionadas {n} / {total}", "Sélectionnées {n} / {total}", "Ausgewählt {n} / {total}"],
+  ["pick.disabled", "服务器已关闭", "Disabled by server", "伺服器已關閉", "サーバーで無効", "서버에서 비활성화됨", "Desactivada por el servidor", "Désactivée par le serveur", "Vom Server deaktiviert"],
+  ["pick.hidden", "频道里不显示", "Hidden from channels", "頻道中不顯示", "チャンネルでは非表示", "채널에 표시되지 않음", "Oculta en los canales", "Masquée dans les canaux", "In Kanälen verborgen"],
+  ["pick.visible", "频道可见", "Visible in channels", "頻道可見", "チャンネルで表示", "채널에 표시됨", "Visible en los canales", "Visible dans les canaux", "In Kanälen sichtbar"],
+  ["pick.community", "读者社区", "Reader community", "讀者社群", "読者コミュニティ", "독자 커뮤니티", "Comunidad de lectores", "Communauté des lecteurs", "Lesergemeinschaft"],
+  ["pick.saved", "已保存筛选", "Selection saved", "已儲存篩選", "選択を保存しました", "선택을 저장했습니다", "Selección guardada", "Sélection enregistrée", "Auswahl gespeichert"],
+  ["pick.restored", "已恢复全部乔木精选", "All Qiaomu picks restored", "已恢復全部喬木精選", "Qiaomu の全ソースに戻しました", "모든 Qiaomu 소스를 복원했습니다", "Fuentes Qiaomu restauradas", "Sources Qiaomu rétablies", "Alle Qiaomu-Quellen wiederhergestellt"],
+  ["divider.podcasts", "播客", "Podcasts", "播客", "ポッドキャスト", "팟캐스트", "Pódcasts", "Podcasts", "Podcasts"],
+  ["divider.blogsNews", "博客与资讯", "Blogs & news", "部落格與資訊", "ブログとニュース", "블로그와 뉴스", "Blogs y noticias", "Blogs et actualités", "Blogs und Nachrichten"],
+
   ["lab.enable", "启用链接转写", "Enable link rewriting", "啟用連結轉寫", "リンクのリライトを有効化", "링크 재작성 활성화", "Activar reescritura de enlaces", "Activer la réécriture de liens", "Link-Umschreibung aktivieren"],
   ["lab.shortDescription", "提交到乔木 RSS 抓取正文并生成公开改写，完成后在 Obsidian 通知。", "Submit to Qiaomu RSS for collection and a public rewrite. Obsidian notifies you when finished.", "提交到喬木 RSS 擷取正文並生成公開改寫，完成後在 Obsidian 通知。", "喬木 RSS に送信して記事を収集・公開リライト。完了は Obsidian で通知。", "Qiaomu RSS에 제출하여 본문을 수집하고 공개 재작성합니다. 완료 시 Obsidian에서 알립니다.", "Envía a Qiaomu RSS para recopilar y reescribir públicamente. Obsidian avisa al finalizar.", "Envoyez à Qiaomu RSS pour collecter et réécrire publiquement. Obsidian vous avertit à la fin.", "An Qiaomu RSS senden, um den Artikel öffentlich umzuschreiben. Obsidian meldet den Abschluss."],
 
@@ -549,7 +572,7 @@ export function isLocalizedError(error: unknown): boolean {
 
 const DIVIDER_KEYS: Record<string, MessageKey> = {
   '微信公众号': 'divider.wechat', '小宇宙': 'divider.xiaoyuzhou', 'YouTube': 'divider.youtube',
-  'Newsletter': 'divider.newsletter', '资讯': 'divider.news', '博客与网站': 'divider.blogs',
+  '播客': 'divider.podcasts', '博客与资讯': 'divider.blogsNews', 'Newsletter': 'divider.newsletter', '资讯': 'divider.news', '博客与网站': 'divider.blogs',
 };
 
 /** Display label for a curated channel divider; unknown custom dividers stay as-is. */

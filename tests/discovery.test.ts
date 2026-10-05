@@ -95,11 +95,11 @@ describe('local discovery catalog', () => {
   it('adds visual dividers from source locations without changing source identity', () => {
     const source = (id: string, category: string, siteUrl: string) => ({ id, name: id, category, siteUrl });
     expect(qiaomuChannelDivider(source('wechat-qiaomu', 'article', 'https://mp.weixin.qq.com/'))).toBe('微信公众号');
-    expect(qiaomuChannelDivider(source('zhangxiaojun', 'podcast', 'https://www.xiaoyuzhoufm.com/podcast/abc'))).toBe('小宇宙');
-    expect(qiaomuChannelDivider(source('video', 'podcast', 'https://www.youtube.com/@example'))).toBe('YouTube');
+    expect(qiaomuChannelDivider(source('zhangxiaojun', 'podcast', 'https://www.xiaoyuzhoufm.com/podcast/abc'))).toBe('播客');
+    expect(qiaomuChannelDivider(source('video', 'podcast', 'https://www.youtube.com/@example'))).toBe('播客');
     expect(qiaomuChannelDivider(source('bensbites', 'article', 'https://www.bensbites.com'))).toBe('Newsletter');
-    expect(qiaomuChannelDivider(source('producthunt', 'news', 'https://www.producthunt.com'))).toBe('资讯');
-    expect(qiaomuChannelDivider(source('qiaomu-blog', 'article', 'https://blog.qiaomu.ai'))).toBe('博客与网站');
+    expect(qiaomuChannelDivider(source('producthunt', 'news', 'https://www.producthunt.com'))).toBe('博客与资讯');
+    expect(qiaomuChannelDivider(source('qiaomu-blog', 'article', 'https://blog.qiaomu.ai'))).toBe('博客与资讯');
   });
   it('sorts channels by Chinese pinyin and English letters within each divider', () => {
     const items = ['张三', '阿里', '百度'].map(name => ({ name, id: name }));

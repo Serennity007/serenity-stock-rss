@@ -1,3 +1,4 @@
+import { filterCuratedEntries } from './curated-sources';
 import type QiaomuRssPlugin from './main';
 import { titleOf, type Entry } from './model';
 import { homeProvider, type HomeItem, type HomeProvider } from './qiaomu-home';
@@ -23,7 +24,7 @@ function relative(ms: number): string {
 function localEntries(plugin: QiaomuRssPlugin): Entry[] {
   const state = plugin.state;
   const seen = new Set<string>();
-  const all = [...state.entries, ...state.subscriptions.flatMap(feed => feed.entries)];
+  const all = [...filterCuratedEntries(state, state.entries), ...state.subscriptions.flatMap(feed => feed.entries)];
   return all.filter(entry => !seen.has(entry.id) && seen.add(entry.id)).sort((a, b) => when(b) - when(a));
 }
 
