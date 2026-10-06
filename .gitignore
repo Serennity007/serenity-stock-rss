@@ -6,3 +6,5 @@ coverage/
 .env*
 *.log
 artifacts/
+
+.wrangler/

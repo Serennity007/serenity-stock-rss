@@ -1,0 +1,38 @@
+name = "qiaomu-rss-failover"
+main = "worker.mjs"
+compatibility_date = "2026-10-06"
+account_id = "d060d68463fc12fa91fa2aa216bbab02"
+
+[triggers]
+crons = ["17 * * * *"]
+
+[[routes]]
+pattern = "rss-dr.qiaomu.ai"
+custom_domain = true
+
+[[routes]]
+pattern = "rss.qiaomu.ai/api/*"
+zone_name = "qiaomu.ai"
+
+[[routes]]
+pattern = "rss.qiaomu.ai/media/wechat/*"
+zone_name = "qiaomu.ai"
+
+[vars]
+PRIMARY_ORIGIN = "https://rss-origin.qiaomu.ai"
+STANDBY_ORIGIN = "https://rss-standby.qiaomu.ai"
+PRIMARY_TIMEOUT_MS = "5000"
+STANDBY_TIMEOUT_MS = "4000"
+MAX_SNAPSHOT_AGE_MS = "86400000"
+
+[[durable_objects.bindings]]
+name = "SAFETY"
+class_name = "SafetyGate"
+
+[[migrations]]
+tag = "v1"
+new_sqlite_classes = ["SafetyGate"]
+
+[[r2_buckets]]
+binding = "BACKUPS"
+bucket_name = "qiaomu-rss-private-backups"
