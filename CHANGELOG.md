@@ -1,5 +1,9 @@
 # Changelog
 
+## Unreleased
+
+- Read Atom elements in their own XML namespace so Media RSS attachments cannot replace article text with a filename (including Jant feeds).
+
 ## 0.26.0
 
 - Add a Reader community section beside Qiaomu picks. Reader submissions now live there instead of inside the combined picks list, and the site administrator can show or hide the channel.

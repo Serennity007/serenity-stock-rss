@@ -24,6 +24,49 @@ describe('feed formats and article identity', () => {
     expect(entries[0].content).toContain('https://example.org/blog/assets/photo.png'); expect(entries[0].image).toBe('https://example.org/blog/assets/photo.png');
     expect(entries[0].content).toContain('Body');
   });
+  it('reads Atom body instead of preceding Media RSS attachment filenames', async () => {
+    const xml = `<feed xmlns="http://www.w3.org/2005/Atom" xmlns:media="http://search.yahoo.com/mrss/">
+      <title>Archive</title><entry><id>urn:post</id><title>Photo post</title>
+      <link href="https://example.com/post"/>
+      <media:content url="https://example.com/one.webp" type="image/webp" medium="image"><media:title>one.webp</media:title></media:content>
+      <media:content url="https://example.com/two.webp" type="image/webp" medium="image"><media:title>two.webp</media:title></media:content>
+      <content type="html">&lt;p&gt;Complete article body&lt;/p&gt;&lt;img src="https://example.com/one.webp"/&gt;&lt;img src="https://example.com/two.webp"/&gt;</content>
+      </entry></feed>`;
+    const { entries } = await parseFeed(xml, 'https://example.com/archive/feed', document);
+    expect(entries[0].content).toContain('Complete article body');
+    expect(entries[0].summary).toBe('Complete article body');
+    expect(entries[0].content).not.toContain('<p>one.webp</p>');
+    const fragment = new DOMParser().parseFromString(entries[0].content!, 'text/html');
+    expect(fragment.querySelectorAll('img')).toHaveLength(2);
+    expect(entries[0].image).toBe('https://example.com/one.webp');
+  });
+  it('falls back to Atom summary when only Media RSS has a content element', async () => {
+    const xml = `<feed xmlns="http://www.w3.org/2005/Atom" xmlns:media="http://search.yahoo.com/mrss/">
+      <title>Archive</title><entry><id>urn:post</id><title>Summary post</title>
+      <media:content url="https://example.com/photo.webp" type="image/webp" medium="image"><media:title>photo.webp</media:title></media:content>
+      <summary type="html">&lt;p&gt;Actual summary&lt;/p&gt;</summary></entry></feed>`;
+    const { entries } = await parseFeed(xml, 'https://example.com/feed', document);
+    expect(entries[0].content).toContain('Actual summary');
+    expect(entries[0].summary).toBe('Actual summary');
+    expect(entries[0].image).toBe('https://example.com/photo.webp');
+  });
+  it('ignores extension collisions in Atom titles, links, authors and stable IDs', async () => {
+    const xml = `<feed xmlns="http://www.w3.org/2005/Atom" xmlns:ext="urn:extension">
+      <ext:title>Extension feed title</ext:title><title>Real feed title</title><entry>
+      <ext:id>extension-id</ext:id><id>urn:actual-post</id>
+      <ext:title>Extension title</ext:title><title>Real title</title>
+      <ext:link href="https://other.example/post"/><link href="https://example.com/post"/>
+      <ext:author><ext:name>Extension author</ext:name></ext:author><author><name>Actual author</name></author>
+      <ext:summary>Extension summary</ext:summary><summary>Actual summary</summary></entry></feed>`;
+    const first = await parseFeed(xml, 'https://example.com/feed', document);
+    const changed = await parseFeed(xml.replace('extension-id', 'changed-extension-id'), 'https://example.com/feed', document);
+    expect(first.name).toBe('Real feed title');
+    expect(first.entries[0].title).toBe('Real title');
+    expect(first.entries[0].link).toBe('https://example.com/post');
+    expect(first.entries[0].author).toBe('Actual author');
+    expect(first.entries[0].summary).toBe('Actual summary');
+    expect(first.entries[0].id).toBe(changed.entries[0].id);
+  });
   it('prefers RSS media thumbnails and image enclosures', async () => {
     const xml = '<rss xmlns:media="http://search.yahoo.com/mrss/"><channel><title>Images</title><item><guid>one</guid><title>One</title><media:thumbnail url="/thumb.jpg"/><enclosure url="/large.jpg" type="image/jpeg"/><description>Text</description></item></channel></rss>';
     const { entries } = await parseFeed(xml, 'https://example.com/feed', document);
