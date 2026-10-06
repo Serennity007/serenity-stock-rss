@@ -6,6 +6,7 @@ import { SourceIcons } from './source-icons';
 import { addSearchClear } from './search-clear';
 import { addLocalContent, ConfirmAction, GroupChoice, iconButton, OpmlImport, TextPrompt } from './subscription-ui';
 import { fail, t } from './i18n';
+import { showSubscriptionMenu } from './subscription-menu';
 
 type KindFilter = 'all' | PersonalSource['kind'] | 'error';
 function kindLabel(kind: KindFilter): string {
@@ -50,14 +51,14 @@ export class LibraryPanel extends Component {
     this.render();
   }
   private addMenu(anchor: HTMLElement) {
-    const menu = new Menu().setUseNativeMenu(false);
+    const menu = new Menu();
     menu.addItem(i => i.setTitle(t('reader.discover')).setIcon('compass').onClick(() => this.discover()));
     menu.addItem(i => i.setTitle(t('library.addLocal')).setIcon('hard-drive').onClick(() => addLocalContent(this.plugin, anchor)));
     menu.addItem(i => i.setTitle(t('library.newGroup')).setIcon('folder-plus').onClick(() => new TextPrompt(this.plugin, t('library.newGroup'), '', async name => { await this.plugin.editLibrary(() => { if (!name.trim()) fail('error.nameEmpty'); ensureGroup(this.plugin.state, name); }); }).open()));
     menu.addSeparator();
     menu.addItem(i => i.setTitle(t('library.importOpml')).setIcon('download').onClick(() => new OpmlImport(this.plugin).open()));
     menu.addItem(i => i.setTitle(t('library.exportOpml')).setIcon('upload').onClick(() => this.exportOpml()));
-    const rect = anchor.getBoundingClientRect(); menu.showAtPosition({ x: Math.max(8, rect.right - 220), y: rect.bottom + 4 });
+    showSubscriptionMenu(menu, anchor);
   }
   refresh() { if (this.list) this.render(); }
   private exportOpml() {
@@ -124,7 +125,7 @@ export class LibraryPanel extends Component {
   }
   private groupMenu(id: string, anchor: HTMLElement) {
     const state = this.plugin.state, group = state.subscriptionGroups.find(g => g.id === id)!;
-    const menu = new Menu().setUseNativeMenu(false);
+    const menu = new Menu();
     menu.addItem(i => i.setTitle(t('library.readGroup')).setIcon('book-open').onClick(() => { void this.plugin.openPersonalSource(`@group:${id}`); }));
     menu.addItem(i => i.setTitle(t('library.rename')).setIcon('pencil').onClick(() => new TextPrompt(this.plugin, t('library.renameGroup'), group.name, async name => { await this.plugin.editLibrary(() => renameGroup(state, id, name)); this.updated(); }).open()));
     for (const [label, step] of [[t('library.moveUp'), -1], [t('library.moveDown'), 1]] as const) {
@@ -133,10 +134,10 @@ export class LibraryPanel extends Component {
     }
     menu.addSeparator();
     menu.addItem(i => i.setTitle(t('library.deleteGroup')).setIcon('trash-2').setWarning(true).onClick(() => new ConfirmAction(this.plugin, t('library.deleteGroup'), t('library.deleteGroupDesc'), async () => { await this.plugin.editLibrary(() => deleteGroup(state, id)); this.updated(); }).open()));
-    const rect = anchor.getBoundingClientRect(); menu.showAtPosition({ x: rect.left, y: rect.bottom });
+    showSubscriptionMenu(menu, anchor);
   }
   private itemMenu(item: PersonalSource, anchor: HTMLElement) {
-    const menu = new Menu().setUseNativeMenu(false), feed = this.feed(item.id);
+    const menu = new Menu(), feed = this.feed(item.id);
     menu.addItem(i => i.setTitle(t('library.rename')).setIcon('pencil').onClick(() => new TextPrompt(this.plugin, t('library.subscriptionName'), item.name, async name => { await this.plugin.editLibrary(() => { if (!name.trim()) fail('error.nameEmpty'); this.plugin.state.sourceMeta[item.id].name = name.trim().slice(0, 200); if (feed) feed.name = name.trim().slice(0, 200); }); this.updated(); }).open()));
     menu.addItem(i => i.setTitle(t('library.moveToGroup')).setIcon('folder').onClick(() => new GroupChoice(this.plugin, t('library.moveToGroup'), item.groupId, async id => { await this.plugin.editLibrary(() => moveSources(this.plugin.state, [item.id], id)); this.updated(); }).open()));
     if (feed) {
@@ -145,7 +146,7 @@ export class LibraryPanel extends Component {
     }
     menu.addSeparator();
     menu.addItem(i => i.setTitle(t('library.unsubscribe')).setIcon('trash-2').setWarning(true).onClick(() => this.remove([item.id])));
-    const rect = anchor.getBoundingClientRect(); menu.showAtPosition({ x: rect.left, y: rect.bottom });
+    showSubscriptionMenu(menu, anchor);
   }
   private render() {
     const state = this.plugin.state, all = personalSources(state), query = this.query.trim().toLocaleLowerCase();
