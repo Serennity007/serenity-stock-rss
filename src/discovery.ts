@@ -93,17 +93,15 @@ const newsletterSourceIds = new Set([
   'superhuman_ai', 'aibreakfast', 'garymarcus', 'dwarkesh', 'experimental-history',
   'construction-physics', 'ds-ai-section',
 ]);
-export const qiaomuDividers = ['微信公众号', '小宇宙', 'YouTube', 'Newsletter', '资讯', '博客与网站'] as const;
-export const qiaomuDividerIcons: Record<string, string> = { 微信公众号: 'message-circle', 小宇宙: 'podcast', YouTube: 'tv', Newsletter: 'mail', 资讯: 'newspaper', 博客与网站: 'globe' };
+export const qiaomuDividers = ['微信公众号', '播客', 'Newsletter', '博客与资讯'] as const;
+export const qiaomuDividerIcons: Record<string, string> = { 微信公众号: 'message-circle', 播客: 'podcast', Newsletter: 'mail', 博客与资讯: 'globe' };
 export function qiaomuChannelDivider(source: Source): string {
   let host = '';
-  try { host = new URL(source.siteUrl || '').hostname.toLowerCase(); } catch { /* Some feeds have no site URL. */ }
+  try { host = new URL(source.siteUrl || '').hostname.toLowerCase().replace(/^www\./, ''); } catch { /* Some feeds have no site URL. */ }
   if (host === 'mp.weixin.qq.com' || source.id.startsWith('wechat-')) return '微信公众号';
-  if (host === 'www.xiaoyuzhoufm.com') return '小宇宙';
-  if (host === 'youtube.com' || host === 'www.youtube.com' || host === 'youtu.be') return 'YouTube';
-  if (newsletterSourceIds.has(source.id)) return 'Newsletter';
-  if (source.category === 'news') return '资讯';
-  return '博客与网站';
+  if (source.category === 'podcast' || host === 'xiaoyuzhoufm.com') return '播客';
+  if (newsletterSourceIds.has(source.id) || host.endsWith('.substack.com') || host.endsWith('.beehiiv.com') || host.startsWith('newsletter.') || /newsletter/i.test(source.name)) return 'Newsletter';
+  return '博客与资讯';
 }
 /** Reader-submitted channels live in their own community section, not under Qiaomu picks. The site can hide one. */
 export function communityChannelSources(sources: Source[]): Source[] {

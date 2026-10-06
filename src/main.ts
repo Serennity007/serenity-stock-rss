@@ -1,3 +1,5 @@
+import { CuratedSourcePicker } from './curated-source-picker';
+import { applyCuratedPicks } from './curated-sources';
 import { watchPaneDividers } from "./pane-dividers";
 import { LabSettingsModal } from './lab-settings';
 import { applyDeletedEntries, remoteEntry } from './moderation';
@@ -53,6 +55,7 @@ export default class QiaomuRssPlugin extends Plugin {
     const data: unknown = await this.loadData();
     try { this.state = initialState(data); }
     catch { new Notice(t('notice.dataUnreadable')); throw new Error('Incompatible RSS data'); }
+    applyCuratedPicks(this.state);
     this.adminSession = this.state.collectionAdminSession ?? undefined;
     if (data && typeof data === 'object' && !('libraryVersion' in data)) {
       const backup = `${this.app.vault.configDir}/plugins/${this.manifest.id}/data-before-library-v1.json`;
@@ -68,6 +71,7 @@ export default class QiaomuRssPlugin extends Plugin {
     const retire = () => { for (const type of RETIRED_VIEW_TYPES) for (const leaf of this.app.workspace.getLeavesOfType(type)) leaf.detach(); };
     this.app.workspace.onLayoutReady(() => { retire(); window.setTimeout(retire, 500); });
     this.addCommand({ id: 'explore-subscriptions', name: t('cmd.exploreSubscriptions'), callback: () => { void this.openDiscovery(); } });
+    this.addCommand({ id: 'pick-qiaomu-sources', name: t('pick.title'), callback: () => this.pickCuratedSources() });
     this.addRibbonIcon('rss', t('cmd.openReader'), () => { void this.openReader(); });
     this.addCommand({ id: 'open-reader', name: t('cmd.openReader'), callback: () => { void this.openReader(); } });
     this.registerInterval(window.setInterval(() => { void this.checkCollectionJobs(); }, 15000));
@@ -283,7 +287,24 @@ export default class QiaomuRssPlugin extends Plugin {
       await this.app.workspace.revealLeaf(leaf);
     } catch { new Notice(t('notice.cannotOpenReader')); }
   }
+  pickCuratedSources() { new CuratedSourcePicker(this).open(); }
+  async saveCuratedSources(ids: string[] | null, sources = this.state.sources) {
+    const previous = { ids: this.state.settings.pickedSourceIds, sources: this.state.sources, entries: this.state.entries,
+      channels: structuredClone(this.state.channelStates), last: this.state.settings.lastSource };
+    this.state.settings.pickedSourceIds = ids === null ? null : [...new Set(ids)];
+    this.state.sources = sources;
+    const last = this.state.settings.lastSource;
+    if (ids !== null && sources.some(source => source.id === last) && !ids.includes(last) && !this.state.settings.followedPodcasts.includes(last)) this.state.settings.lastSource = '';
+    try { await this.persist(); }
+    catch (error) {
+      this.state.settings.pickedSourceIds = previous.ids; this.state.sources = previous.sources;
+      this.state.entries = previous.entries; this.state.channelStates = previous.channels; this.state.settings.lastSource = previous.last;
+      throw error;
+    }
+    this.resetViews();
+  }
   persist(): Promise<void> {
+    applyCuratedPicks(this.state);
     if (this.state.deletedEntries[this.state.settings.baseUrl]?.length) applyDeletedEntries(this.state, [], this.state.settings.baseUrl);
     this.saving = this.saving.catch(() => undefined).then(() => this.saveData(this.state));
     // Read state, favorites and fetched entries all persist through here; Home coalesces bursts.
@@ -614,7 +635,9 @@ class RssSettings extends PluginSettingTab {
     reading.heading = t('settings.tab.reading');
     const buckets: Record<string, SettingDefinitionItem[]> = {
       reading: [reading, definitions[4], definitions[5]],
-      sources: [definitions[2], definitions[1]],
+      sources: [{ name: t('pick.title'), desc: t('pick.description'), render: setting => {
+        setting.addButton(button => button.setButtonText(t('pick.open')).onClick(() => { (this.app as App & { setting: { close(): void } }).setting.close(); this.plugin.pickCuratedSources(); }));
+      } }, definitions[2], definitions[1]],
       excerpt: [definitions[3], excerpt, definitions[7]],
       lab: [{ name: t('lab.collection'), desc: t('lab.entryDescription'), render: setting => {
         setting.addButton(button => button.setButtonText(t('lab.manage')).onClick(() => this.plugin.openCollectionSettings()));
