@@ -24,7 +24,11 @@ function xmlDocument(value: string, doc: Document): Document {
   if (parsed.getElementsByTagName('parsererror').length) fail('error.xmlInvalid');
   return parsed;
 }
-function children(node: Element, name: string): Element[] { return Array.from(node.children).filter(child => child.localName === name); }
+function children(node: Element, name: string): Element[] {
+  // Atom content and Media RSS attachments share a local name; keep Atom lookups in its namespace.
+  return Array.from(node.children).filter(child => child.localName === name &&
+    (node.namespaceURI !== 'http://www.w3.org/2005/Atom' || child.namespaceURI === node.namespaceURI));
+}
 function child(node: Element, name: string): Element | undefined { return children(node, name)[0]; }
 function text(node: Element, name: string): string { return child(node, name)?.textContent?.trim() || ''; }
 function baseUrl(node: Element, fallback: string): string {
