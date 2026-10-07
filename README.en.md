@@ -6,13 +6,15 @@
 
 **A finance RSS reader for Obsidian — US & China stock markets**
 
-[![Release](https://img.shields.io/github/v/release/Serennity007/stocks-ai-rss?logo=github)](https://github.com/Serennity007/stocks-ai-rss/releases)
+[![Release](https://img.shields.io/github/v/release/Serennity007/serenity-stock-rss?logo=github)](https://github.com/Serennity007/serenity-stock-rss/releases)
 [![License: GPL-3.0](https://img.shields.io/badge/License-GPL--3.0--only-blue.svg)](LICENSE)
 ![Obsidian](https://img.shields.io/badge/Obsidian-%E2%89%A51.13.0-purple?logo=obsidian)
 [![Upstream: Qiaomu AI RSS](https://img.shields.io/badge/fork%20of-Qiaomu%20AI%20RSS-orange)](https://github.com/joeseesun/qiaomu-ai-rss)
 ![Languages](https://img.shields.io/badge/Languages-%E4%B8%AD%E6%96%87%20%7C%20EN%20%7C%20JA-orange)
 
 *Free · Open source · No account · Fully local*
+
+**This project is a fork of — and was learned from — [Qiaomu AI RSS](https://github.com/joeseesun/qiaomu-ai-rss) by [向阳乔木](https://github.com/joeseesun). The reading experience is the original author's work 🙏**
 
 </div>
 
@@ -46,12 +48,12 @@ Market news lives in a dozen apps; your notes live in Obsidian. Why not let the 
 **Option 1: BRAT (recommended, auto-updates)**
 
 1. Install the [BRAT](https://github.com/TfTHacker/obsidian42-brat) plugin
-2. BRAT settings → *Add Beta plugin* → enter `Serennity007/stocks-ai-rss`
+2. BRAT settings → *Add Beta plugin* → enter `Serennity007/serenity-stock-rss`
 3. Enable it under community plugins
 
 **Option 2: Manual**
 
-1. Download `main.js`, `manifest.json`, `styles.css` from [Releases](https://github.com/Serennity007/stocks-ai-rss/releases)
+1. Download `main.js`, `manifest.json`, `styles.css` from [Releases](https://github.com/Serennity007/serenity-stock-rss/releases)
 2. Put them into `<vault>/.obsidian/plugins/stocks-ai-rss/`
 3. Settings → Community plugins → enable **Stocks AI RSS**
 

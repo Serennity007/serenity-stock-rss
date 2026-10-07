@@ -6,13 +6,15 @@
 
 **Obsidian で米国株・中国 A 株の金融ニュースを読む RSS リーダー**
 
-[![Release](https://img.shields.io/github/v/release/Serennity007/stocks-ai-rss?logo=github)](https://github.com/Serennity007/stocks-ai-rss/releases)
+[![Release](https://img.shields.io/github/v/release/Serennity007/serenity-stock-rss?logo=github)](https://github.com/Serennity007/serenity-stock-rss/releases)
 [![License: GPL-3.0](https://img.shields.io/badge/License-GPL--3.0--only-blue.svg)](LICENSE)
 ![Obsidian](https://img.shields.io/badge/Obsidian-%E2%89%A51.13.0-purple?logo=obsidian)
 [![Upstream: Qiaomu AI RSS](https://img.shields.io/badge/fork%20of-Qiaomu%20AI%20RSS-orange)](https://github.com/joeseesun/qiaomu-ai-rss)
 ![言語](https://img.shields.io/badge/%E8%A8%80%E8%AA%9E-%E4%B8%AD%E6%96%87%20%7C%20EN%20%7C%20JA-orange)
 
 *無料 · オープンソース · アカウント不要 · 完全ローカル*
+
+**本プロジェクトは [向阳乔木](https://github.com/joeseesun) 氏の [Qiaomu AI RSS](https://github.com/joeseesun/qiaomu-ai-rss) を学んでフォーク・改良したものです。リーディング体験の功績は原作者のものです 🙏**
 
 </div>
 
@@ -46,12 +48,12 @@
 **方法 1：BRAT（推奨、自動更新）**
 
 1. [BRAT](https://github.com/TfTHacker/obsidian42-brat) プラグインをインストール
-2. BRAT 設定 → *Add Beta plugin* → `Serennity007/stocks-ai-rss` を入力
+2. BRAT 設定 → *Add Beta plugin* → `Serennity007/serenity-stock-rss` を入力
 3. コミュニティプラグイン設定で有効化
 
 **方法 2：手動**
 
-1. [Releases](https://github.com/Serennity007/stocks-ai-rss/releases) から `main.js`・`manifest.json`・`styles.css` をダウンロード
+1. [Releases](https://github.com/Serennity007/serenity-stock-rss/releases) から `main.js`・`manifest.json`・`styles.css` をダウンロード
 2. `<vault>/.obsidian/plugins/stocks-ai-rss/` に配置
 3. 設定 → コミュニティプラグイン → **Stocks AI RSS** を有効化
 

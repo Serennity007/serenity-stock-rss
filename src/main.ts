@@ -394,7 +394,7 @@ class RssSettings extends PluginSettingTab {
           const details = setting.descEl.createEl('details');
           details.createEl('summary', { text: t('settings.changelogSummary') });
           details.createEl('p', { text: t('settings.changelogBody') });
-          details.createEl('a', { text: t('settings.changelogLink'), href: 'https://github.com/Serennity007/stocks-ai-rss/releases', attr: { target: '_blank', rel: 'noopener noreferrer' } });
+          details.createEl('a', { text: t('settings.changelogLink'), href: 'https://github.com/Serennity007/serenity-stock-rss/releases', attr: { target: '_blank', rel: 'noopener noreferrer' } });
         } },
       ] },
       { name: t('settings.localData.name'), desc: t('settings.localData.desc') },
@@ -404,8 +404,8 @@ class RssSettings extends PluginSettingTab {
       sources: [definitions[2], definitions[1]],
       excerpt: [definitions[3], definitions[6]],
       about: [definitions[5], ...([
-        [t('about.reportBug'), t('about.reportBug.desc'), 'https://github.com/Serennity007/stocks-ai-rss/issues/new'],
-        [t('about.guide'), t('about.guide.desc'), 'https://github.com/Serennity007/stocks-ai-rss#readme'],
+        [t('about.reportBug'), t('about.reportBug.desc'), 'https://github.com/Serennity007/serenity-stock-rss/issues/new'],
+        [t('about.guide'), t('about.guide.desc'), 'https://github.com/Serennity007/serenity-stock-rss#readme'],
         ['GitHub', '@Serennity007', 'https://github.com/Serennity007'],
         [t('about.upstream'), 'Qiaomu AI RSS (GPL-3.0)', 'https://github.com/joeseesun/qiaomu-ai-rss'],
       ]).map(([name, label, href]) => ({ name, render: (setting: import('obsidian').Setting) => {

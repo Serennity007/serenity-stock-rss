@@ -6,13 +6,15 @@
 
 **在 Obsidian 里读美股 & A 股财经资讯的 RSS 阅读器**
 
-[![Release](https://img.shields.io/github/v/release/Serennity007/stocks-ai-rss?logo=github)](https://github.com/Serennity007/stocks-ai-rss/releases)
+[![Release](https://img.shields.io/github/v/release/Serennity007/serenity-stock-rss?logo=github)](https://github.com/Serennity007/serenity-stock-rss/releases)
 [![License: GPL-3.0](https://img.shields.io/badge/License-GPL--3.0--only-blue.svg)](LICENSE)
 ![Obsidian](https://img.shields.io/badge/Obsidian-%E2%89%A51.13.0-purple?logo=obsidian)
 [![Upstream: Qiaomu AI RSS](https://img.shields.io/badge/fork%20of-Qiaomu%20AI%20RSS-orange)](https://github.com/joeseesun/qiaomu-ai-rss)
 ![语言](https://img.shields.io/badge/%E8%AF%AD%E8%A8%80-%E4%B8%AD%E6%96%87%20%7C%20EN%20%7C%20JA-orange)
 
 *免费 · 开源 · 无账号 · 纯本地*
+
+**本项目学习自 [向阳乔木](https://github.com/joeseesun) 的 [Qiaomu AI RSS（乔木 RSS）](https://github.com/joeseesun/qiaomu-ai-rss) 并在其基础上深度改造，阅读体验的功劳属于原作者 🙏**
 
 </div>
 
@@ -46,12 +48,12 @@
 **方式一：BRAT（推荐，自动更新）**
 
 1. 先安装 [BRAT](https://github.com/TfTHacker/obsidian42-brat) 插件
-2. BRAT 设置 → *Add Beta plugin* → 输入 `Serennity007/stocks-ai-rss`
+2. BRAT 设置 → *Add Beta plugin* → 输入 `Serennity007/serenity-stock-rss`
 3. 回到社区插件设置启用即可
 
 **方式二：手动安装**
 
-1. 从 [Releases](https://github.com/Serennity007/stocks-ai-rss/releases) 下载 `main.js`、`manifest.json`、`styles.css`
+1. 从 [Releases](https://github.com/Serennity007/serenity-stock-rss/releases) 下载 `main.js`、`manifest.json`、`styles.css`
 2. 放入库目录 `<vault>/.obsidian/plugins/stocks-ai-rss/`
 3. 设置 → 第三方插件 → 启用 **Stocks AI RSS**
 
