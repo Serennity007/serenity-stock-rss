@@ -1,5 +1,16 @@
 # Changelog
 
+## 1.1.0
+
+Five market themes: the bundled catalog grows from 16 to 30 hand-verified feeds and the discovery panel is reorganized around them.
+
+- New AI & LLMs collection: OpenAI News, TechCrunch AI, Interconnects, Simon Willison.
+- New Semiconductors collection: SemiAnalysis, Tom's Hardware, SemiWiki, EE Times.
+- New Gold & crypto collection: MINING.com, FXStreet, The Block, Cointelegraph, Bitcoin Magazine, Decrypt.
+- Macro economy split out as its own collection (CNBC Economy, Federal Reserve, SEC).
+- Chinese finance (华尔街见闻, 新浪财经, 钛媒体) and finance blogs kept as auxiliary collections.
+- Feed candidates that fail direct-HTTPS verification from a mainland-China network are excluded (HuggingFace, Substack, CoinDesk, Kitco).
+
 ## 1.0.0
 
 First Stocks AI RSS release — a finance fork of [Qiaomu AI RSS](https://github.com/joeseesun/qiaomu-ai-rss) at v0.26.2, kept under GPL-3.0-only. Upstream changelog below.

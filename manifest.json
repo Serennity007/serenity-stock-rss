@@ -1,7 +1,7 @@
 {
   "id": "stocks-ai-rss",
   "name": "Stocks AI RSS",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "minAppVersion": "1.13.0",
   "description": "Read US & China stock-market RSS feeds in Obsidian, then add article links to your Daily Note.",
   "author": "Pasteliangzhengtao",
