@@ -12,7 +12,7 @@
 [![Upstream: Qiaomu AI RSS](https://img.shields.io/badge/fork%20of-Qiaomu%20AI%20RSS-orange)](https://github.com/joeseesun/qiaomu-ai-rss)
 ![语言](https://img.shields.io/badge/%E8%AF%AD%E8%A8%80-%E4%B8%AD%E6%96%87%20%7C%20EN%20%7C%20JA-orange)
 
-*免费 · 开源 · 无账号 · 纯本地 · 30 个内置源*
+*免费 · 开源 · 无账号 · 纯本地 · 31 个内置源*
 
 **本项目学习自 [向阳乔木](https://github.com/joeseesun) 的 [Qiaomu AI RSS（乔木 RSS）](https://github.com/joeseesun/qiaomu-ai-rss) 并在其基础上深度改造，阅读体验的功劳属于原作者 🙏**
 
@@ -24,19 +24,19 @@
 
 投资决策靠信息质量。但今天的信息流是这样的：AI 突发在 X 上、半导体深度在付费研报里、BTC 消息在十几个群轮播、黄金行情得盯着行情软件——**看完就散，永远进不了你的知识库**。
 
-**Stocks AI RSS** 把这件事收拢进 Obsidian：**30 个逐个实测直连可用的财经源**，按五大主题组织，刷到有价值的文章一键变成 Markdown 笔记或日记摘录。基于 [Qiaomu AI RSS](https://github.com/joeseesun/qiaomu-ai-rss) 的成熟阅读体验改造——那位作者把「RSS 阅读 → 存笔记」这条链路做到了极致，本仓库站在他的肩膀上把它带向投资研究场景。
+**Stocks AI RSS** 把这件事收拢进 Obsidian：**31 个逐个实测直连可用的财经源**，按五大主题组织，刷到有价值的文章一键变成 Markdown 笔记或日记摘录。基于 [Qiaomu AI RSS](https://github.com/joeseesun/qiaomu-ai-rss) 的成熟阅读体验改造——那位作者把「RSS 阅读 → 存笔记」这条链路做到了极致，本仓库站在他的肩膀上把它带向投资研究场景。
 
 ## 🔥 五大主题，一键订阅
 
 | 主题 | 内置源 | 你会刷到什么 |
 | --- | --- | --- |
 | 🇺🇸 **美股市场**（8 源） | CNBC ×3 · MarketWatch · WSJ ×2 · Seeking Alpha · Fortune | 大盘异动、财报季、个股消息 |
-| 🤖 **AI 与大模型**（4 源） | OpenAI · TechCrunch AI · Interconnects · Simon Willison | 模型发布、AI 创业融资、LLM 前沿研究 |
+| 🤖 **AI 与大模型**（5 源） | OpenAI · TechCrunch AI · Interconnects · Simon Willison · 量子位 | 模型发布、AI 创业融资、LLM 前沿研究、中文 AI 产业 |
 | 💾 **半导体**（4 源） | SemiAnalysis · Tom's Hardware · SemiWiki · EE Times | 算力产业链、制程工艺、芯片设计 |
 | 🪙 **黄金与加密货币**（6 源） | MINING.com · FXStreet · The Block · Cointelegraph · Bitcoin Magazine · Decrypt | 金价供给端、BTC 行情、机构采用与监管 |
 | 🏛️ **宏观经济**（3 源） | CNBC Economy · 美联储官方 · SEC 官方 | FOMC 决议、就业通胀数据、监管规则 |
 
-另有 **中文财经**（华尔街见闻、新浪财经、钛媒体）与 **财经博客**（Ben Carlson、Josh Brown）两个辅助分类，共 **30 源**。想加雪球、财联社这类无官方 RSS 的站点？自建 [RSSHub](https://docs.rsshub.app/) 后把链接粘进探索页即可。
+另有 **中文财经**（华尔街见闻、新浪财经、钛媒体）与 **财经博客**（Ben Carlson、Josh Brown）两个辅助分类，共 **31 源**。想加雪球、财联社这类无官方 RSS 的站点？自建 [RSSHub](https://docs.rsshub.app/) 后把链接粘进探索页即可。
 
 ## ✨ 为什么它值得常驻你的 Obsidian
 

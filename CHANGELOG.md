@@ -1,5 +1,11 @@
 # Changelog
 
+## 1.1.1
+
+- Add 量子位 (QbitAI) to the AI & LLMs collection — the first Chinese-language source there; the catalog now ships 31 feeds.
+- Align discovery tab, card and subscription-group labels with the actual category names (美股市场 / 中文财经 / 黄金与加密货币 — the cn tab no longer promises "A股").
+- Update the plugin description to the five-theme positioning; remove dead i18n strings and fix feed counts in the 1.0.0 changelog entries.
+
 ## 1.1.0
 
 Five market themes: the bundled catalog grows from 16 to 30 hand-verified feeds and the discovery panel is reorganized around them.
@@ -16,14 +22,10 @@ Five market themes: the bundled catalog grows from 16 to 30 hand-verified feeds 
 First Stocks AI RSS release — a finance fork of [Qiaomu AI RSS](https://github.com/joeseesun/qiaomu-ai-rss) at v0.26.2, kept under GPL-3.0-only. Upstream changelog below.
 
 - Rebrand to Stocks AI RSS (`stocks-ai-rss`); deep links become `obsidian://stocks-ai-rss`.
-- Bundle a hand-verified finance catalog (13 feeds): CNBC, MarketWatch, WSJ, Seeking Alpha, Fortune, Federal Reserve, SEC, 华尔街见闻, 新浪财经, 钛媒体 and finance blogs. The discovery panel now has US / Chinese / blogs collections.
+- Bundle a hand-verified finance catalog (16 feeds): CNBC, MarketWatch, WSJ, Seeking Alpha, Fortune, Federal Reserve, SEC, 华尔街见闻, 新浪财经, 钛媒体 and finance blogs. The discovery panel now has US / Chinese / blogs collections.
 - Remove the upstream server-dependent features: Qiaomu curated picks, AI rewrite & translation, podcast transcripts, the link-collection lab, WeChat/podcast catalog search and the Qiaomu Agent/Home plugin bridges. Subscribing, reading, favorites, saving to notes, PDF/OPML export are fully local.
 - Reading mode is always the original text; the mode selector is gone.
 - Fixed a discovery dedupe regression where same-name blogs from different sites merged.
-
-## Unreleased
-
-- Read Atom elements in their own XML namespace so Media RSS attachments cannot replace article text with a filename (including Jant feeds).
 
 ## 0.26.0
 

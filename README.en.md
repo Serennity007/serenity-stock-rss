@@ -12,7 +12,7 @@
 [![Upstream: Qiaomu AI RSS](https://img.shields.io/badge/fork%20of-Qiaomu%20AI%20RSS-orange)](https://github.com/joeseesun/qiaomu-ai-rss)
 ![Languages](https://img.shields.io/badge/Languages-%E4%B8%AD%E6%96%87%20%7C%20EN%20%7C%20JA-orange)
 
-*Free · Open source · No account · Fully local · 30 bundled feeds*
+*Free · Open source · No account · Fully local · 31 bundled feeds*
 
 **This project is a fork of — and was learned from — [Qiaomu AI RSS](https://github.com/joeseesun/qiaomu-ai-rss) by [向阳乔木](https://github.com/joeseesun). The reading experience is the original author's work 🙏**
 
@@ -24,19 +24,19 @@
 
 Investment decisions are only as good as the information behind them. But today the flow looks like this: AI breaking news on X, semiconductor deep-dives behind paywalls, BTC rumors broadcast across a dozen group chats, gold quotes buried in trading apps — **consumed once, remembered nowhere, never entering your knowledge base**.
 
-**Stocks AI RSS** closes that loop inside Obsidian: **30 finance feeds, each hand-verified to work over direct HTTPS**, organized into five market themes — and any article worth keeping becomes a Markdown note or a daily-note excerpt in one click. Built on the reading experience of [Qiaomu AI RSS](https://github.com/joeseesun/qiaomu-ai-rss): its author perfected the "read RSS → save to notes" loop, and this fork carries it into investment research.
+**Stocks AI RSS** closes that loop inside Obsidian: **31 finance feeds, each hand-verified to work over direct HTTPS**, organized into five market themes — and any article worth keeping becomes a Markdown note or a daily-note excerpt in one click. Built on the reading experience of [Qiaomu AI RSS](https://github.com/joeseesun/qiaomu-ai-rss): its author perfected the "read RSS → save to notes" loop, and this fork carries it into investment research.
 
 ## 🔥 Five themes, one-click subscribe
 
 | Theme | Bundled feeds | What you'll read |
 | --- | --- | --- |
 | 🇺🇸 **US equities** (8) | CNBC ×3 · MarketWatch · WSJ ×2 · Seeking Alpha · Fortune | Market moves, earnings season, single-stock news |
-| 🤖 **AI & LLMs** (4) | OpenAI · TechCrunch AI · Interconnects · Simon Willison | Model releases, AI startups & funding, LLM research |
+| 🤖 **AI & LLMs** (5) | OpenAI · TechCrunch AI · Interconnects · Simon Willison · 量子位 | Model releases, AI startups & funding, LLM research, Chinese AI industry |
 | 💾 **Semiconductors** (4) | SemiAnalysis · Tom's Hardware · SemiWiki · EE Times | Compute supply chain, process nodes, chip design |
 | 🪙 **Gold & crypto** (6) | MINING.com · FXStreet · The Block · Cointelegraph · Bitcoin Magazine · Decrypt | Gold supply side, BTC markets, institutional adoption & regulation |
 | 🏛️ **Macro** (3) | CNBC Economy · Federal Reserve · SEC | FOMC decisions, jobs & inflation data, rulemaking |
 
-Two auxiliary collections round it out: **Chinese finance** (华尔街见闻, Sina Finance, TMTPost) and **finance blogs** (Ben Carlson, Josh Brown) — **30 feeds** in total. Want Xueqiu or Cailianshe (no official RSS)? Self-host [RSSHub](https://docs.rsshub.app/) and paste the link into the discovery panel.
+Two auxiliary collections round it out: **Chinese finance** (华尔街见闻, Sina Finance, TMTPost) and **finance blogs** (Ben Carlson, Josh Brown) — **31 feeds** in total. Want Xueqiu or Cailianshe (no official RSS)? Self-host [RSSHub](https://docs.rsshub.app/) and paste the link into the discovery panel.
 
 ## ✨ Why it earns a place in your vault
 

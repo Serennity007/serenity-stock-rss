@@ -12,7 +12,7 @@
 [![Upstream: Qiaomu AI RSS](https://img.shields.io/badge/fork%20of-Qiaomu%20AI%20RSS-orange)](https://github.com/joeseesun/qiaomu-ai-rss)
 ![言語](https://img.shields.io/badge/%E8%A8%80%E8%AA%9E-%E4%B8%AD%E6%96%87%20%7C%20EN%20%7C%20JA-orange)
 
-*無料 · オープンソース · アカウント不要 · 完全ローカル · 内蔵フィード 30 件*
+*無料 · オープンソース · アカウント不要 · 完全ローカル · 内蔵フィード 31 件*
 
 **本プロジェクトは [向阳乔木](https://github.com/joeseesun) 氏の [Qiaomu AI RSS](https://github.com/joeseesun/qiaomu-ai-rss) を学んでフォーク・改良したものです。リーディング体験の功績は原作者のものです 🙏**
 
@@ -24,19 +24,19 @@
 
 投資判断は情報の質で決まります。しかし現状はこうです：AI の速報は X に、半導体の深掘りは有料レポートに、BTC の噂は無数のグループチャットに、金相場はトレーディングアプリの中——**読んだそばから散り、ナレッジベースには何も残らない**。
 
-**Stocks AI RSS** はそのループを Obsidian の中で完結させます。**HTTPS 直接接続を 1 件ずつ検証した 30 の金融フィード**を 5 つのテーマに整理し、価値のある記事はワンクリックで Markdown ノートに、気になる一節はデイリーノートに保存。[Qiaomu AI RSS](https://github.com/joeseesun/qiaomu-ai-rss) の成熟したリーディング体験をベースに——「RSS を読む → ノートに残す」を極めたその設計の上に、投資リサーチ向けの姿へと作り替えました。
+**Stocks AI RSS** はそのループを Obsidian の中で完結させます。**HTTPS 直接接続を 1 件ずつ検証した 31 の金融フィード**を 5 つのテーマに整理し、価値のある記事はワンクリックで Markdown ノートに、気になる一節はデイリーノートに保存。[Qiaomu AI RSS](https://github.com/joeseesun/qiaomu-ai-rss) の成熟したリーディング体験をベースに——「RSS を読む → ノートに残す」を極めたその設計の上に、投資リサーチ向けの姿へと作り替えました。
 
 ## 🔥 5 テーマ、ワンクリック購読
 
 | テーマ | 内蔵フィード | 読める内容 |
 | --- | --- | --- |
 | 🇺🇸 **米国株** (8) | CNBC ×3 · MarketWatch · WSJ ×2 · Seeking Alpha · Fortune | 市場の動き、決算シーズン、個別株ニュース |
-| 🤖 **AI・大規模モデル** (4) | OpenAI · TechCrunch AI · Interconnects · Simon Willison | モデル公開、AI スタートアップの資金調達、LLM 研究 |
+| 🤖 **AI・大規模モデル** (5) | OpenAI · TechCrunch AI · Interconnects · Simon Willison · 量子位 | モデル公開、AI スタートアップの資金調達、LLM 研究、中国語 AI ビジネス |
 | 💾 **半導体** (4) | SemiAnalysis · Tom's Hardware · SemiWiki · EE Times | 計算基盤のサプライチェーン、プロセスノード、チップ設計 |
 | 🪙 **金・暗号資産** (6) | MINING.com · FXStreet · The Block · Cointelegraph · Bitcoin Magazine · Decrypt | 金の供給側、BTC 市場、機関採用と規制 |
 | 🏛️ **マクロ** (3) | CNBC Economy · 米連邦準備制度 · SEC | FOMC、雇用・インフレ指標、ルールメイキング |
 
-補助コレクションとして **中国語金融**（華爾街見聞、新浪財経、鉄媒体）と **金融ブログ**（Ben Carlson、Josh Brown）を含め、合計 **30 フィード**。公式 RSS のない雪球・財聯社などは、自前の [RSSHub](https://docs.rsshub.app/) で生成した URL を探索パネルに貼って追加できます。
+補助コレクションとして **中国語金融**（華爾街見聞、新浪財経、鉄媒体）と **金融ブログ**（Ben Carlson、Josh Brown）を含め、合計 **31 フィード**。公式 RSS のない雪球・財聯社などは、自前の [RSSHub](https://docs.rsshub.app/) で生成した URL を探索パネルに貼って追加できます。
 
 ## ✨ 保管庫に常駐する価値
 

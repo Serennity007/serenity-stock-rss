@@ -1,7 +1,7 @@
 {
   "name": "stocks-ai-rss",
-  "version": "1.1.0",
-  "description": "Read US & China stock-market RSS feeds in Obsidian, then add article links to your Daily Note.",
+  "version": "1.1.1",
+  "description": "Five-theme finance RSS for Obsidian: US equities, AI, semiconductors, gold & crypto, macro. 31 hand-verified feeds, fully local.",
   "license": "GPL-3.0-only",
   "private": true,
   "scripts": {
