@@ -89,7 +89,7 @@ export class DiscoveryPanel extends Component {
     form.onsubmit = event => { event.preventDefault(); this.query = this.search.value.trim(); if (/^https?:\/\//i.test(this.query)) void this.previewLink(this.query); else this.refresh(); };
     const categories = page.createDiv('qrs-discovery-collections');
     categories.setAttribute('role', 'group'); categories.setAttribute('aria-label', t('discovery.categories'));
-    for (const [kind, label] of [['home', t('discovery.home')], ...(['us', 'cn', 'blogs'] as DiscoverCollection[]).map(c => [c, collectionLabel(c)] as [DiscoverCollection, string])] as ['home' | DiscoverCollection, string][]) {
+    for (const [kind, label] of [['home', t('discovery.home')], ...(['us', 'ai', 'semi', 'gold', 'macro', 'cn', 'blogs'] as DiscoverCollection[]).map(c => [c, collectionLabel(c)] as [DiscoverCollection, string])] as ['home' | DiscoverCollection, string][]) {
       const button = categories.createEl('button', { text: label, attr: { 'data-collection': kind, 'aria-pressed': 'false' } });
       button.onclick = () => { this.collection = kind; this.limit = 24; this.refresh(); };
     }
@@ -125,8 +125,8 @@ export class DiscoveryPanel extends Component {
     if (this.collection !== 'home') { const collection = this.collection; items = items.filter(f => inCollection(f, collection)); }
     if (query) items = searchDiscovery(items, query);
     if (home) {
-      const us = items.filter(f => f.kind === 'us'), cn = items.filter(f => f.kind === 'cn'), blogs = items.filter(f => f.kind === 'blogs');
-      items = [us[0], cn[0], blogs[0], us[1], cn[1], blogs[1], us[2], cn[2]].filter((f): f is DiscoverSource => !!f);
+      const groups = ['us', 'ai', 'semi', 'gold', 'macro', 'cn', 'blogs'].map(kind => items.filter(f => f.kind === kind));
+      items = [groups[0][0], groups[1][0], groups[2][0], groups[3][0], groups[4][0], groups[5][0], groups[6][0], groups[0][1], groups[1][1], groups[2][1], groups[3][1]].filter((f): f is DiscoverSource => !!f);
     }
     this.count.setText(home ? '' : query ? t('discovery.matches', { n: items.length }) : t('discovery.sources', { n: items.length }));
     this.note.empty(); this.note.toggleClass('qrs-hidden', this.collection !== 'blogs' || !!query);

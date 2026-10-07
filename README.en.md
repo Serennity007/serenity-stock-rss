@@ -4,7 +4,7 @@
 
 # 📈 Stocks AI RSS
 
-**A finance RSS reader for Obsidian — US & China stock markets**
+**US stocks · AI · Semiconductors · Gold · BTC — five market themes flowing straight into your Obsidian**
 
 [![Release](https://img.shields.io/github/v/release/Serennity007/serenity-stock-rss?logo=github)](https://github.com/Serennity007/serenity-stock-rss/releases)
 [![License: GPL-3.0](https://img.shields.io/badge/License-GPL--3.0--only-blue.svg)](LICENSE)
@@ -12,7 +12,7 @@
 [![Upstream: Qiaomu AI RSS](https://img.shields.io/badge/fork%20of-Qiaomu%20AI%20RSS-orange)](https://github.com/joeseesun/qiaomu-ai-rss)
 ![Languages](https://img.shields.io/badge/Languages-%E4%B8%AD%E6%96%87%20%7C%20EN%20%7C%20JA-orange)
 
-*Free · Open source · No account · Fully local*
+*Free · Open source · No account · Fully local · 30 bundled feeds*
 
 **This project is a fork of — and was learned from — [Qiaomu AI RSS](https://github.com/joeseesun/qiaomu-ai-rss) by [向阳乔木](https://github.com/joeseesun). The reading experience is the original author's work 🙏**
 
@@ -22,28 +22,29 @@
 
 ---
 
-Market news lives in a dozen apps; your notes live in Obsidian. Why not let the news flow straight into your knowledge base?
+Investment decisions are only as good as the information behind them. But today the flow looks like this: AI breaking news on X, semiconductor deep-dives behind paywalls, BTC rumors broadcast across a dozen group chats, gold quotes buried in trading apps — **consumed once, remembered nowhere, never entering your knowledge base**.
 
-**Stocks AI RSS** puts US & China market news inside Obsidian: it ships with 13 hand-verified finance feeds, and any article worth keeping becomes a Markdown note — or an excerpt in your daily note — with one click. Built on the polished reading experience of [Qiaomu AI RSS](https://github.com/joeseesun/qiaomu-ai-rss), refocused on investment research.
+**Stocks AI RSS** closes that loop inside Obsidian: **30 finance feeds, each hand-verified to work over direct HTTPS**, organized into five market themes — and any article worth keeping becomes a Markdown note or a daily-note excerpt in one click. Built on the reading experience of [Qiaomu AI RSS](https://github.com/joeseesun/qiaomu-ai-rss): its author perfected the "read RSS → save to notes" loop, and this fork carries it into investment research.
 
-## ✨ Features
+## 🔥 Five themes, one-click subscribe
 
-- 📊 **Bundled finance feeds, zero setup** — CNBC, MarketWatch, WSJ, Seeking Alpha, Federal Reserve, SEC, 华尔街见闻, Sina Finance, TMTPost and more: 13 feeds, each verified to work over direct HTTPS. No hunting for feed URLs.
-- ✍️ **Read and note in one place** — save any article as Markdown (images downloaded locally), append excerpts to your daily note, export to PDF; links back to the source are preserved.
-- 🗂️ **Subscription groups** — custom groups, OPML import/export, and vault folders as reading sources (your clipped Markdown shows up in the reader).
-- 📖 **Comfortable reading** — 7 themes, 8 fonts (bundled Zhuque Fangsong subset), adjustable size, line height and column width, J/K keyboard navigation.
-- 🔒 **Fully local** — no accounts, no server dependency. Read state, favorites and cache all stay in your vault.
+| Theme | Bundled feeds | What you'll read |
+| --- | --- | --- |
+| 🇺🇸 **US equities** (8) | CNBC ×3 · MarketWatch · WSJ ×2 · Seeking Alpha · Fortune | Market moves, earnings season, single-stock news |
+| 🤖 **AI & LLMs** (4) | OpenAI · TechCrunch AI · Interconnects · Simon Willison | Model releases, AI startups & funding, LLM research |
+| 💾 **Semiconductors** (4) | SemiAnalysis · Tom's Hardware · SemiWiki · EE Times | Compute supply chain, process nodes, chip design |
+| 🪙 **Gold & crypto** (6) | MINING.com · FXStreet · The Block · Cointelegraph · Bitcoin Magazine · Decrypt | Gold supply side, BTC markets, institutional adoption & regulation |
+| 🏛️ **Macro** (3) | CNBC Economy · Federal Reserve · SEC | FOMC decisions, jobs & inflation data, rulemaking |
 
-## 📊 Bundled feeds
+Two auxiliary collections round it out: **Chinese finance** (华尔街见闻, Sina Finance, TMTPost) and **finance blogs** (Ben Carlson, Josh Brown) — **30 feeds** in total. Want Xueqiu or Cailianshe (no official RSS)? Self-host [RSSHub](https://docs.rsshub.app/) and paste the link into the discovery panel.
 
-| Category | Feeds |
-| --- | --- |
-| **US & global** | CNBC (Top News / Markets / Earnings), MarketWatch, WSJ Markets, WSJ Opinion, Seeking Alpha, Fortune |
-| **Economy & macro** | CNBC Economy, Federal Reserve press releases, SEC press releases |
-| **Chinese markets** | 华尔街见闻 (Wallstreetcn), Sina Finance, TMTPost |
-| **Finance blogs** | A Wealth of Common Sense (Ben Carlson), The Reformed Broker (Josh Brown) |
+## ✨ Why it earns a place in your vault
 
-> Want Xueqiu, Cailianshe or The Paper? They have no official RSS — self-host [RSSHub](https://docs.rsshub.app/) and paste the generated link into the plugin's discovery panel.
+- ✍️ **The last mile from information to knowledge** — save any article as Markdown (images localized, so notes survive link rot), or append a selected paragraph straight into today's daily note with the source link attached
+- 📊 **Institutional-grade sources next to the tape** — SemiAnalysis and Interconnects sit in the same reader as breaking-news feeds; no more app-hopping between the tape and the deep dives
+- 🗂️ **Organize it your way** — subscription groups, OPML import/export, vault folders as reading sources (your clipped research notes become readable)
+- 📖 **Typography tuned for long reads** — 7 themes, 8 fonts (bundled Zhuque Fangsong subset), adjustable size/line-height/column width, J/K keyboard flow
+- 🔒 **Fully local** — no accounts, no telemetry; read state, favorites and cache stay in your vault. The plugin has no server dependency — it keeps working even if this repo disappears
 
 ## 🚀 Install
 
@@ -59,21 +60,24 @@ Market news lives in a dozen apps; your notes live in Obsidian. Why not let the 
 2. Put them into `<vault>/.obsidian/plugins/stocks-ai-rss/`
 3. Settings → Community plugins → enable **Stocks AI RSS**
 
-> This plugin coexists with the upstream [Qiaomu AI RSS](https://github.com/joeseesun/qiaomu-ai-rss) (available in the official Obsidian plugin store) — the IDs differ.
+> Coexists with upstream [Qiaomu AI RSS](https://github.com/joeseesun/qiaomu-ai-rss) (available in the official Obsidian store) — the plugin IDs differ.
 
 ## ❓ FAQ
 
-**Why a fork instead of a PR upstream?**
-Qiaomu AI RSS targets overseas AI news, with curated content served by the author's server. This fork serves a different scenario (US/A-share research), so it drops the server dependency and becomes a fully local finance reader instead of loading the upstream service with unrelated content.
+**Why these five themes?**
+US equities anchor the market; AI and semiconductors are the defining industrial narrative of this cycle (and each other's supply chain); gold and BTC are twin mirrors of fiat confidence. Layered with official macro sources, they form a self-consistent research surface. Chinese sources stay as an auxiliary collection because high-quality Chinese content rarely offers RSS.
+
+**Will the catalog be updated?**
+Yes. It's a standalone data file ([finance-feeds.json](src/data/finance-feeds.json), CC0). To add or fix a feed, PR that file with availability verification; a same-named JSON dropped into the plugin folder overrides the bundled catalog.
 
 **Is my data safe?**
-The plugin has no server of its own. Subscriptions are the feed URLs you add; articles are stored under `.obsidian/plugins/stocks-ai-rss/` in your vault. Uninstalling the plugin never touches your saved notes.
+The plugin has no server of its own. Subscriptions are the feed URLs you add; articles live under `.obsidian/plugins/stocks-ai-rss/` in your vault. Uninstalling never touches your saved notes.
 
 **How does it differ from upstream?**
 
 | | Upstream Qiaomu AI RSS | This fork |
 | --- | --- | --- |
-| Content | Qiaomu curated picks (online) + personal feeds | Personal feeds + bundled finance catalog |
+| Content | Qiaomu curated picks (online) + personal feeds | Personal feeds + bundled five-theme catalog |
 | Chinese AI rewrite/translation | Yes (server-generated) | No, original text only |
 | Podcast transcripts, link-collection lab | Yes | Removed |
 | Network dependency | Curated content needs the service | Only the feeds you subscribe to |
@@ -85,7 +89,7 @@ npm ci
 npm run check   # eslint + vitest + tsc + esbuild
 ```
 
-The bundled catalog lives in [`src/data/finance-feeds.json`](src/data/finance-feeds.json). Feed additions or fixes need availability verification — see [CONTRIBUTING.md](CONTRIBUTING.md). PRs welcome!
+PRs welcome for new feeds and improvements — see [CONTRIBUTING.md](CONTRIBUTING.md).
 
 ## 🙏 Acknowledgements
 
