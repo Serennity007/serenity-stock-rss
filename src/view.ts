@@ -1,12 +1,10 @@
-import { curatedChannels, curatedCommunityChannels, filterCuratedEntries, keepCuratedEntry, pickedSources } from './curated-sources';
-import type { CollectionItem } from './collection';
 import { todayLabel } from './daily-note';
 import { groupsInOrder, personalSources } from './personal-library';
 import { SourceIcons } from './source-icons';
 import { addSearchClear } from './search-clear';
 import { ChannelPicker, channelMark, type ChannelChoice } from './channel-picker';
 import { Component, MarkdownRenderer, ItemView, Menu, Notice, Platform, setIcon, TFile, type WorkspaceLeaf } from 'obsidian';
-import type QiaomuRssPlugin from './main';
+import type StocksRssPlugin from './main';
 import { vaultSourceId } from './vault-source';
 import { enableImageDrag, prepareMarkdownImageDrags } from './image-drag';
 import { SelectionCapture } from './selection';
@@ -18,13 +16,8 @@ import { exportBaseName } from './article-export';
 import { NoteLocationModal } from './note-location';
 import { cleanExcerpt } from './excerpt';
 import { AudioDock, pauseVideos, renderMedia, stopMedia, videoEmbedUrl } from './media';
-import { sameRemoteContent, uniqueRemoteEntries, wechatArticleKey, xiaoyuzhouEpisodeKey } from './wechat-articles';
-import { platformOf, PLATFORMS, type LinkPlatform } from './platform';
-import { featuredXiaoyuzhouPodcasts, mergeFeaturedPodcasts, qiaomuChannelDivider, qiaomuDividerIcons, qiaomuDividers, qiaomuFeaturedEntries } from './discovery';
-import { articleNoteKey, modeLabel, modeSchema, podcastDefaultMode, readingFontSchema, readingThemeSchema, safeUrl, titleOf, type ChannelState, type Bundle, type Entry, type Mode } from './model';
-import { dividerLabel, relativeTime, t } from './i18n';
-import { agentAvailable, articleSnapshot, askAgent } from './agent-bridge';
-import { notifyContextChanged, type ContextSnapshot } from './qiaomu-context';
+import { articleNoteKey, readingFontSchema, readingThemeSchema, safeUrl, titleOf, type ChannelState, type Bundle, type Entry, type Mode } from './model';
+import { relativeTime, t } from './i18n';
 import { fontName } from './fonts';
 export const VIEW_TYPE = 'qiaomu-ai-rss-reader';
 type Filter = 'all' | 'unread' | 'favorites';
@@ -35,13 +28,12 @@ export class ReaderView extends ItemView {
   private checkpointTimer?: number;
   private lastListTop = 0;
   private lastReaderTop = 0;
-  private channelKey() { return JSON.stringify([this.plugin.state.settings.baseUrl, this.source]); }
+  private channelKey() { return JSON.stringify([this.source]); }
   private saveChannel() {
-    if (this.collectionScope()) return;
     if (!this.list || !this.reader) return;
     this.plugin.state.channelStates[this.channelKey()] = {
       entries: this.entries, bundle: this.bundle, mode: this.mode, filter: this.filter, query: this.query,
-      unread: [...this.unreadSession], cursor: this.cursor, hasMore: this.hasMore,
+      unread: [...this.unreadSession], cursor: '', hasMore: false,
       listTop: this.pendingScroll?.listTop ?? (this.list.clientHeight ? this.list.scrollTop : this.lastListTop),
       readerTop: this.pendingScroll?.readerTop ?? (this.reader.clientHeight ? this.reader.scrollTop : this.lastReaderTop), articlePending: this.articleLoading,
     };
@@ -58,11 +50,10 @@ export class ReaderView extends ItemView {
     this.restoreObserver.observe(this.list); this.restoreObserver.observe(this.reader);
   }
   private restoreChannel(saved: ChannelState) {
-    this.entries = filterCuratedEntries(this.plugin.state, this.source || this.plugin.state.settings.pickedSourceIds !== null ? saved.entries : qiaomuFeaturedEntries(saved.entries));
-    this.bundle = saved.bundle && (!keepCuratedEntry(this.plugin.state, saved.bundle.entry) || !this.source && this.plugin.state.settings.pickedSourceIds === null && !qiaomuFeaturedEntries([saved.bundle.entry]).length) ? null : saved.bundle;
-    this.mode = saved.mode;
+    this.entries = saved.entries;
+    this.bundle = saved.bundle;
     this.filter = saved.filter; this.query = saved.query; this.unreadSession = new Set(saved.unread);
-    this.cursor = saved.cursor; this.hasMore = saved.hasMore; this.lastListTop = saved.listTop; this.lastReaderTop = saved.readerTop;
+    this.lastListTop = saved.listTop; this.lastReaderTop = saved.readerTop;
     this.pendingScroll = { listTop: saved.listTop, readerTop: saved.readerTop };
     this.searchInput.value = this.query; this.searchBox.toggleClass('is-hidden', !this.query);
     this.contentEl.toggleClass('qrs-has-article', !!this.bundle);
@@ -82,18 +73,12 @@ export class ReaderView extends ItemView {
   private welcomeTip = -1;
   private refreshButton!: HTMLButtonElement;
   private filters!: HTMLElement;
-  private collectionSettingsButton!: HTMLButtonElement;
-  private collectionItems: CollectionItem[] = [];
   private entries: Entry[] = [];
   private personalLimit = 100;
   private source = '';
   private filter: Filter = 'all';
-  private platform: LinkPlatform | 'all' = 'all';
   private unreadSession = new Set<string>();
   private query = '';
-  private cursor = '';
-  private hasMore = false;
-  private featuredEpisodes: Entry[] = [];
   private loading = false;
   private articleLoading = false;
   private focused = false;
@@ -103,7 +88,7 @@ export class ReaderView extends ItemView {
   private articleVersion = 0;
   private renderVersion = 0;
   private bundle: Bundle | null = null;
-  private mode: Mode;
+  private mode: Mode = 'original';
   private closed = false;
   private message = '';
   private blobUrls: string[] = [];
@@ -111,11 +96,11 @@ export class ReaderView extends ItemView {
   private thumbnailPending = new Map<string, Promise<string | null>>();
   private thumbnailVersion = 0;
   private imageObserver?: IntersectionObserver;
-  constructor(leaf: WorkspaceLeaf, private plugin: QiaomuRssPlugin) {
-    super(leaf); this.mode = plugin.state.settings.defaultMode;
+  constructor(leaf: WorkspaceLeaf, private plugin: StocksRssPlugin) {
+    super(leaf);
   }
   getViewType() { return VIEW_TYPE; }
-  getDisplayText() { return 'Qiaomu AI RSS'; }
+  getDisplayText() { return 'Stocks AI RSS'; }
   getIcon() { return 'rss'; }
   onOpen(): Promise<void> {
     this.reset();
@@ -132,14 +117,14 @@ export class ReaderView extends ItemView {
       const target = event.target;
       if (!(target instanceof this.contentEl.ownerDocument.defaultView!.HTMLElement) || !target.closest('.qrs-article') || !this.bundle) return;
       event.preventDefault();
-      const bundle = this.bundle, mode = this.mode, note = this.plugin.currentNote();
+      const bundle = this.bundle, note = this.plugin.currentNote();
       const selection = this.contentEl.ownerDocument.getSelection();
       const prose = target.closest('.qrs-article')?.querySelector('.qrs-prose');
       const excerpt = selection && prose?.contains(selection.anchorNode) && prose.contains(selection.focusNode) ? selection.toString().trim() : '';
       const append = async (current: boolean) => {
         try {
           this.plugin.remember(bundle);
-          const result = await this.plugin.appendToDailyNote(bundle.entry, excerpt, mode, current && note ? note : undefined);
+          const result = await this.plugin.appendToDailyNote(bundle.entry, excerpt, current && note ? note : undefined);
           new Notice(result.added ? t('notice.appendedToNote', { name: result.file.basename }) : t('notice.alreadyInNote'));
         } catch (error) { new Notice(error instanceof Error ? error.message : t('notice.cannotAppend')); }
       };
@@ -150,33 +135,26 @@ export class ReaderView extends ItemView {
       const link = href ? safeUrl(href, bundle.entry.link || undefined) : null;
       if (link) {
         menu.addSeparator().addItem(item => item.setTitle(t('capture.copyLink')).setIcon('copy').onClick(async () => { try { await this.contentEl.ownerDocument.defaultView!.navigator.clipboard.writeText(link); } catch { new Notice(t('capture.copyFailed')); } }));
-        if (this.plugin.state.settings.labCollection) menu.addItem(item => item.setTitle(t('lab.apply')).setIcon('file-audio').onClick(() => this.plugin.submitCollection(link)));
       }
-      const snapshot = this.agentSnapshot();
-      if (snapshot && agentAvailable(this.app)) menu.addSeparator().addItem(item => item.setTitle(t('capture.askAi')).setIcon('sparkles').onClick(() => { void askAgent(this.app, snapshot, excerpt); }));
       menu.showAtMouseEvent(event);
     });
     this.selectionCapture = new SelectionCapture(this.contentEl.ownerDocument, () => this.reader, () => {
-      const bundle = this.bundle, mode = this.mode;
+      const bundle = this.bundle;
       if (!bundle || !this.plugin.state.settings.selectionPopup) return null;
       const note = this.plugin.currentNote();
       const capture = async (text: string, current: boolean) => {
         try {
           this.plugin.remember(bundle);
           const result = current && note
-            ? await this.plugin.appendToDailyNote(bundle.entry, text, mode, note)
-            : await this.plugin.noteArticle(bundle.entry, text, mode);
+            ? await this.plugin.appendToDailyNote(bundle.entry, text, note)
+            : await this.plugin.noteArticle(bundle.entry, text);
           new Notice(result.added ? t('notice.excerptAddedTo', { name: result.file.basename }) : t('notice.excerptAlready'));
         } catch (error) { new Notice(error instanceof Error ? error.message : t('notice.excerptFailed')); }
       };
-      const actions = [
+      return [
         { label: t('capture.appendDaily'), icon: 'calendar-plus', save: (text: string) => capture(text, false) },
         { label: note ? t('capture.appendCurrent', { name: note.basename }) : t('capture.appendCurrentEmpty'), icon: 'file-pen-line', disabled: !note, save: (text: string) => capture(text, true) },
       ];
-      // Only when Qiaomu Agent is installed and enabled; checked each time the popup opens.
-      const snapshot = agentAvailable(this.app) ? this.agentSnapshot() : null;
-      if (snapshot) actions.push({ label: t('capture.askAi'), icon: 'sparkles', save: text => askAgent(this.app, snapshot, text) });
-      return actions;
     });
     return Promise.resolve();
   }
@@ -198,14 +176,13 @@ export class ReaderView extends ItemView {
     const remembered = this.plugin.state.settings.lastSource;
     const localExists = this.plugin.state.subscriptions.some(feed => feed.id === remembered);
     const groupExists = remembered.startsWith('@group:') && this.plugin.state.subscriptions.some(feed => feed.group === remembered.slice(7));
-    this.focused = false; this.source = (remembered !== 'levelingup' || this.plugin.state.settings.pickedSourceIds?.includes(remembered)) && (remembered === '@local' || remembered === '@collection' || remembered === '@collection-all' && this.plugin.collectionAdminAvailable() || this.plugin.state.settings.markdownFolders.some(folder => vaultSourceId(folder) === remembered) || groupExists || localExists || this.plugin.state.settings.followedPodcasts.includes(remembered) || (qiaomuDividers as readonly string[]).includes(remembered.replace(/^@qiaomu:/, '')) && remembered.startsWith('@qiaomu:') || curatedChannels(this.plugin.state).some(source => source.id === remembered)) ? remembered : '';
-    this.cursor = ''; this.bundle = null; this.loading = false; this.hasMore = false;
-    this.mode = this.plugin.state.settings.defaultMode;
-    this.collectionItems = this.source === '@collection' ? this.plugin.collectionLocalItems() : [];
-    this.entries = this.personalScope() ? this.localEntries() : this.source ? [] : filterCuratedEntries(this.plugin.state, this.plugin.state.settings.pickedSourceIds === null ? qiaomuFeaturedEntries(this.plugin.state.entries) : this.plugin.state.entries);
+    this.focused = false;
+    this.source = (remembered === '@local' || this.plugin.state.settings.markdownFolders.some(folder => vaultSourceId(folder) === remembered) || groupExists || localExists) ? remembered : '@local';
+    this.bundle = null; this.loading = false;
+    this.entries = this.localEntries();
     this.build();
     const saved = this.plugin.state.channelStates[this.channelKey()];
-    if (saved) { this.restoreChannel(saved); if (!this.entries.length || !this.source) void this.loadEntries(); }
+    if (saved) { this.restoreChannel(saved); if (!this.entries.length) void this.loadEntries(); }
     else { this.renderList(); this.renderReader(); void this.loadEntries(); }
   }
   private run(action: () => Promise<void>) {
@@ -276,9 +253,8 @@ export class ReaderView extends ItemView {
     this.renderChannel(); this.channelButton.addEventListener('click', () => this.pickChannel());
     this.addIconButton(bar, 'plus', t('reader.discover'), () => { void this.plugin.openDiscovery(); });
     this.addIconButton(bar, 'search', t('reader.searchTooltip'), () => this.toggleSearch());
-    this.addIconButton(bar, 'list-filter', t('pick.title'), () => this.plugin.pickCuratedSources());
-    this.refreshButton = this.addIconButton(bar, 'refresh-cw', t('reader.refresh'), () => { void this.loadEntries(false, true); });
-    this.collectionSettingsButton = this.addIconButton(bar, 'settings', t('reader.pluginSettings'), () => this.plugin.openCollectionSettings());
+    this.refreshButton = this.addIconButton(bar, 'refresh-cw', t('reader.refresh'), () => { void this.loadEntries(true); });
+    this.addIconButton(bar, 'settings', t('reader.pluginSettings'), () => this.plugin.openSettings());
     this.filters = sidebar.createDiv({ cls: 'qrs-filters', attr: { role: 'group' } });
     this.renderFilters();
     this.searchBox = sidebar.createDiv('qrs-search-box'); this.searchBox.toggleClass('is-hidden', !this.query);
@@ -313,64 +289,28 @@ export class ReaderView extends ItemView {
   }
   private renderFilters() {
     this.filters.empty();
-    this.filters.toggleClass('is-hidden', this.collectionScope());
-    this.collectionSettingsButton?.toggleClass('is-hidden', !this.collectionScope());
-    if (!this.collectionScope()) for (const [value, label] of [['all', t('common.all')], ['unread', t('reader.filter.unread')], ['favorites', t('reader.filter.favorites')]] as const) {
+    for (const [value, label] of [['all', t('common.all')], ['unread', t('reader.filter.unread')], ['favorites', t('reader.filter.favorites')]] as const) {
       const button = this.filters.createEl('button', { text: label, attr: { 'aria-pressed': String(value === this.filter), 'data-filter': value } });
       button.addEventListener('click', () => { this.filter = value; this.unreadSession.clear(); this.renderFilters(); this.renderList(); });
     }
-    // Reader submissions mix video, WeChat and web links, so that channel can be narrowed by where a link comes from.
-    if (this.communityScope()) for (const value of ['all', ...PLATFORMS] as const) {
-      const button = this.filters.createEl('button', { text: value === 'all' ? t('common.all') : t(`platform.${value}`), attr: { 'aria-pressed': String(value === this.platform), 'data-platform': value } });
-      button.addEventListener('click', () => { this.platform = value; this.renderFilters(); this.renderList(); });
-    }
-    if (!this.collectionScope()) this.addIconButton(this.filters, 'settings', t('reader.pluginSettings'), () => this.plugin.openSettings()).addClass('qrs-settings-button');
+    this.addIconButton(this.filters, 'settings', t('reader.pluginSettings'), () => this.plugin.openSettings()).addClass('qrs-settings-button');
   }
-  private communityScope() { return curatedCommunityChannels(this.plugin.state).some(source => source.id === this.source); }
   private channelChoices(): ChannelChoice[] {
     const sources = personalSources(this.plugin.state), groups = groupsInOrder(this.plugin.state);
     return [
-      { id: '', name: t('reader.featured'), short: t('reader.featuredAll'), section: '聚合', subtitle: t('reader.featuredSubtitle'), icon: 'tree-deciduous' },
-      ...qiaomuDividers.map(divider => ({ id: `@qiaomu:${divider}`, name: dividerLabel(divider), section: '乔木分组' as const, subtitle: t('reader.featured'), icon: qiaomuDividerIcons[divider] })),
       { id: '@local', name: t('reader.mySubscriptions'), short: t('reader.allSubscriptions'), section: '聚合', subtitle: t('reader.sourceCount', { n: sources.length }), icon: 'rss' },
-      ...(this.plugin.state.settings.labCollection || this.plugin.state.collectionJobs.length ? [{ id: '@collection', name: t('lab.myRequests'), section: '转写入口' as const, subtitle: t('channel.mine'), icon: 'file-audio' }] : []),
-      ...(this.plugin.collectionAdminAvailable() ? [{ id: '@collection-all', name: t('lab.userRequests'), section: '转写入口' as const, subtitle: t('channel.mine'), icon: 'users' }] : []),
       ...groups.map(group => ({ id: `@group:${group.id}`, name: group.name, section: '订阅分组' as const, subtitle: t('reader.sourceCount', { n: sources.filter(s => s.groupId === group.id).length }), icon: 'folder' })),
-      ...curatedChannels(this.plugin.state).map(source => ({ id: source.id, name: source.name, section: '乔木频道' as const, subtitle: source.category || '', monogram: source.name.trim().slice(0, 1), divider: qiaomuChannelDivider(source) })),
-      ...curatedCommunityChannels(this.plugin.state).map(source => ({ id: source.id, name: source.name, section: '读者社区' as const, subtitle: t('channel.community'), icon: 'users' })),
       ...sources.map(source => ({ id: source.id, name: source.name, section: '我的订阅源' as const, subtitle: source.detail, group: source.groupId, site: source.site, url: source.url, image: source.image, kind: source.kind })),
     ];
   }
   refreshPersonalSources() {
     if (this.closed || !this.channelButton) return;
-    if (this.source === '@collection-all' && !this.plugin.collectionAdminAvailable()) { this.collectionItems = []; this.selectSource('@collection'); return; }
-    if (this.source === '@collection') {
-      const local = this.plugin.collectionLocalItems();
-      this.collectionItems = [...new Map([...this.collectionItems, ...local].map(item => [item.id, item])).values()].sort((a,b) => b.createdAt - a.createdAt);
-      this.renderList();
-    }
     if (this.source.startsWith('@group:') && !this.plugin.state.subscriptionGroups.some(g => g.id === this.source.slice(7)) || (this.source.startsWith('local:') || this.vaultScope()) && !personalSources(this.plugin.state).some(s => s.id === this.source)) { this.selectSource('@local', false); return; }
     this.renderChannel(); this.renderFilters();
     if (this.personalScope()) { this.entries = this.localEntries(); this.renderList(); }
   }
   showPersonalSource(id: string) { this.selectSource(id); }
-  private collectionScope() { return this.source === '@collection' || this.source === '@collection-all'; }
-  moderationEntries() { return [...this.entries, ...(this.bundle ? [this.bundle.entry] : [])]; }
-  removeDeletedArticles() {
-    this.entries = this.entries.filter(entry => !this.plugin.articleDeleted(entry));
-    const deleted = this.plugin.state.deletedEntries[this.plugin.state.settings.baseUrl] || [];
-    this.collectionItems = this.collectionItems.filter(job => !job.entryId || !deleted.includes(job.entryId));
-    if (this.bundle && this.plugin.articleDeleted(this.bundle.entry)) {
-      ++this.articleVersion; this.bundle = null; this.articleLoading = false; this.message = '';
-      this.contentEl.removeClass('qrs-has-article'); this.reader.setAttribute('aria-busy', 'false'); this.renderReader();
-    }
-    this.renderList();
-  }
   private vaultScope() { return this.source.startsWith('@vault:'); }
-  private qiaomuGroupIds(source = this.source) {
-    const divider = source.startsWith('@qiaomu:') ? source.slice(8) : '';
-    return new Set(divider ? curatedChannels(this.plugin.state).filter(item => qiaomuChannelDivider(item) === divider).map(item => item.id) : []);
-  }
   private personalScope() { return this.source === '@local' || this.source.startsWith('@group:') || this.source.startsWith('local:'); }
   private selectedFeeds() {
     return this.plugin.state.subscriptions.filter(feed => this.source === '@local' || feed.id === this.source ||
@@ -381,7 +321,6 @@ export class ReaderView extends ItemView {
   showSubscription(id: string) {
     if (this.plugin.state.subscriptions.some(feed => feed.id === id)) this.selectSource(id, false);
   }
-  showRemoteSource(id: string) { if (id !== 'levelingup' || this.plugin.state.settings.pickedSourceIds?.includes(id)) this.selectSource(id); }
   private pickChannel() {
     if (this.channelPicker) { this.channelPicker.close(); return; }
     this.channelPicker = new ChannelPicker(this.channelButton, this.channelChoices(), this.source, source => this.selectSource(source.id), () => { this.channelPicker = undefined; }, new SourceIcons(this.plugin), { collapsed: this.plugin.state.collapsedGroups, save: (id, collapsed) => { void this.plugin.editLibrary(() => { const state = this.plugin.state; state.collapsedGroups = collapsed ? [...new Set([...state.collapsedGroups, id])] : state.collapsedGroups.filter(g => g !== id); }).catch(() => new Notice(t('notice.groupStateSaveFailed'))); } }, () => this.plugin.manageSubscriptions());
@@ -393,16 +332,15 @@ export class ReaderView extends ItemView {
     this.unreadSession.clear();
     this.listVersion++; this.loading = false; this.refreshButton.removeClass('is-loading');
     this.articleLoading = false; this.reader.setAttribute('aria-busy', 'false');
-    this.collectionItems = source === '@collection' ? this.plugin.collectionLocalItems() : [];
-    this.personalLimit = 100; this.source = source; this.cursor = ''; this.entries = []; this.hasMore = false;
+    this.personalLimit = 100; this.source = source;
     this.plugin.state.settings.lastSource = source; this.run(() => this.plugin.persist());
     this.bundle = null; this.articleVersion++; this.focused = false; this.contentEl.removeClass('qrs-focus');
-    this.contentEl.removeClass('qrs-focus'); this.contentEl.removeClass('qrs-has-article');
-    this.entries = this.personalScope() ? this.localEntries() : source.startsWith('@qiaomu:') ? this.plugin.state.entries.filter(entry => this.qiaomuGroupIds().has(entry.sourceId)) : source ? [] : filterCuratedEntries(this.plugin.state, this.plugin.state.settings.pickedSourceIds === null ? qiaomuFeaturedEntries(this.plugin.state.entries) : this.plugin.state.entries);
+    this.contentEl.removeClass('qrs-has-article');
+    this.entries = this.localEntries();
     this.status.setText(''); this.renderChannel();
     const saved = this.plugin.state.channelStates[this.channelKey()];
     if (saved) { this.restoreChannel(saved); if (!this.entries.length && refresh) void this.loadEntries(); return; }
-    this.filter = 'all'; this.platform = 'all'; this.query = ''; this.searchInput.value = ''; this.searchBox.addClass('is-hidden'); this.lastListTop = 0; this.lastReaderTop = 0;
+    this.filter = 'all'; this.query = ''; this.searchInput.value = ''; this.searchBox.addClass('is-hidden'); this.lastListTop = 0; this.lastReaderTop = 0;
     this.renderFilters(); this.renderReader(); this.renderList(); this.list.scrollTop = 0; this.reader.scrollTop = 0;
     if (refresh) void this.loadEntries();
   }
@@ -460,81 +398,23 @@ export class ReaderView extends ItemView {
     if (event.key === 'Escape') { this.focused = false; this.contentEl.removeClass('qrs-focus'); this.showList(); }
   }
   private navigate(direction: number) {
-    const query = this.query.trim().toLocaleLowerCase();
-    const entries = this.collectionScope() ? this.collectionItems.filter(job => job.status === 'complete' && job.entryId && `${job.title} ${job.url} ${job.submitter || ''}`.toLocaleLowerCase().includes(query)).map(job => ({ id: job.entryId!, sourceId: 'user-submitted', origin: 'qiaomu' as const, title: job.title || job.url, link: job.url })) : this.visibleEntries(); const index = entries.findIndex(entry => entry.id === this.bundle?.entry.id);
+    const entries = this.visibleEntries();
+    const index = entries.findIndex(entry => entry.id === this.bundle?.entry.id);
     const next = entries[index + direction]; if (next) void this.openArticle(next);
   }
-  private async loadEntries(more = false, force = false) {
-    if (this.loading && more) return;
+  private async loadEntries(force = false) {
+    if (this.loading) return;
     const version = ++this.listVersion; this.loading = true; this.status.setText(''); this.refreshButton.addClass('is-loading');
-    const state = this.plugin.state;
     try {
-      if (force && !more) {
-        try { await this.plugin.syncDeletedArticles(); } catch { /* Keep offline reading; never infer deletion from a failed request. */ }
-        if (this.closed || version !== this.listVersion) return;
-      }
-      if (this.collectionScope()) {
-        const scope = this.source, page = await this.plugin.collectionPage(scope === '@collection-all', more ? this.cursor : '');
-        if (this.closed || version !== this.listVersion || scope !== this.source || scope === '@collection-all' && !this.plugin.collectionAdminAvailable()) return;
-        this.collectionItems = more ? [...new Map([...this.collectionItems, ...page.jobs].map(job => [job.id, job])).values()] : page.jobs;
-        const deleted = this.plugin.state.deletedEntries[this.plugin.state.settings.baseUrl] || [];
-        this.collectionItems = this.collectionItems.filter(job => !job.entryId || !deleted.includes(job.entryId));
-        this.hasMore = page.hasMore; this.cursor = page.nextCursor; return;
-      }
-      if (this.vaultScope()) { this.entries = this.plugin.vaultSources.entries(this.source.slice(7)); this.hasMore = false; return; }
-      if (this.personalScope()) {
-        const feeds = [...this.selectedFeeds()].sort((a, b) => (a.lastAttemptAt || a.updatedAt) - (b.lastAttemptAt || b.updatedAt)).slice(0, 20);
-        await this.plugin.subscriptions.refresh(feeds.map(feed => feed.id), this.reader.ownerDocument, force, () => {
-          if (!this.closed && version === this.listVersion) { this.entries = this.localEntries(); this.renderList(); }
-        });
-        if (this.closed || version !== this.listVersion) return;
-        this.entries = this.localEntries(); this.hasMore = false;
-        const failed = feeds.filter(feed => feed.error).length;
-        this.status.setText(failed ? t('reader.refreshFailed', { n: failed }) : this.selectedFeeds().length > 20 ? t('reader.refreshBatch') : '');
-        return;
-      }
-      const api = this.plugin.api();
-      if (this.source.startsWith('podscribe-') && !state.sources.some(source => source.id === this.source && source.enabled !== false)) {
-        const page = await api.podcastEpisodes(this.source, more ? this.cursor : '');
-        if (this.closed || version !== this.listVersion) return;
-        this.entries = more ? [...new Map([...this.entries, ...page.entries].map(entry => [entry.id, entry])).values()] : page.entries;
-        this.cursor = page.nextCursor || ''; this.hasMore = page.hasMore && !!this.cursor;
-        return;
-      }
-      const picked = pickedSources(state);
-      if (this.source.startsWith('@qiaomu:') || !this.source && picked !== null && picked.size <= 36) {
-        const ids = this.source ? [...this.qiaomuGroupIds()] : [...picked!], results: PromiseSettledResult<Entry[]>[] = [];
-        for (let i = 0; i < ids.length; i += 8) results.push(...await Promise.allSettled(ids.slice(i, i + 8).map(id => api.entries(id, '', 12).then(page => page.entries))));
-        if (this.closed || version !== this.listVersion) return;
-        const entries = filterCuratedEntries(state, results.flatMap(result => result.status === 'fulfilled' ? result.value : []));
-        const failed = results.filter((result): result is PromiseRejectedResult => result.status === 'rejected');
-        if (!entries.length && failed.length) throw failed[0].reason;
-        this.entries = [...new Map(entries.map(entry => [entry.id, entry])).values()].sort((a, b) => (b.publishedTs || 0) - (a.publishedTs || 0));
-        this.cursor = ''; this.hasMore = false;
-        if (!this.source) { state.entries = this.entries; state.updatedAt = Date.now(); }
-        await this.plugin.persist();
-        if (!this.closed && version === this.listVersion) this.status.setText(failed.length ? t('reader.channelsUnavailable', { n: failed.length }) : '');
-        return;
-      }
-      const [page, sources] = await Promise.allSettled([api.entries(this.source, more ? this.cursor : ''), api.sources()]);
+      if (this.vaultScope()) { this.entries = this.plugin.vaultSources.entries(this.source.slice(7)); this.renderList(); return; }
+      const feeds = [...this.selectedFeeds()].sort((a, b) => (a.lastAttemptAt || a.updatedAt) - (b.lastAttemptAt || b.updatedAt)).slice(0, 20);
+      await this.plugin.subscriptions.refresh(feeds.map(feed => feed.id), this.reader.ownerDocument, force, () => {
+        if (!this.closed && version === this.listVersion) { this.entries = this.localEntries(); this.renderList(); }
+      });
       if (this.closed || version !== this.listVersion) return;
-      if (sources.status === 'fulfilled') { state.sources = sources.value.sources; this.renderChannel(); }
-      if (page.status === 'rejected') throw page.reason;
-      const pageEntries = filterCuratedEntries(state, this.source || picked !== null ? page.value.entries : qiaomuFeaturedEntries(page.value.entries));
-      this.entries = more ? [...new Map([...this.entries, ...pageEntries].map(entry => [entry.id, entry])).values()] : pageEntries;
-      this.cursor = page.value.nextCursor || ''; this.hasMore = !!page.value.hasMore && !!this.cursor;
-      if (!this.source && !more) {
-        this.renderList();
-        const featured = featuredXiaoyuzhouPodcasts(state.sources).filter(source => picked === null || picked.has(source.id));
-        const latest = await Promise.allSettled(featured.map(source => api.entries(source.id, '', 1)));
-        if (this.closed || version !== this.listVersion) return;
-        this.featuredEpisodes = latest.flatMap(result => result.status === 'fulfilled' ? result.value.entries : []);
-      }
-      if (!this.source) this.entries = filterCuratedEntries(state, mergeFeaturedPodcasts(this.entries, this.featuredEpisodes, !this.hasMore));
-      if (!this.source) { state.entries = this.entries; state.updatedAt = Date.now(); }
-      await this.plugin.persist();
-      if (this.closed || version !== this.listVersion) return;
-      this.status.setText(sources.status === 'rejected' ? t('reader.channelsFailed') : '');
+      this.entries = this.localEntries();
+      const failed = feeds.filter(feed => feed.error).length;
+      this.status.setText(failed ? t('reader.refreshFailed', { n: failed }) : this.selectedFeeds().length > 20 ? t('reader.refreshBatch') : '');
     } catch (error) {
       if (this.closed || version !== this.listVersion) return;
       this.status.setText(`${error instanceof Error ? error.message : t('error.networkUnavailable')}${this.entries.length ? t('reader.showingCached') : t('reader.refreshRetry')}`);
@@ -545,28 +425,14 @@ export class ReaderView extends ItemView {
   private visibleEntries(): Entry[] {
     const state = this.plugin.state;
     const entries = this.filter === 'favorites' ? Object.values(state.favorites).map(b => b.entry) : this.entries;
-    const query = this.query.trim().toLocaleLowerCase(), group = this.qiaomuGroupIds();
-    return uniqueRemoteEntries(entries, this.bundle?.entry.id).filter(entry => (this.vaultScope() ? entry.origin === 'vault' && entry.sourceId === this.source : this.personalScope()
-      ? entry.origin === 'local' && (this.source === '@local' || this.selectedFeeds().some(feed => feed.id === entry.sourceId))
-      : entry.origin !== 'local' && entry.origin !== 'vault' && (!this.source || (this.source.startsWith('@qiaomu:') ? group.has(entry.sourceId) : entry.sourceId === this.source))) &&
-      !this.plugin.articleDeleted(entry) && keepCuratedEntry(state, entry) && (state.settings.pickedSourceIds !== null || entry.sourceId !== 'levelingup') && (this.platform === 'all' || !this.communityScope() || platformOf(entry.link) === this.platform) &&
-      (this.filter !== 'unread' || !this.relatedContentIds(entry).some(id => state.readIds.includes(id)) || this.unreadSession.has(entry.id) || entry.id === this.bundle?.entry.id) &&
+    const query = this.query.trim().toLocaleLowerCase();
+    return entries.filter(entry => (this.vaultScope() ? entry.origin === 'vault' && entry.sourceId === this.source : entry.origin !== 'vault' && (this.source === '@local' || this.selectedFeeds().some(feed => feed.id === entry.sourceId))) &&
+      (this.filter !== 'unread' || state.readIds.includes(entry.id) === false || this.unreadSession.has(entry.id) || entry.id === this.bundle?.entry.id) &&
       (!query || `${titleOf(entry)} ${entry.title} ${entry.summary || ''} ${this.sourceName(entry)}`.toLocaleLowerCase().includes(query)));
   }
-  private relatedContentIds(entry: Entry): string[] {
-    if (!wechatArticleKey(entry.link) && !xiaoyuzhouEpisodeKey(entry.link)) return [entry.id];
-    return [...new Set([entry, ...this.entries, ...Object.values(this.plugin.state.favorites).map(bundle => bundle.entry)]
-      .filter(candidate => sameRemoteContent(entry, candidate)).map(candidate => candidate.id))];
-  }
-  private sourceName(entry: Entry) { return this.plugin.state.subscriptions.find(feed => feed.id === entry.sourceId)?.name || entry.sourceName || this.plugin.state.settings.podcastNames[entry.sourceId] || this.plugin.state.sources.find(source => source.id === entry.sourceId)?.name || entry.sourceId; }
+  private sourceName(entry: Entry) { return this.plugin.state.subscriptions.find(feed => feed.id === entry.sourceId)?.name || entry.sourceName || entry.sourceId; }
   private excerpt(entry: Entry): string {
-    if (entry.summaryZh) return entry.summaryZh;
-    const cjk = /[\u3400-\u9fff]/;
-    const rewrite = entry.rewrite?.body || this.plugin.state.cache[entry.id]?.rewrite?.body;
-    const text = rewrite?.split('\n\n').find(line => cjk.test(line) && !line.startsWith('#') && !line.startsWith('!['));
-    // A Chinese title over an untranslated opening ("Hi folks, …") says nothing; the title gets the room instead.
-    if (!text && cjk.test(titleOf(entry)) && !cjk.test(entry.summary || '')) return '';
-    return cleanExcerpt(text || entry.summary || '');
+    return cleanExcerpt(entry.summary || '');
   }
   private clearThumbnails() {
     this.thumbnailVersion++;
@@ -595,47 +461,7 @@ export class ReaderView extends ItemView {
       img.onload = () => holder.removeClass('is-loading'); img.onerror = () => holder.remove(); img.src = local;
     });
   }
-  private renderCollectionList() {
-    const scroll = this.list.scrollTop;
-    const focusedId = (this.contentEl.ownerDocument.activeElement as HTMLElement)?.closest('[data-collection-id]')?.getAttribute('data-collection-id');
-    this.list.empty();
-    const query = this.query.trim().toLocaleLowerCase();
-    const items = this.collectionItems.filter(job => `${job.title} ${job.url} ${job.submitter || ''}`.toLocaleLowerCase().includes(query));
-    if (!items.length) this.list.createDiv({ cls: 'qrs-collection-empty', text: this.loading ? t('reader.loadingEntries') : query ? t('reader.emptyFilter') : t('lab.emptyRequests') });
-    for (const job of items) {
-      const row = this.list.createDiv({ cls: 'qrs-entry qrs-collection-entry', attr: { 'data-collection-id': job.id } });
-      row.toggleClass('qrs-selected', !!job.entryId && job.entryId === this.bundle?.entry.id);
-      const copy = row.createDiv('qrs-entry-copy');
-      const url = safeUrl(job.url);
-      const meta = copy.createSpan('qrs-entry-meta');
-      meta.createSpan({ cls: 'qrs-source-name', text: url ? new URL(url).hostname : job.url });
-      meta.createSpan({ cls: 'qrs-date', text: new Date(job.createdAt).toLocaleDateString(undefined, { month: 'numeric', day: 'numeric' }) });
-      copy.createDiv('qrs-entry-title').createEl('h3', { text: job.title || job.url });
-      const status = copy.createDiv('qrs-summary qrs-collection-status');
-      setIcon(status.createSpan({ attr: { 'aria-hidden': 'true' } }), { complete: 'check', running: 'loader-circle', queued: 'clock-3', failed: 'circle-alert' }[job.status]);
-      status.createSpan({ text: [t(`lab.status.${job.status}`), job.submitter].filter(Boolean).join(' · ') });
-      if (url) row.oncontextmenu = event => {
-        event.preventDefault();
-        const menu = new Menu();
-        menu.addItem(item => item.setTitle(t('capture.copyLink')).setIcon('link').onClick(() => { void navigator.clipboard.writeText(url); }));
-        menu.showAtMouseEvent(event);
-      };
-      if (job.status === 'complete' && job.entryId) {
-        row.setAttribute('role', 'button'); row.setAttribute('aria-pressed', String(job.entryId === this.bundle?.entry.id)); row.tabIndex = 0;
-        const open = () => { void this.openArticle({ id: job.entryId!, sourceId: 'user-submitted', origin: 'qiaomu', title: job.title || job.url, link: job.url }); };
-        row.onclick = e => { if (!(e.target as HTMLElement).closest('a,button')) open(); };
-        row.onkeydown = e => { if (e.target === row && (e.key === 'Enter' || e.key === ' ')) { e.preventDefault(); open(); } };
-      } else if (job.status === 'failed' && this.source === '@collection') {
-        const retry = copy.createEl('button', { text: t('lab.retry'), cls: 'qrs-collection-retry' });
-        retry.onclick = () => { void this.plugin.submitCollection(job.url); };
-      }
-    }
-    if (this.hasMore) { const more = this.list.createEl('button', { text: t('reader.loadEarlier'), cls: 'qrs-more' }); more.disabled = this.loading; more.onclick = () => { void this.loadEntries(true); }; }
-    this.list.scrollTop = scroll;
-    if (focusedId) Array.from(this.list.querySelectorAll<HTMLElement>('[data-collection-id]')).find(row => row.dataset.collectionId === focusedId)?.focus({ preventScroll: true });
-  }
   private renderList() {
-    if (this.collectionScope()) { this.renderCollectionList(); return; }
     const restoreFocus = this.list.contains(this.contentEl.ownerDocument.activeElement);
     const scroll = this.list.scrollTop; this.list.empty(); const entries = this.visibleEntries();
     if (this.source === '@local' || this.source.startsWith('@group:')) {
@@ -649,9 +475,8 @@ export class ReaderView extends ItemView {
     if (!entries.length) this.list.createDiv({ cls: 'qrs-empty', text: this.loading ? t('reader.loadingEntries') : this.filter === 'favorites' ? t('reader.emptyFavorites') : this.personalScope() && !this.entries.length ? t('reader.emptyPersonal') : t('reader.emptyFilter') });
     // Inside one channel every row would repeat the same source name, so it only appears when sources mix.
     const mixed = new Set(entries.map(entry => entry.sourceId)).size > 1;
-    for (const entry of (this.personalScope() ? entries.slice(0, this.personalLimit) : entries)) {
-      const relatedIds = this.relatedContentIds(entry);
-      const read = relatedIds.some(id => this.plugin.state.readIds.includes(id));
+    for (const entry of entries.slice(0, this.personalLimit)) {
+      const read = this.plugin.state.readIds.includes(entry.id);
       const row = this.list.createEl('button', { cls: 'qrs-entry', attr: { 'data-entry-id': entry.id } });
       row.toggleClass('qrs-selected', this.bundle?.entry.id === entry.id);
       row.setAttribute('aria-pressed', String(this.bundle?.entry.id === entry.id)); row.toggleClass('qrs-read', read);
@@ -660,74 +485,54 @@ export class ReaderView extends ItemView {
       if (mixed) meta.createSpan({ text: this.sourceName(entry), cls: 'qrs-source-name' });
       const date = entry.publishedTs ? new Date(entry.publishedTs) : entry.published ? new Date(entry.published) : null;
       meta.createSpan({ cls: 'qrs-date', text: date && !Number.isNaN(date.getTime()) ? date.toLocaleDateString(undefined, { month: 'numeric', day: 'numeric' }) : relativeTime(entry.publishedRelative || '') });
-      if (entry.sourceId.startsWith('podscribe-')) {
-        const details = [entry.podcastViews != null ? t('reader.originalViews', { n: entry.podcastViews.toLocaleString() }) : '',
-          entry.podcastDurationSeconds ? t('reader.minutes', { n: Math.round(entry.podcastDurationSeconds / 60) }) : ''].filter(Boolean).join(' · ');
-        if (details) meta.createSpan({ cls: 'qrs-podcast-facts', text: details });
-      }
       const title = copy.createDiv('qrs-entry-title');
       title.createSpan({ cls: read ? 'qrs-read-dot' : 'qrs-unread-dot', attr: { 'aria-hidden': 'true' } });
       title.createSpan({ cls: 'qrs-visually-hidden', text: read ? t('reader.read') : t('reader.unread') });
-      const bilingual = (entry.sourceId === 'podscribe-all-in-with-chamath-jason-sacks-friedberg' || entry.sourceId === 'podscribe-the-joe-rogan-experience') &&
-        !!entry.titleZh?.trim() && entry.titleZh.trim() !== entry.title.trim();
-      const heading = bilingual ? title.createDiv('qrs-bilingual-heading') : title;
-      heading.createEl('h3', { text: titleOf(entry) });
-      if (bilingual) heading.createDiv({ cls: 'qrs-original-title', text: entry.title });
-      if (relatedIds.some(id => this.plugin.state.favorites[id])) setIcon(title.createSpan('qrs-bookmarked'), 'bookmark');
+      title.createEl('h3', { text: titleOf(entry) });
+      if (this.plugin.state.favorites[entry.id]) setIcon(title.createSpan('qrs-bookmarked'), 'bookmark');
       const summary = this.excerpt(entry); if (summary) copy.createEl('p', { text: summary, cls: 'qrs-summary' }); else row.addClass('qrs-no-summary');
       this.renderThumbnail(row, entry);
       row.addEventListener('click', () => { void this.openArticle(entry); });
     }
-    if (this.personalScope() && entries.length > this.personalLimit) this.list.createEl('button', { text: t('reader.showMoreArticles'), cls: 'qrs-more' }).onclick = () => { this.personalLimit += 100; this.renderList(); };
-    if (this.hasMore && this.filter !== 'favorites') {
-      const button = this.list.createEl('button', { text: this.loading ? t('reader.loadingMore') : t('reader.loadEarlier'), cls: 'qrs-more' });
-      button.disabled = this.loading; button.addEventListener('click', () => { void this.loadEntries(true); });
-    }
+    if (entries.length > this.personalLimit) this.list.createEl('button', { text: t('reader.showMoreArticles'), cls: 'qrs-more' }).onclick = () => { this.personalLimit += 100; this.renderList(); };
     this.list.scrollTop = scroll;
     if (restoreFocus) this.reader.focus({ preventScroll: true });
   }
   private async openArticle(entry: Entry, resume?: ChannelState) {
-    if (this.plugin.articleDeleted(entry)) { new Notice(t('moderation.deleted')); return; }
     this.stopRestoring();
     // Keep this unread reading session navigable after opening marks entries read.
     if (this.filter === 'unread') this.unreadSession.add(entry.id);
-    const version = ++this.articleVersion; const state = this.plugin.state;
+    const version = ++this.articleVersion;
     this.audioDock?.open(entry);
-    this.bundle = state.cache[entry.id] || state.favorites[entry.id] || { entry, rewrite: entry.rewrite ?? null, translation: null, fetchedAt: 0 };
-    state.readIds = [...new Set([...state.readIds, entry.id])].slice(-5000); this.run(() => this.plugin.persist());
-    this.mode = entry.origin === 'local' || entry.origin === 'vault' ? 'original'
-      : podcastDefaultMode(entry, state.sources, state.settings.followedPodcasts)
-        ?? (entry.audio || videoEmbedUrl(entry.videoUrl || entry.link) ? 'original' : state.settings.defaultMode);
+    this.bundle = this.plugin.state.cache[entry.id] || this.plugin.state.favorites[entry.id] || { entry, rewrite: null, translation: null, fetchedAt: 0 };
+    this.plugin.state.readIds = [...new Set([...this.plugin.state.readIds, entry.id])].slice(-5000); this.run(() => this.plugin.persist());
     this.message = ''; this.articleLoading = true; this.reader.setAttribute('aria-busy', 'true');
     this.contentEl.addClass('qrs-has-article'); this.renderReader(); this.reader.scrollTop = 0; this.lastReaderTop = 0; this.reader.focus({ preventScroll: true }); this.renderList();
-    if (resume) { this.mode = resume.mode; this.pendingScroll = { listTop: resume.listTop, readerTop: resume.readerTop }; this.renderReader(); this.restoreOffsets(); }
-    if (entry.origin === 'local') {
-      this.bundle = { entry, rewrite: null, translation: null, fetchedAt: Date.now() };
-      this.plugin.remember(this.bundle); this.run(() => this.plugin.persist());
-      this.articleLoading = false; this.reader.setAttribute('aria-busy', 'false'); this.renderReader(); return;
-    }
+    if (resume) { this.pendingScroll = { listTop: resume.listTop, readerTop: resume.readerTop }; this.renderReader(); this.restoreOffsets(); }
     try {
-      const { bundle, warnings } = entry.origin === 'vault' ? { bundle: await this.plugin.vaultSources.article(entry), warnings: [] } : await this.plugin.api().article(entry.id, entry);
-      if (this.closed || version !== this.articleVersion || this.plugin.articleDeleted(entry)) return;
-      this.bundle = bundle; this.message = warnings.join('；');
-      this.plugin.remember(bundle); this.run(() => this.plugin.persist());
+      if (entry.origin === 'vault') {
+        const bundle = await this.plugin.vaultSources.article(entry);
+        if (this.closed || version !== this.articleVersion) return;
+        this.bundle = bundle;
+      } else {
+        this.bundle = { entry, rewrite: null, translation: null, fetchedAt: Date.now() };
+      }
+      this.plugin.remember(this.bundle); this.run(() => this.plugin.persist());
     } catch (error) {
       if (this.closed || version !== this.articleVersion) return;
       const cached = this.bundle.fetchedAt ? t('reader.cachedAt', { date: new Date(this.bundle.fetchedAt).toLocaleString() }) : t('reader.reopenRetry');
       this.message = `${error instanceof Error ? error.message : t('reader.contentFailed')}${cached}`;
     }
     if (!this.closed && version === this.articleVersion) {
-      if (this.mode === 'rewrite' && !this.bundle.rewrite?.body.trim()) this.mode = 'original';
       this.articleLoading = false; this.reader.setAttribute('aria-busy', 'false'); this.renderReader(); this.renderList();
     }
   }
-  /** Opens one article from outside the list, e.g. from Qiaomu Home. */
+  /** Opens one article from outside the list. */
   openEntry(entry: Entry) { void this.openArticle(entry); }
-  showSavedArticle(bundle: Bundle, mode: Mode) {
-    if (this.plugin.articleDeleted(bundle.entry)) { new Notice(t('moderation.deleted')); return; }
+  showSavedArticle(bundle: Bundle) {
     this.stopRestoring();
     this.articleVersion++; this.articleLoading = false;
-    this.bundle = bundle; this.mode = mode; this.message = ''; this.audioDock?.open(bundle.entry);
+    this.bundle = bundle; this.message = ''; this.audioDock?.open(bundle.entry);
     this.reader.setAttribute('aria-busy', 'false'); this.contentEl.addClass('qrs-has-article');
     this.renderReader(); this.reader.scrollTop = 0; this.lastReaderTop = 0; this.reader.focus({ preventScroll: true }); this.renderList();
   }
@@ -735,7 +540,7 @@ export class ReaderView extends ItemView {
     const bundle = this.bundle; if (!bundle) return;
     this.run(async () => {
       this.plugin.remember(bundle);
-      const result = await this.plugin.noteArticle(bundle.entry, '', this.mode);
+      const result = await this.plugin.noteArticle(bundle.entry, '');
       new Notice(result.added ? t('notice.addedToDailyNote') : t('notice.alreadyInDailyNote'));
     });
   }
@@ -797,7 +602,7 @@ export class ReaderView extends ItemView {
     const bundle = this.bundle;
     if (!bundle) {
       const empty = this.reader.createDiv('qrs-welcome');
-      empty.createDiv({ cls: 'qrs-welcome-brand', text: 'QIAOMU RSS' });
+      empty.createDiv({ cls: 'qrs-welcome-brand', text: 'STOCKS RSS' });
       empty.createEl('h2', { text: t('welcome.title') });
       empty.createEl('p', { cls: 'qrs-welcome-intro', text: t('welcome.intro') });
       const tips = [
@@ -820,35 +625,26 @@ export class ReaderView extends ItemView {
     }
     const toolbar = this.reader.createDiv('qrs-reader-toolbar');
     this.addIconButton(toolbar, this.focused ? 'panel-left-open' : 'panel-left-close', t('reader.toggleList'), () => this.toggleFocus());
-    const modeId = `${this.appearanceId}-mode`; toolbar.createEl('label', { cls: 'qrs-visually-hidden', text: t('reader.readingVersion'), attr: { for: modeId } });
-    const select = toolbar.createEl('select', { cls: 'qrs-mode-select', attr: { id: modeId, 'data-qrs-field': t('reader.readingVersion') } });
-    const podcast = !!bundle.entry.podcastSlug || this.plugin.state.sources.some(source => source.id === bundle.entry.sourceId && source.category === 'podcast');
-    const fullTranscript = !!bundle.entry.podcastSlug || ['allin', 'joerogan'].includes(bundle.entry.sourceId) || bundle.entry.sourceId.startsWith('podscribe-');
-    for (const mode of modeSchema.options.filter(mode => (bundle.entry.origin !== 'local' && bundle.entry.origin !== 'vault' && !bundle.entry.podcastSlug) || mode === 'original')) select.createEl('option', { value: mode, text: podcast && mode === 'original' ? (fullTranscript ? t('mode.transcript') : t('mode.podcastOriginal')) : modeLabel(mode) });
-    select.disabled = bundle.entry.origin === 'local' || bundle.entry.origin === 'vault' || !!bundle.entry.podcastSlug;
-    select.value = this.mode; select.onchange = () => { this.mode = modeSchema.parse(select.value); this.renderReader(); };
     const nav = toolbar.createDiv('qrs-reader-nav');
     this.addIconButton(nav, 'chevron-up', t('reader.prevArticle'), () => this.navigate(-1));
     this.addIconButton(nav, 'chevron-down', t('reader.nextArticle'), () => this.navigate(1));
     const actions = toolbar.createDiv('qrs-actions');
-    const favoriteId = this.relatedContentIds(bundle.entry).find(id => this.plugin.state.favorites[id]);
-    const favorite = !!favoriteId;
+    const favorite = !!this.plugin.state.favorites[bundle.entry.id];
     const bookmark = this.addIconButton(actions, 'bookmark', favorite ? t('reader.unfavorite') : t('reader.favorite'), () => this.run(async () => {
-      if (favoriteId) for (const id of this.relatedContentIds(bundle.entry)) delete this.plugin.state.favorites[id];
+      if (favorite) delete this.plugin.state.favorites[bundle.entry.id];
       else this.plugin.state.favorites[bundle.entry.id] = bundle;
       await this.plugin.persist(); this.renderReader(true); this.renderList();
     }));
     bookmark.setAttribute('aria-pressed', String(favorite)); bookmark.toggleClass('is-bookmarked', favorite);
-    const relatedIds = this.relatedContentIds(bundle.entry);
-    const read = relatedIds.some(id => this.plugin.state.readIds.includes(id));
+    const read = this.plugin.state.readIds.includes(bundle.entry.id);
     const readButton = this.addIconButton(actions, read ? 'circle-check' : 'circle', read ? t('reader.markUnread') : t('reader.markRead'), () => this.run(async () => {
-      const ids = this.plugin.state.readIds.filter(id => !relatedIds.includes(id));
+      const ids = this.plugin.state.readIds.filter(id => id !== bundle.entry.id);
       this.plugin.state.readIds = read ? ids : [...ids, bundle.entry.id].slice(-5000);
       await this.plugin.persist(); this.renderReader(true); this.renderList();
     }));
     readButton.setAttribute('aria-pressed', String(read));
     // Saving the article as a note is the frequent write action, so it gets a toolbar slot; once saved, the same slot opens that note.
-    const mode = this.mode, savedNote = this.savedNote(bundle, mode);
+    const mode: Mode = 'original', savedNote = this.savedNote(bundle, mode);
     const noteButton = this.addIconButton(actions, savedNote ? 'file-check' : 'file-plus', savedNote ? t('reader.openSavedNote') : t('reader.saveNote'), () => {
       if (savedNote) void this.app.workspace.getLeaf('tab').openFile(savedNote); else this.saveNote(bundle, mode);
     });
@@ -864,11 +660,7 @@ export class ReaderView extends ItemView {
       if (link) menu.addItem(item => item.setTitle(t('reader.openOriginal')).setIcon('external-link').onClick(() => { this.contentEl.win.open(link, '_blank', 'noopener,noreferrer'); }));
       const video = safeUrl(bundle.entry.videoUrl || '');
       if (video && videoEmbedUrl(video)) menu.addItem(item => item.setTitle(t('reader.openVideo')).setIcon('video').onClick(() => { this.contentEl.win.open(video, '_blank', 'noopener,noreferrer'); }));
-      menu.addItem(item => item.setTitle(t('reader.reloadArticle')).setIcon('refresh-cw').onClick(() => this.run(async () => {
-        try { await this.plugin.syncDeletedArticles(); } catch { /* Preserve cached reading when the service is offline. */ }
-        if (!this.plugin.articleDeleted(bundle.entry)) await this.openArticle(bundle.entry);
-      })));
-      if (this.plugin.canDeleteArticle(bundle.entry)) menu.addSeparator().addItem(item => item.setTitle(t('moderation.delete')).setIcon('trash-2').onClick(() => this.plugin.confirmDeleteArticle(bundle.entry)));
+      menu.addItem(item => item.setTitle(t('reader.reloadArticle')).setIcon('refresh-cw').onClick(() => this.run(() => this.openArticle(bundle.entry))));
       menu.addSeparator();
       if (savedNote) menu.addItem(item => item.setTitle(t('reader.saveAnotherNote')).setIcon('file-plus').onClick(() => this.saveNote(bundle, mode)));
       menu.addItem(item => item.setTitle(t('reader.saveNoteTo')).setIcon('folder').onClick(() => {
@@ -878,7 +670,7 @@ export class ReaderView extends ItemView {
       if (Platform.isDesktopApp) {
         menu.addItem(item => item.setTitle(t('reader.exportPdf')).setIcon('file-down').onClick(() => this.run(async () => {
           const article = this.reader.querySelector<HTMLElement>('.qrs-article');
-          if (!article || this.bundle?.entry.id !== bundle.entry.id || this.mode !== mode) throw new Error(t('error.articleSwitched'));
+          if (!article || this.bundle?.entry.id !== bundle.entry.id) throw new Error(t('error.articleSwitched'));
           const result = await saveArticlePdf(bundle, mode, article, this.plugin.images, this.plugin.state.settings);
           if (!result) return;
           await this.plugin.persist();
@@ -898,27 +690,6 @@ export class ReaderView extends ItemView {
       link.onclick = event => { event.preventDefault(); void this.app.workspace.openLinkText(bundle.entry.markdownPath!, '', true); };
     } else if (originalUrl) title.createEl('a', { text: titleOf(bundle.entry), href: originalUrl, cls: 'qrs-title-link', attr: { target: '_blank', rel: 'noopener noreferrer' } });
     else title.setText(titleOf(bundle.entry));
-    if ((bundle.entry.sourceId === 'podscribe-all-in-with-chamath-jason-sacks-friedberg' || bundle.entry.sourceId === 'podscribe-the-joe-rogan-experience' || bundle.entry.sourceId === 'user-submitted') &&
-      bundle.entry.titleZh?.trim() && bundle.entry.titleZh.trim() !== bundle.entry.title.trim()) {
-      title.addClass('qrs-bilingual-title');
-      article.createDiv({ cls: 'qrs-article-original-title', text: bundle.entry.title });
-    }
-    if (podcast) {
-      const episode = bundle.entry;
-      const date = episode.publishedTs ? new Date(episode.publishedTs).toLocaleDateString(undefined, { year: 'numeric', month: 'numeric', day: 'numeric' }) : relativeTime(episode.publishedRelative || '');
-      const facts = [date,
-        episode.podcastViews != null ? t('reader.originalViews', { n: episode.podcastViews.toLocaleString() }) : '',
-        episode.podcastDurationSeconds ? t('reader.duration', { n: Math.round(episode.podcastDurationSeconds / 60) }) : '',
-        episode.podcastWordCount ? t('reader.words', { n: episode.podcastWordCount.toLocaleString() }) : ''].filter(Boolean);
-      if (facts.length) article.createDiv({ cls: 'qrs-podcast-meta', text: facts.join(' · ') });
-    }
-    const original = safeUrl(bundle.entry.link || '');
-    if (original && wechatArticleKey(original)) {
-      title.addClass('qrs-wechat-title');
-      const notice = article.createDiv('qrs-wechat-source');
-      notice.createSpan({ text: t('reader.wechatNotice') });
-      notice.createEl('a', { text: t('reader.wechatOriginal'), href: original, attr: { target: '_blank', rel: 'noopener noreferrer' } });
-    }
     if (this.message) article.createDiv({ cls: 'qrs-feedback', text: this.message, attr: { role: 'status' } });
     if (!this.articleLoading) renderMedia(article, bundle.entry);
     try {
@@ -929,18 +700,12 @@ export class ReaderView extends ItemView {
           .then(() => prepareMarkdownImageDrags(this.app, this.plugin.images, prose, bundle.entry.markdownPath || ''))
           .catch(() => { prose.setText(t('reader.markdownFailed')); });
       } else {
-      const fragment = articleFragment(bundle, this.mode, article.ownerDocument, this.plugin.state.settings.remoteImages);
+      const fragment = articleFragment(bundle, 'original', article.ownerDocument, this.plugin.state.settings.remoteImages);
       if (fragment) { this.prepareImages(fragment); article.createDiv('qrs-prose').append(fragment); }
-      else if (!this.message || this.articleLoading) article.createDiv({ cls: 'qrs-empty', text: this.articleLoading ? t('reader.loadingContent') : t('reader.noContent', { mode: podcast && this.mode === 'original' ? (fullTranscript ? t('mode.transcript') : t('mode.podcastOriginal')) : modeLabel(this.mode) }) });
+      else if (!this.message || this.articleLoading) article.createDiv({ cls: 'qrs-empty', text: this.articleLoading ? t('reader.loadingContent') : t('reader.noContent', { mode: t('mode.original') }) });
       }
     } catch { article.createDiv({ cls: 'qrs-empty', text: t('reader.renderFailed') }); }
     this.reader.scrollTop = scroll; this.restoreOffsets();
-    notifyContextChanged(this.app, this.plugin.manifest.id);
-  }
-  /** The article as Qiaomu Agent should see it, or null when nothing is open. */
-  agentSnapshot(): ContextSnapshot | null {
-    if (!this.bundle || this.closed) return null;
-    return articleSnapshot(this.plugin.manifest.id, { bundle: this.bundle, mode: this.mode, prose: this.reader?.querySelector<HTMLElement>('.qrs-prose') ?? null });
   }
   private renderAppearanceSettings(anchor: HTMLElement) {
     const settings = this.plugin.state.settings;

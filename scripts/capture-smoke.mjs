@@ -7,13 +7,13 @@ const evaluate = code => {
   return JSON.parse(output.slice(3));
 };
 for (let i=0;i<60;i++) {
-  if(evaluate('JSON.stringify(!!app.plugins.plugins["qiaomu-ai-rss"]?.fonts)')) break;
+  if(evaluate('JSON.stringify(!!app.plugins.plugins["stocks-ai-rss"]?.fonts)')) break;
   Atomics.wait(new Int32Array(new SharedArrayBuffer(4)),0,0,500);
 }
 evaluate(`(()=>{window.__qrsCaptureQA=null;void(async()=>{
-const p=app.plugins.plugins['qiaomu-ai-rss'];await p.openReader();
+const p=app.plugins.plugins['stocks-ai-rss'];await p.openReader();
 const popupEnabled=p.state.settings.selectionPopup;p.state.settings.selectionPopup=true;
-const v=app.workspace.getLeavesOfType('qiaomu-ai-rss-reader')[0].view;
+const v=app.workspace.getLeavesOfType('stocks-ai-rss-reader')[0].view;
 const results=[],check=(name,ok)=>{if(!ok)throw Error(name);results.push(name);};
 const bundle={entry:{id:'qa-capture',sourceId:'qa',origin:'local',title:'Selection QA',link:'https://example.com/qa',content:'<p>Selection capture QA paragraph.</p><p>Second paragraph.</p>'},rewrite:null,translation:null,fetchedAt:Date.now()};
 v.showSavedArticle(bundle,'original');
@@ -29,7 +29,7 @@ popup.querySelector('button').click();
 for(let i=0;i<100&&!captured;i++)await new Promise(r=>setTimeout(r,100));
 check('Capture appends through real Daily Note action',!!captured);
 const text=await app.vault.read(captured.file);
-check('Daily Note uses paragraphs and internal link',text.includes('Selection capture QA paragraph')&&text.includes('obsidian://qiaomu-ai-rss?')&&!text.includes('- [Selection QA]'));
+check('Daily Note uses paragraphs and internal link',text.includes('Selection capture QA paragraph')&&text.includes('obsidian://stocks-ai-rss?')&&!text.includes('- [Selection QA]'));
 check('Daily Note opens beside reader',app.workspace.getLeavesOfType('markdown').some(l=>l.view.file?.path===captured.file.path)&&!!v);
 check('Popup closes after capture',!document.querySelector('.qrs-selection-popup'));
 const again=await p.appendToDailyNote(bundle.entry,'Selection capture QA paragraph.','original');

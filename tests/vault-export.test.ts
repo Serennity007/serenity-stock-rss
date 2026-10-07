@@ -41,7 +41,7 @@ describe('vault export', () => {
     expect(files.has('T - 原文.md/child')).toBe(false);
   });
   it('names files after the title and mode without link-breaking characters', () => {
-    expect(exportBaseName(bundle('A/B: [C] #tag^x'), 'rewrite')).toBe('A B C tag x - 乔木改写');
+    expect(exportBaseName(bundle('A/B: [C] #tag^x'), 'rewrite')).toBe('A B C tag x - 改写');
     expect(exportBaseName(bundle('   '), 'original')).toMatch(/^文章 - /);
   });
   it('never reuses an existing note path', () => {

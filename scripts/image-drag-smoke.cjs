@@ -1,9 +1,9 @@
 const {execFileSync}=require('node:child_process');
 const fs=require('node:fs');
 const evaluate=code=>{const s=execFileSync('obsidian',['vault=Qiaomu RSS QA','eval','code='+code.replace(/\n/g,' ')],{encoding:'utf8'});return s.trim()?JSON.parse(s.slice(3)):null;};
-for(let i=0;i<60;i++){if(evaluate('JSON.stringify(!!app.plugins.plugins["qiaomu-ai-rss"]?.images)'))break;Atomics.wait(new Int32Array(new SharedArrayBuffer(4)),0,0,500);}
+for(let i=0;i<60;i++){if(evaluate('JSON.stringify(!!app.plugins.plugins["stocks-ai-rss"]?.images)'))break;Atomics.wait(new Int32Array(new SharedArrayBuffer(4)),0,0,500);}
 evaluate(String.raw`(()=>{window.__imageDragQA=null;void(async()=>{
-const p=app.plugins.plugins['qiaomu-ai-rss'],folder='Image drag QA '+Date.now();
+const p=app.plugins.plugins['stocks-ai-rss'],folder='Image drag QA '+Date.now();
 if(app.vault.getAbstractFileByPath(folder))throw Error('QA fixture already exists');
 const config=app.vault.getConfig('attachmentFolderPath'),load=p.images.load,results=[];
 const check=(name,ok)=>{if(!ok)throw Error(name);results.push(name);};
@@ -11,7 +11,7 @@ await app.vault.createFolder(folder);const note=await app.vault.create(folder+'/
 const bytes=Uint8Array.from(atob('iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mP8/x8AAwMCAO+aO1cAAAAASUVORK5CYII='),c=>c.charCodeAt(0));
 const blob=new Blob([bytes],{type:'image/png'});
 try{
-await p.openReader();const v=app.workspace.getLeavesOfType('qiaomu-ai-rss-reader')[0].view;
+await p.openReader();const v=app.workspace.getLeavesOfType('stocks-ai-rss-reader')[0].view;
 p.images.load=async()=>blob;
 v.showSavedArticle({entry:{id:'qa-image-drag',sourceId:'qa',title:'Image QA',content:'<p>Drag image</p><img src="https://example.com/qa.png">',link:'https://example.com'},rewrite:null,translation:null,fetchedAt:Date.now()},'original');
 const leaf=app.workspace.getLeaf('split','vertical');await leaf.openFile(note);await app.workspace.revealLeaf(leaf);
@@ -48,7 +48,7 @@ window.__imageDragQA={results};
 for(const leaf of app.workspace.getLeavesOfType('markdown').filter(l=>l.view.file?.path.startsWith(folder+'/'))){await leaf.setViewState({type:'empty',state:{}});leaf.detach();}
 p.images.load=load;app.vault.setConfig('attachmentFolderPath',config);
 await app.vault.delete(app.vault.getAbstractFileByPath(folder),true);
-const v=app.workspace.getLeavesOfType('qiaomu-ai-rss-reader')[0]?.view;if(v?.entries[0])void v.openArticle(v.entries[0]);
+const v=app.workspace.getLeavesOfType('stocks-ai-rss-reader')[0]?.view;if(v?.entries[0])void v.openArticle(v.entries[0]);
 }
 })().catch(e=>window.__imageDragQA={error:String(e)});return true})()`);
 let result;for(let i=0;i<180;i++){result=evaluate('JSON.stringify(window.__imageDragQA)');if(result)break;Atomics.wait(new Int32Array(new SharedArrayBuffer(4)),0,0,500);}

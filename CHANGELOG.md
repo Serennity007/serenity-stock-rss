@@ -1,5 +1,15 @@
 # Changelog
 
+## 1.0.0
+
+First Stocks AI RSS release — a finance fork of [Qiaomu AI RSS](https://github.com/joeseesun/qiaomu-ai-rss) at v0.26.2, kept under GPL-3.0-only. Upstream changelog below.
+
+- Rebrand to Stocks AI RSS (`stocks-ai-rss`); deep links become `obsidian://stocks-ai-rss`.
+- Bundle a hand-verified finance catalog (13 feeds): CNBC, MarketWatch, WSJ, Seeking Alpha, Fortune, Federal Reserve, SEC, 华尔街见闻, 新浪财经, 钛媒体 and finance blogs. The discovery panel now has US / Chinese / blogs collections.
+- Remove the upstream server-dependent features: Qiaomu curated picks, AI rewrite & translation, podcast transcripts, the link-collection lab, WeChat/podcast catalog search and the Qiaomu Agent/Home plugin bridges. Subscribing, reading, favorites, saving to notes, PDF/OPML export are fully local.
+- Reading mode is always the original text; the mode selector is gone.
+- Fixed a discovery dedupe regression where same-name blogs from different sites merged.
+
 ## Unreleased
 
 - Read Atom elements in their own XML namespace so Media RSS attachments cannot replace article text with a filename (including Jant feeds).

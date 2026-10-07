@@ -1,5 +1,5 @@
 import { Menu, Modal, Notice, Setting, setIcon } from 'obsidian';
-import type QiaomuRssPlugin from './main';
+import type StocksRssPlugin from './main';
 import { MAX_SUBSCRIPTIONS, parseOpml, type FeedInput } from './feeds';
 import { ensureGroup, groupsInOrder } from './personal-library';
 import { readImportUrl } from './import-source';
@@ -11,7 +11,7 @@ export function iconButton(parent: HTMLElement, icon: string, label: string, act
   setIcon(button, icon); button.createSpan({ cls: 'qrs-visually-hidden', text: label }); button.onclick = action; return button;
 }
 export class TextPrompt extends Modal {
-  constructor(plugin: QiaomuRssPlugin, private title: string, private value: string, private save: (value: string) => Promise<void>) { super(plugin.app); }
+  constructor(plugin: StocksRssPlugin, private title: string, private value: string, private save: (value: string) => Promise<void>) { super(plugin.app); }
   onOpen() {
     this.modalEl.addClass('qrs-modal'); this.setTitle(this.title); let value = this.value;
     const input = new Setting(this.contentEl).setName(t('modal.name')).addText(text => text.setValue(value).onChange(v => { value = v; }));
@@ -20,7 +20,7 @@ export class TextPrompt extends Modal {
     new Setting(this.contentEl).addButton(b => b.setButtonText(t('common.save')).setCta().onClick(submit));
   }
 }
-export function groupSelect(parent: HTMLElement, plugin: QiaomuRssPlugin, initial: string, changed: (id: string) => void) {
+export function groupSelect(parent: HTMLElement, plugin: StocksRssPlugin, initial: string, changed: (id: string) => void) {
   const row = parent.createDiv('qrs-group-choice'), id = crypto.randomUUID();
   row.createEl('label', { text: t('modal.group'), attr: { for: id } });
   const select = row.createEl('select', { attr: { id } });
@@ -31,26 +31,26 @@ export function groupSelect(parent: HTMLElement, plugin: QiaomuRssPlugin, initia
   }).open();
   return select;
 }
-export function addLocalContent(plugin: QiaomuRssPlugin, button: HTMLElement) {
+export function addLocalContent(plugin: StocksRssPlugin, button: HTMLElement) {
   const choose = (path: string) => new GroupChoice(plugin, t('modal.addLocalContent'), '', async id => { await plugin.addLocalSource(path, id); new Notice(t('notice.subscribed')); }).open();
   const menu = new Menu().setUseNativeMenu(false); menu.addItem(i => i.setTitle(t('modal.addFolder')).setIcon('folder-open').onClick(() => new VaultFolderPicker(plugin.app, f => choose(f.path)).open()));
   menu.addItem(i => i.setTitle(t('modal.addNote')).setIcon('file-text').onClick(() => new VaultFilePicker(plugin.app, f => choose(f.path)).open()));
   const rect = button.getBoundingClientRect(); menu.showAtPosition({ x: rect.left, y: rect.bottom });
 }
 export class GroupChoice extends Modal {
-  constructor(private plugin: QiaomuRssPlugin, private title: string, private groupId: string, private save: (id: string) => Promise<void>) { super(plugin.app); }
+  constructor(private plugin: StocksRssPlugin, private title: string, private groupId: string, private save: (id: string) => Promise<void>) { super(plugin.app); }
   onOpen() {
     this.modalEl.addClass('qrs-modal'); this.setTitle(this.title); groupSelect(this.contentEl, this.plugin, this.groupId, id => { this.groupId = id; });
     new Setting(this.contentEl).addButton(b => b.setButtonText(t('common.confirm')).setCta().onClick(async () => { b.setDisabled(true); try { await this.save(this.groupId); this.close(); } catch (e) { new Notice(e instanceof Error ? e.message : t('common.saveFailed')); b.setDisabled(false); } }));
   }
 }
 export class ConfirmAction extends Modal {
-  constructor(plugin: QiaomuRssPlugin, private title: string, private description: string, private action: () => Promise<void>) { super(plugin.app); }
+  constructor(plugin: StocksRssPlugin, private title: string, private description: string, private action: () => Promise<void>) { super(plugin.app); }
   onOpen() { this.modalEl.addClass('qrs-modal'); this.setTitle(this.title); this.contentEl.createEl('p', { text: this.description }); new Setting(this.contentEl).addButton(b => b.setButtonText(t('common.cancel')).onClick(() => this.close())).addButton(b => b.setButtonText(t('common.confirm')).setDestructive().onClick(async () => { b.setDisabled(true); try { await this.action(); this.close(); } catch { new Notice(t('common.saveFailedRetry')); b.setDisabled(false); } })); }
 }
 export class OpmlImport extends Modal {
   private serial = 0;
-  constructor(private plugin: QiaomuRssPlugin, private changed: () => void = () => plugin.refreshDiscovery(), private initial = '') { super(plugin.app); }
+  constructor(private plugin: StocksRssPlugin, private changed: () => void = () => plugin.refreshDiscovery(), private initial = '') { super(plugin.app); }
   onClose() { this.serial++; this.contentEl.empty(); }
   onOpen() {
     this.setTitle(t('modal.importOpml')); this.modalEl.addClass('qrs-subscription-modal', 'qrs-modal');

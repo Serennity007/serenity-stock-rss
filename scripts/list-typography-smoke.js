@@ -1,6 +1,6 @@
 // Async host_eval.py body; run only in a QA vault after installing the candidate.
-const p=app.plugins.plugins['qiaomu-ai-rss'];
-const v=app.workspace.getLeavesOfType('qiaomu-ai-rss-reader')[0].view;
+const p=app.plugins.plugins['stocks-ai-rss'];
+const v=app.workspace.getLeavesOfType('stocks-ai-rss-reader')[0].view;
 for(let attempt=0;v.loading&&attempt<100;attempt++)await new Promise(r=>setTimeout(r,100));
 if(v.loading)throw Error('Wait for the feed to finish loading');
 const previous={entries:v.entries,filter:v.filter,query:v.query,source:v.source,theme:p.state.settings.readingTheme,readIds:[...p.state.readIds]};

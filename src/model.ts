@@ -50,31 +50,22 @@ export const channelStateSchema = z.object({
   articlePending: z.boolean(),
 });
 export type ChannelState = z.infer<typeof channelStateSchema>;
-export const collectionJobSchema = z.object({ id: z.string(), url: z.string(), baseUrl: z.string(), status: z.enum(['queued', 'running', 'complete', 'failed']).default('queued'), title: z.string().default(''), originalTitle: z.string().optional(), entryId: z.string().optional(), notified: z.boolean().default(false), createdAt: z.number() });
-export type CollectionJob = z.infer<typeof collectionJobSchema>;
 export const stateSchema = z.object({
   libraryVersion: z.number().int().min(0).max(1).default(0),
   subscriptionGroups: z.array(z.object({ id: z.string(), name: z.string(), order: z.number() })).default([]),
   sourceMeta: z.record(z.string(), z.object({ groupId: z.string(), name: z.string().default(''), order: z.number().default(0) })).default({}),
   collapsedGroups: z.array(z.string()).default([]),
   settings: z.object({
-    labCollection: z.boolean().default(false), labInviteVerified: z.boolean().default(false), labInviteCode: z.string().max(200).default(''),
-    baseUrl: z.string().default('https://rss.qiaomu.ai'), folder: z.string().default('Qiaomu RSS'),
-    defaultMode: modeSchema.default('rewrite'), remoteImages: z.boolean().default(true), listWidth: z.number().min(220).max(520).default(300),
+    folder: z.string().default('Stocks RSS'),
+    defaultMode: modeSchema.default('original'), remoteImages: z.boolean().default(true), listWidth: z.number().min(220).max(520).default(300),
     readingTheme: readingThemeSchema.catch('auto').default('auto'),
     fontSize: z.number().int().min(14).max(32).default(19), customFont: z.string().max(200).catch('').default(''), fontFamily: readingFontSchema.default('fangsong'),
     lineHeight: z.number().min(1.5).max(2.4).default(1.9), lineWidth: z.union([z.literal(28), z.literal(36), z.literal(44)]).default(36),
-    selectionPopup: z.boolean().default(true), markdownFolders: z.array(z.string()).default([]), followedPodcasts: z.array(z.string()).default([]), podcastNames: z.record(z.string(), z.string()).default({}),
-    pickedSourceIds: z.array(z.string().max(120)).max(300).nullable().default(null),
-    lastSource: z.string().max(300).default(''), articleFolder: z.string().default('Qiaomu RSS/文章'), pdfDirectory: z.string().default(''),
-  }).default({ labCollection: false, labInviteVerified: false, labInviteCode: '', baseUrl: 'https://rss.qiaomu.ai', folder: 'Qiaomu RSS', articleFolder: 'Qiaomu RSS/文章', pdfDirectory: '', defaultMode: 'rewrite', remoteImages: true, listWidth: 300,
-    readingTheme: 'auto', fontSize: 19, fontFamily: 'fangsong', customFont: '', lineHeight: 1.9, lineWidth: 36, lastSource: '', selectionPopup: true, markdownFolders: [], followedPodcasts: [], podcastNames: {}, pickedSourceIds: null }),
-  collectionIdentity: z.object({ id: z.string(), key: z.string() }).nullable().default(null),
-  collectionAdminSession: z.object({ token: z.string(), expiresAt: z.number(), name: z.string(), baseUrl: z.string() }).nullable().default(null),
-  collectionJobs: z.array(collectionJobSchema).default([]),
-  deletedEntries: z.record(z.string(), z.array(z.string())).default({}),
+    selectionPopup: z.boolean().default(true), markdownFolders: z.array(z.string()).default([]),
+    lastSource: z.string().max(300).default(''), articleFolder: z.string().default('Stocks RSS/文章'), pdfDirectory: z.string().default(''),
+  }).default({ folder: 'Stocks RSS', articleFolder: 'Stocks RSS/文章', pdfDirectory: '', defaultMode: 'original', remoteImages: true, listWidth: 300,
+    readingTheme: 'auto', fontSize: 19, fontFamily: 'fangsong', customFont: '', lineHeight: 1.9, lineWidth: 36, lastSource: '', selectionPopup: true, markdownFolders: [] }),
   readIds: z.array(z.string()).default([]), favorites: z.record(z.string(), bundleSchema).default({}),
-  entries: z.array(entrySchema).default([]), sources: z.array(sourceSchema).default([]),
   subscriptions: z.array(subscriptionSchema).default([]),
   channelStates: z.record(z.string(), channelStateSchema).catch({}).default({}),
   savedArticles: z.record(z.string(), bundleSchema).default({}),
@@ -83,26 +74,8 @@ export const stateSchema = z.object({
   cache: z.record(z.string(), bundleSchema).default({}), updatedAt: z.number().default(0),
 });
 export type State = z.infer<typeof stateSchema>;
-const podcastSourceUpgrades: Record<string, string> = {
-  allin: 'podscribe-all-in-with-chamath-jason-sacks-friedberg',
-  joerogan: 'podscribe-the-joe-rogan-experience',
-};
 export function initialState(data: unknown): State {
   const state = stateSchema.parse(data ?? {});
-  state.settings.followedPodcasts = [...new Set(state.settings.followedPodcasts.map(id => podcastSourceUpgrades[id] || id))];
-  for (const [oldId, newId] of Object.entries(podcastSourceUpgrades)) {
-    if (state.settings.podcastNames[oldId] && !state.settings.podcastNames[newId]) state.settings.podcastNames[newId] = state.settings.podcastNames[oldId];
-    delete state.settings.podcastNames[oldId];
-  }
-  const previousSource = state.settings.lastSource;
-  state.settings.lastSource = podcastSourceUpgrades[previousSource] || previousSource;
-  if (podcastSourceUpgrades[previousSource] && !state.settings.followedPodcasts.includes(state.settings.lastSource)) {
-    state.settings.followedPodcasts.push(state.settings.lastSource);
-  }
-  const last = state.settings.lastSource;
-  if (state.sources.some(source => source.id === last && source.category === 'podcast') && !state.settings.followedPodcasts.includes(last)) {
-    state.settings.followedPodcasts.push(last);
-  }
   migrateLibrary(state);
   return state;
 }
@@ -112,13 +85,6 @@ export function safeUrl(value: string, base?: string): string | null {
     const url = new URL(value, base);
     return ['https:', 'http:'].includes(url.protocol) && !url.username && !url.password ? url.href : null;
   } catch { return null; }
-}
-export function serviceUrl(value: string): string {
-  const url = new URL(value.trim());
-  if (url.protocol !== 'https:' || url.username || url.password || url.search || url.hash || !['', '/'].includes(url.pathname)) {
-    throw new Error(t('error.serviceUrlInvalid'));
-  }
-  return url.origin;
 }
 export function folderPath(value: string): string {
   const segments = value.trim().replace(/\\/g, '/').split('/');
@@ -137,9 +103,4 @@ export function renameArticleNotes(notes: Record<string, string>, oldPath: strin
   }
   return changed;
 }
-export function withServiceOrigin(state: State, baseUrl: string): State {
-  return initialState({ deletedEntries: state.deletedEntries, collectionIdentity: state.collectionIdentity, collectionJobs: state.collectionJobs, savedArticles: state.savedArticles, articleNotes: state.articleNotes, settings: { ...state.settings, baseUrl: serviceUrl(baseUrl) }, subscriptions: state.subscriptions,
-    favorites: Object.fromEntries(Object.entries(state.favorites).filter(([, bundle]) => bundle.entry.origin === 'local' || bundle.entry.origin === 'vault')),
-    cache: Object.fromEntries(Object.entries(state.cache).filter(([, bundle]) => bundle.entry.origin === 'local' || bundle.entry.origin === 'vault')),
-    readIds: state.readIds.filter(id => id.startsWith('local-') || id.startsWith('vault:')) });
-}
+

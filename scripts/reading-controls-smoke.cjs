@@ -1,13 +1,13 @@
 const {execFileSync}=require('node:child_process');
 const ev=code=>{const output=execFileSync('obsidian',['vault=Qiaomu RSS QA','eval','code='+code.replace(/\n/g,' ')],{encoding:'utf8'}).trim();return output?JSON.parse(output.slice(3)):null;};
 ev(`(()=>{window.__controls=null;void(async()=>{
-const p=app.plugins.plugins['qiaomu-ai-rss'],results=[];
+const p=app.plugins.plugins['stocks-ai-rss'],results=[];
 const check=(name,ok)=>{if(!ok)throw Error(name);results.push(name)};
-await p.openReader();const r=app.workspace.getLeavesOfType('qiaomu-ai-rss-reader')[0],v=r.view;
+await p.openReader();const r=app.workspace.getLeavesOfType('stocks-ai-rss-reader')[0],v=r.view;
 const bundle=Object.values(p.state.savedArticles)[0];v.showSavedArticle(bundle,'original');
 check('Article metadata removed',!v.reader.querySelector('.qrs-article-meta')&&!!v.reader.querySelector('h1'));
 const gear=v.contentEl.querySelector('.qrs-settings-button');check('Settings icon at right of filter row',!!gear&&gear.parentElement===v.filters&&gear===v.filters.lastElementChild);
-gear.click();check('Gear opens plugin settings',app.setting.activeTab?.id==='qiaomu-ai-rss');app.setting.close();
+gear.click();check('Gear opens plugin settings',app.setting.activeTab?.id==='stocks-ai-rss');app.setting.close();
 p.manageSubscriptions('explore');check('Only curated and independent-blog collections remain',document.querySelectorAll('.qrs-discovery-collections button').length===2&&!document.querySelector('.qrs-discovery').textContent.includes('公众号'));p.subscriptionManager.close();
 await app.workspace.revealLeaf(r);const file=await app.vault.create('Split note QA '+Date.now()+'.md','Keep existing text');
 const tab=app.workspace.getLeaf('tab');await tab.openFile(file);check('Regression fixture begins in reader tab group',tab.parent===r.parent);

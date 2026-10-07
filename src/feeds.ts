@@ -155,5 +155,5 @@ export function exportOpml(feeds: Pick<Subscription, 'url' | 'name' | 'group'>[]
   for (const feed of feeds) { const group = groups.get(feed.group) || []; group.push(feed); groups.set(feed.group, group); }
   const outline = (feed: typeof feeds[number]) => `<outline type="rss" text="${escapeXml(feed.name)}" title="${escapeXml(feed.name)}" xmlUrl="${escapeXml(feed.url)}"/>`;
   const body = Array.from(groups, ([group, values]) => group ? `<outline text="${escapeXml(group)}">\n${values.map(outline).join('\n')}\n</outline>` : values.map(outline).join('\n')).join('\n');
-  return `<?xml version="1.0" encoding="UTF-8"?>\n<opml version="2.0"><head><title>Qiaomu AI RSS subscriptions</title></head><body>\n${body}\n</body></opml>\n`;
+  return `<?xml version="1.0" encoding="UTF-8"?>\n<opml version="2.0"><head><title>Stocks AI RSS subscriptions</title></head><body>\n${body}\n</body></opml>\n`;
 }

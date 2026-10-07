@@ -2,7 +2,7 @@ const {execFileSync}=require('node:child_process');const fs=require('node:fs');
 const vault=process.env.RSS_TEST_VAULT||'qiaomu-public-install.NmoBsq';
 const cli=(...args)=>execFileSync('obsidian',[`vault=${vault}`,...args],{encoding:'utf8',timeout:30000});
 const ev=code=>JSON.parse(cli('eval','code='+code.replace(/\n/g,' ')).replace(/^=> /,''));
-ev(`(()=>{window.__discoveryLive=null;void(async()=>{for(const b of document.querySelectorAll('.modal-header-button'))b.click();const p=app.plugins.plugins['qiaomu-ai-rss'];await p.openDiscovery();const d={contentEl:p.center.panels.discover.el},results=[];
+ev(`(()=>{window.__discoveryLive=null;void(async()=>{for(const b of document.querySelectorAll('.modal-header-button'))b.click();const p=app.plugins.plugins['stocks-ai-rss'];await p.openDiscovery();const d={contentEl:p.center.panels.discover.el},results=[];
 const wait=ms=>new Promise(r=>setTimeout(r,ms)),until=async fn=>{for(let i=0;i<250;i++){if(fn())return;await wait(100);}throw Error('Live request timeout');};
 const form=d.contentEl.querySelector('form'),input=form.querySelector('input');
 input.value='https://github.com/fuxiaoai/tidings-rss/blob/main/opml/tidings-top200.opml';input.dispatchEvent(new Event('input'));form.dispatchEvent(new Event('submit',{bubbles:true,cancelable:true}));

@@ -1,5 +1,5 @@
 // Async function body for qiaomu-obsidian-dev/scripts/host_eval.py; QA vault only.
-const p = app.plugins.plugins['qiaomu-ai-rss'];
+const p = app.plugins.plugins['stocks-ai-rss'];
 const results = [];
 const check = (name, ok) => { if (!ok) throw Error(name); results.push(name); };
 const luminance = color => {
@@ -8,12 +8,12 @@ const luminance = color => {
 };
 const contrast = (a, b) => (Math.max(luminance(a), luminance(b)) + 0.05) / (Math.min(luminance(a), luminance(b)) + 0.05);
 const pause = () => new Promise(resolve => setTimeout(resolve, 80));
-const leaves = app.workspace.getLeavesOfType('qiaomu-ai-rss-reader');
+const leaves = app.workspace.getLeavesOfType('stocks-ai-rss-reader');
 const first = leaves[0] || app.workspace.getLeaf('tab');
-if (!leaves.length) await first.setViewState({ type: 'qiaomu-ai-rss-reader', active: true });
+if (!leaves.length) await first.setViewState({ type: 'stocks-ai-rss-reader', active: true });
 await app.workspace.revealLeaf(first);
 const second = app.workspace.getLeaf('split');
-await second.setViewState({ type: 'qiaomu-ai-rss-reader', active: true });
+await second.setViewState({ type: 'stocks-ai-rss-reader', active: true });
 const view = first.view;
 const oldTheme = p.state.settings.readingTheme;
 const wasDark = document.body.classList.contains('theme-dark');

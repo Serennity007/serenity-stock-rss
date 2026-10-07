@@ -3,7 +3,7 @@ import { beforeAll, describe, expect, it, vi } from 'vitest';
 import { webcrypto } from 'node:crypto';
 import { articleFragment } from '../src/content';
 import { exportOpml, feedUrl, parseFeed, parseOpml, MAX_SUBSCRIPTIONS } from '../src/feeds';
-import { initialState, withServiceOrigin, type Bundle } from '../src/model';
+import { initialState, type Bundle } from '../src/model';
 import { Subscriptions } from '../src/subscriptions';
 beforeAll(() => { Object.defineProperty(window.crypto, 'subtle', { value: webcrypto.subtle, configurable: true }); });
 const rss = (body = '<p>文章 <img src="/cover.jpg" onerror="evil()"></p>') => `<rss version="2.0" xmlns:content="http://purl.org/rss/1.0/modules/content/"><channel><title>RSS &amp; news</title><item><guid>urn:one</guid><title>First</title><link>https://example.com/posts/one</link><pubDate>Mon, 07 Sep 2026 00:00:00 GMT</pubDate><content:encoded><![CDATA[${body}]]></content:encoded></item></channel></rss>`;
@@ -121,18 +121,6 @@ describe('OPML and migration', () => {
   it('flattens nested groups and skips duplicate/unsafe URLs', () => {
     const result = parseOpml('<opml><body><outline text="Tech"><outline text="AI"><outline text="A" xmlUrl="https://example.com/feed"/><outline text="B" xmlUrl="https://example.com/feed#x"/><outline xmlUrl="javascript:bad"/></outline></outline></body></opml>', document);
     expect(result.feeds).toEqual([{ name: 'A', url: 'https://example.com/feed', group: 'Tech / AI' }]); expect(result.skipped).toBe(2);
-  });
-  it('changing Qiaomu origins preserves personal subscriptions, favorites and read state', async () => {
-    const state = initialState(null); const service = new Subscriptions(() => state, async () => {}, async () => ({ status: 200, text: rss() }));
-    const feed = await service.add('https://example.com/feed', 'Tech', document);
-    const local: Bundle = { entry: feed.entries[0], rewrite: null, translation: null, fetchedAt: 1 };
-    const remote: Bundle = { ...local, entry: { ...local.entry, origin: 'qiaomu', id: 'remote' } };
-    state.favorites[local.entry.id] = local; state.favorites.remote = remote; state.cache[local.entry.id] = local;
-    state.readIds = [local.entry.id, 'remote']; state.entries = [remote.entry];
-    const next = withServiceOrigin(state, 'https://new.example');
-    expect(next.subscriptions).toEqual(state.subscriptions); expect(next.favorites[local.entry.id]).toEqual(local);
-    expect(next.cache[local.entry.id]).toEqual(local); expect(next.favorites.remote).toBeUndefined();
-    expect(next.readIds).toEqual([local.entry.id]); expect(next.entries).toEqual([]);
   });
   it('preserves v0.1 state when adding empty subscriptions', () => {
     const state = initialState({ readIds: ['existing'], settings: { remoteImages: false, listWidth: 400 } });

@@ -1,9 +1,10 @@
-- 新增实验室「链接收录转写」：右键链接提交，服务器验证邀请码，后台处理完成后通知，重启继续检查。
-- 「我的订阅」新增「申请转写」；经现有 RSS 网站管理员账号验证后可查看「用户转写」。
-- 修复打开文章或重启后转写列表被旧英文标题覆盖。
-- 英文标题自动中文化，中文标题保留，专有名词保持原拼写；正文页保留原标题作对照。
-- 管理员登录有效期为 365 天，保存令牌而不保存密码。有效登录期间高级管理直接显示；在「关于」页开源许可说明句末点击盾牌图标直接打开管理登录弹窗。
-- 统一转写列表与普通文章列表的排版及键盘操作，集中设置入口，邀请码显式验证并保存。
-- 修复今日日记始终使用电脑本地当天日期，RSS 文章链接右键增加复制链接。
+# Release notes
 
-实验室默认关闭。启用并提交后，链接会发送给配置的 RSS 服务，生成的改写公开收录。管理员登录令牌和邀请码保存在插件数据中；密码不保存。桌面安装及升级已验证，未进行手机真机测试。
+## 1.0.0
+
+First release of Stocks AI RSS, a finance-focused fork of [Qiaomu AI RSS](https://github.com/joeseesun/qiaomu-ai-rss) (v0.26.2, GPL-3.0-only).
+
+- Bundled finance catalog: 13 hand-verified feeds covering US markets (CNBC, MarketWatch, WSJ, Seeking Alpha, Fortune, Federal Reserve, SEC) and Chinese markets (华尔街见闻, 新浪财经, 钛媒体) plus finance blogs.
+- Removed the upstream online curated service (Qiaomu picks, AI rewrite/translation, podcast transcripts, link collection lab). Everything now runs locally: subscriptions, reading, saving to notes.
+- Rebranded plugin id to `stocks-ai-rss`; deep links are now `obsidian://stocks-ai-rss`.
+- Fixed a discovery dedupe regression where same-name blogs from different sites merged.

@@ -1,18 +1,18 @@
 const { execFileSync } = require('node:child_process');
 const evaluate = code => JSON.parse(execFileSync('obsidian', ['vault=Qiaomu RSS QA', 'eval', 'code=' + code.replace(/\n/g, ' ')], { encoding: 'utf8' }).trim().slice(3));
 evaluate(`(()=>{window.__returnQA=null;void(async()=>{
-const p=app.plugins.plugins['qiaomu-ai-rss'],id=Object.keys(p.state.savedArticles)[0],bundle=p.state.savedArticles[id],results=[];
+const p=app.plugins.plugins['stocks-ai-rss'],id=Object.keys(p.state.savedArticles)[0],bundle=p.state.savedArticles[id],results=[];
 const check=(name,value)=>{if(!value)throw Error(name);results.push(name)};
 const name='Return link QA '+Date.now()+'.md';
-const url='obsidian://qiaomu-ai-rss?'+new URLSearchParams({vault:app.vault.getName(),article:id,mode:'original'}).toString().replace(/\\+/g,'%20');
+const url='obsidian://stocks-ai-rss?'+new URLSearchParams({vault:app.vault.getName(),article:id,mode:'original'}).toString().replace(/\\+/g,'%20');
 const file=await app.vault.create(name,'[Return article](<'+url+'>)');
 const leaf=app.workspace.getLeaf('split','vertical');
 try{
 await leaf.openFile(file);await leaf.setViewState({type:'markdown',state:{file:name,mode:'preview'}});
 await new Promise(r=>setTimeout(r,500));
-let reader=app.workspace.getLeavesOfType('qiaomu-ai-rss-reader')[0];
+let reader=app.workspace.getLeavesOfType('stocks-ai-rss-reader')[0];
 check('Only RSS native header is hidden',getComputedStyle(reader.view.containerEl.querySelector('.view-header')).display==='none'&&getComputedStyle(leaf.view.containerEl.querySelector('.view-header')).display!=='none');
-const link=leaf.view.containerEl.querySelector('a[href^="obsidian://qiaomu-ai-rss"]');
+const link=leaf.view.containerEl.querySelector('a[href^="obsidian://stocks-ai-rss"]');
 check('Preview produces article link',!!link);
 reader.view.bundle=null;
 const event=new MouseEvent('click',{bubbles:true,cancelable:true});link.dispatchEvent(event);
@@ -21,7 +21,7 @@ check('Click stays inside Obsidian',event.defaultPrevented);
 check('Click returns to exact captured article',reader.view.bundle?.entry.id===bundle.entry.id);
 await reader.setViewState({type:'empty',state:{}});reader.detach();
 await app.workspace.revealLeaf(leaf);link.dispatchEvent(new MouseEvent('click',{bubbles:true,cancelable:true}));
-await new Promise(r=>setTimeout(r,800));reader=app.workspace.getLeavesOfType('qiaomu-ai-rss-reader')[0];
+await new Promise(r=>setTimeout(r,800));reader=app.workspace.getLeavesOfType('stocks-ai-rss-reader')[0];
 check('Click recreates closed reader with exact article',reader?.view.bundle?.entry.id===bundle.entry.id);
 await leaf.setViewState({type:'markdown',state:{file:name,mode:'source',source:false}});
 await app.workspace.revealLeaf(leaf);await new Promise(r=>setTimeout(r,500));

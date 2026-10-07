@@ -1,5 +1,5 @@
 import { ItemView, Modal, type App, type WorkspaceLeaf } from 'obsidian';
-import type QiaomuRssPlugin from './main';
+import type StocksRssPlugin from './main';
 import { DiscoveryPanel } from './discovery-view';
 import { LibraryPanel } from './library-view';
 import { t } from './i18n';
@@ -11,7 +11,7 @@ export class SubscriptionCenter extends Modal {
   private tab: CenterTab;
   private panels: Partial<Record<CenterTab, { el: HTMLElement; panel: LibraryPanel | DiscoveryPanel }>> = {};
   private tabs!: HTMLElement;
-  constructor(app: App, private plugin: QiaomuRssPlugin, tab: CenterTab) { super(app); this.tab = tab; }
+  constructor(app: App, private plugin: StocksRssPlugin, tab: CenterTab) { super(app); this.tab = tab; }
   onOpen() {
     this.modalEl.addClass('qrs-modal', 'qrs-center');
     const head = this.contentEl.createDiv('qrs-center-head');

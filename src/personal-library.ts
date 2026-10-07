@@ -16,7 +16,6 @@ export function registerSource(state: State, id: string, group: string) {
 }
 export function migrateLibrary(state: State) {
   for (const feed of state.subscriptions) registerSource(state, feed.id, feed.group);
-  for (const id of state.settings.followedPodcasts) registerSource(state, id, '播客');
   for (const path of state.settings.markdownFolders) registerSource(state, `@vault:${path}`, '');
   mergeDuplicateGroups(state);
   const valid = new Set(state.subscriptionGroups.map(g => g.id));
@@ -48,7 +47,6 @@ export function mergeDuplicateGroups(state: State) {
 export function personalSources(state: State): PersonalSource[] {
   const items: Omit<PersonalSource, 'groupId'>[] = [
     ...state.subscriptions.map(f => ({ id: f.id, name: f.name, kind: 'rss' as const, url: f.url, site: f.site, image: f.image, detail: f.error || t('library.cachedArticles', { n: f.entries.length }) })),
-    ...state.settings.followedPodcasts.map(id => ({ id, name: state.settings.podcastNames[id] || state.sources.find(s => s.id === id)?.name || id.replace(/^podscribe-/, ''), kind: 'podcast' as const, detail: t('library.kind.podcast') })),
     ...state.settings.markdownFolders.map(path => ({ id: `@vault:${path}`, name: path === '/' ? t('settings.wholeVault') : path.split('/').at(-1) || path, kind: 'vault' as const, detail: path })),
   ];
   return items.map(item => ({ ...item, name: state.sourceMeta[item.id]?.name || item.name, groupId: state.sourceMeta[item.id]?.groupId || '' }))

@@ -1,7 +1,7 @@
 const {execFileSync}=require('node:child_process');
 const ev=code=>{const out=execFileSync('obsidian',['vault=Qiaomu RSS QA','eval','code='+code.replace(/\n/g,' ')],{encoding:'utf8'}).trim();return out?JSON.parse(out.slice(3)):null;};
 ev(String.raw`(()=>{window.__channelsQA=null;void(async()=>{
-const p=app.plugins.plugins['qiaomu-ai-rss'];await p.openReader();const v=app.workspace.getLeavesOfType('qiaomu-ai-rss-reader')[0].view;
+const p=app.plugins.plugins['stocks-ai-rss'];await p.openReader();const v=app.workspace.getLeavesOfType('stocks-ai-rss-reader')[0].view;
 const originals={sessions:structuredClone(p.state.channelStates),last:p.state.settings.lastSource,source:v.source,bundle:v.bundle,api:p.api,sources:p.state.sources,mode:p.state.settings.defaultMode,cache:{...p.state.cache},readIds:[...p.state.readIds]};
 const results=[],check=(name,ok)=>{if(!ok)throw Error(name);results.push(name)},wait=ms=>new Promise(r=>setTimeout(r,ms));
 const make=(source,n)=>Array.from({length:65},(_,i)=>({id:source+'-'+i,sourceId:source,title:n+i,content:'<p>'+('Reading paragraph. '.repeat(50))+'</p>'.repeat(1)+Array.from({length:80},()=>'<p>More reading content '+('words '.repeat(30))+'</p>').join('')}));

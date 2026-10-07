@@ -1,5 +1,5 @@
 import { Component, Menu, Notice, setIcon } from 'obsidian';
-import type QiaomuRssPlugin from './main';
+import type StocksRssPlugin from './main';
 import { exportOpml } from './feeds';
 import { deleteGroup, ensureGroup, groupsInOrder, moveSources, personalSources, renameGroup, type PersonalSource } from './personal-library';
 import { SourceIcons } from './source-icons';
@@ -10,7 +10,7 @@ import { showSubscriptionMenu } from './subscription-menu';
 
 type KindFilter = 'all' | PersonalSource['kind'] | 'error';
 function kindLabel(kind: KindFilter): string {
-  return kind === 'all' ? t('common.all') : kind === 'rss' ? 'RSS' : kind === 'podcast' ? t('library.kind.podcast') : kind === 'vault' ? t('library.kind.vault') : t('library.kind.error');
+  return kind === 'all' ? t('common.all') : kind === 'rss' ? 'RSS' : kind === 'vault' ? t('library.kind.vault') : t('library.kind.error');
 }
 
 export function updatedLabel(ts: number, now = Date.now()) {
@@ -32,7 +32,7 @@ export class LibraryPanel extends Component {
   private query = '';
   private kind: KindFilter = 'all';
   private limit = 100;
-  constructor(private contentEl: HTMLElement, private plugin: QiaomuRssPlugin, private discover: () => void = () => { void plugin.openDiscovery(); }) { super(); this.icons = new SourceIcons(plugin); }
+  constructor(private contentEl: HTMLElement, private plugin: StocksRssPlugin, private discover: () => void = () => { void plugin.openDiscovery(); }) { super(); this.icons = new SourceIcons(plugin); }
   focusSearch() { this.search?.focus({ preventScroll: true }); }
   onload() {
     this.addChild(this.icons); this.contentEl.empty(); this.contentEl.addClass('qrs-discovery', 'qrs-library');
@@ -69,7 +69,6 @@ export class LibraryPanel extends Component {
   // The type prefix only earns its place when the list mixes types.
   private detail(item: PersonalSource) {
     const typed = this.kind === 'all' || this.kind === 'error';
-    if (item.kind === 'podcast') return t('library.kind.podcast');
     if (item.kind === 'vault') return typed ? `${t('library.localPrefix')}${item.detail}` : item.detail;
     const feed = this.feed(item.id); if (!feed) return item.detail;
     return feed.error || `${typed ? 'RSS · ' : ''}${t('library.articles', { n: feed.entries.length })}`;

@@ -1,7 +1,7 @@
 {
-  "name": "qiaomu-ai-rss",
-  "version": "0.26.2",
-  "description": "Read Qiaomu and personal RSS feeds, then add article links to your Daily Note.",
+  "name": "stocks-ai-rss",
+  "version": "1.0.0",
+  "description": "Read US & China stock-market RSS feeds in Obsidian, then add article links to your Daily Note.",
   "license": "GPL-3.0-only",
   "private": true,
   "scripts": {
@@ -9,9 +9,8 @@
     "build": "tsc --noEmit && node esbuild.config.mjs",
     "typecheck": "tsc --noEmit",
     "lint": "eslint src",
-    "test": "vitest run && node --test server/*.check.cjs",
-    "check": "npm run lint && npm run test && npm run build",
-    "test:live": "node scripts/live-api.mjs"
+    "test": "vitest run",
+    "check": "npm run lint && npm run test && npm run build"
   },
   "dependencies": {
     "dompurify": "^3.4.16",

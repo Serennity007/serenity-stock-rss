@@ -1,0 +1,24 @@
+{
+  "source": "stocks-ai-rss finance catalog",
+  "revision": 1,
+  "license": "CC0-1.0",
+  "generated_at": "2026-10-07",
+  "feeds": [
+    { "id": "cnbc-top", "title": "CNBC Top News", "feed_url": "https://search.cnbc.com/rs/search/combinedcms/view.xml?partnerId=wrss01&id=100003114", "site_url": "https://www.cnbc.com/", "description": "CNBC 全球财经头条：美股大盘、个股与公司新闻。", "category": "美股市场", "kind": "us", "language": "en" },
+    { "id": "cnbc-markets", "title": "CNBC Markets", "feed_url": "https://search.cnbc.com/rs/search/combinedcms/view.xml?partnerId=wrss01&id=20910258", "site_url": "https://www.cnbc.com/markets/", "description": "CNBC 市场版块：指数、期货、债市与大宗商品。", "category": "美股市场", "kind": "us", "language": "en" },
+    { "id": "cnbc-economy", "title": "CNBC Economy", "feed_url": "https://www.cnbc.com/id/10000664/device/rss/rss.html", "site_url": "https://www.cnbc.com/economy/", "description": "CNBC 经济版块：宏观政策、就业与通胀数据。", "category": "经济与宏观", "kind": "us", "language": "en" },
+    { "id": "cnbc-earnings", "title": "CNBC Earnings", "feed_url": "https://search.cnbc.com/rs/search/combinedcms/view.xml?partnerId=wrss01&id=15839069", "site_url": "https://www.cnbc.com/earnings/", "description": "CNBC 财报季：上市公司业绩与指引。", "category": "美股市场", "kind": "us", "language": "en" },
+    { "id": "marketwatch-top", "title": "MarketWatch Top Stories", "feed_url": "https://feeds.content.dowjones.io/public/rss/mw_topstories", "site_url": "https://www.marketwatch.com/", "description": "MarketWatch 头条：美股盘中动态与市场分析。", "category": "美股市场", "kind": "us", "language": "en" },
+    { "id": "wsj-markets", "title": "WSJ Markets", "feed_url": "https://feeds.a.dj.com/rss/RSSMarketsMain.xml", "site_url": "https://www.wsj.com/news/markets", "description": "华尔街日报市场版：全球市场深度报道。", "category": "美股市场", "kind": "us", "language": "en" },
+    { "id": "wsj-opinion", "title": "WSJ Opinion", "feed_url": "https://feeds.a.dj.com/rss/RSSOpinion.xml", "site_url": "https://www.wsj.com/news/opinion", "description": "华尔街日报评论版：政策与市场观点。", "category": "经济与宏观", "kind": "us", "language": "en" },
+    { "id": "seekingalpha-currents", "title": "Seeking Alpha Market Currents", "feed_url": "https://seekingalpha.com/market_currents.xml", "site_url": "https://seekingalpha.com/", "description": "Seeking Alpha 实时市场快讯与个股异动。", "category": "美股市场", "kind": "us", "language": "en" },
+    { "id": "fortune", "title": "Fortune", "feed_url": "https://fortune.com/feed/", "site_url": "https://fortune.com/", "description": "《财富》杂志：公司、商业与市场报道。", "category": "美股市场", "kind": "us", "language": "en" },
+    { "id": "fed-press", "title": "美联储新闻 (Federal Reserve)", "feed_url": "https://www.federalreserve.gov/feeds/press_all.xml", "site_url": "https://www.federalreserve.gov/", "description": "美联储官方新闻稿：FOMC 决议、利率与监管公告。", "category": "经济与宏观", "kind": "us", "language": "en" },
+    { "id": "sec-press", "title": "SEC Press Releases", "feed_url": "https://www.sec.gov/news/pressreleases.rss", "site_url": "https://www.sec.gov/", "description": "美国证监会官方新闻：监管执法与市场规则。", "category": "经济与宏观", "kind": "us", "language": "en" },
+    { "id": "wallstreetcn", "title": "华尔街见闻", "feed_url": "https://dedicated.wallstreetcn.com/rss.xml", "site_url": "https://wallstreetcn.com/", "description": "全球财经快讯与深度分析，覆盖A股、美股与宏观。", "category": "A股与中文财经", "kind": "cn", "language": "zh" },
+    { "id": "sina-finance", "title": "新浪财经", "feed_url": "https://rss.sina.com.cn/roll/finance/hot_roll.xml", "site_url": "https://finance.sina.com.cn/", "description": "新浪财经热点滚动：A股行情、政策与公司新闻。", "category": "A股与中文财经", "kind": "cn", "language": "zh" },
+    { "id": "tmtpost", "title": "钛媒体", "feed_url": "https://www.tmtpost.com/feed", "site_url": "https://www.tmtpost.com/", "description": "科技与资本市场报道，关注上市公司与产业动态。", "category": "A股与中文财经", "kind": "cn", "language": "zh" },
+    { "id": "awealthofcommonsense", "title": "A Wealth of Common Sense (Ben Carlson)", "feed_url": "https://awealthofcommonsense.com/feed/", "site_url": "https://awealthofcommonsense.com/", "description": "Ben Carlson 的投资博客：资产配置与市场常识。", "category": "财经博客", "kind": "blogs", "language": "en" },
+    { "id": "thereformedbroker", "title": "The Reformed Broker (Josh Brown)", "feed_url": "https://thereformedbroker.com/feed/", "site_url": "https://thereformedbroker.com/", "description": "Josh Brown 的市场观察：财富管理与投资文化。", "category": "财经博客", "kind": "blogs", "language": "en" }
+  ]
+}

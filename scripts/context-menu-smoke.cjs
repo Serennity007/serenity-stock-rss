@@ -2,12 +2,12 @@ const {execFileSync}=require('node:child_process');
 const fs=require('node:fs');
 const evaluate=code=>{const s=execFileSync('obsidian',['vault=Qiaomu RSS QA','eval','code='+code.replace(/\n/g,' ')],{encoding:'utf8'});return s.trim()?JSON.parse(s.slice(3)):null;};
 evaluate(String.raw`(()=>{window.__contextQA=null;void(async()=>{
-const p=app.plugins.plugins['qiaomu-ai-rss'],folder='Context QA '+Date.now(),results=[];
+const p=app.plugins.plugins['stocks-ai-rss'],folder='Context QA '+Date.now(),results=[];
 const check=(name,ok)=>{if(!ok)throw Error(name);results.push(name);};
 await app.vault.createFolder(folder);
 const a=await app.vault.create(folder+'/A.md','First note'),b=await app.vault.create(folder+'/B.md','Second note\n<!-- qrs-article:legacy -->\n');
 const oldSaved={...p.state.savedArticles},oldCache={...p.state.cache};
-await p.openReader();const reader=app.workspace.getLeavesOfType('qiaomu-ai-rss-reader')[0],v=reader.view,oldBundle=v.bundle;
+await p.openReader();const reader=app.workspace.getLeavesOfType('stocks-ai-rss-reader')[0],v=reader.view,oldBundle=v.bundle;
 try{
 const leaf=app.workspace.getLeaf('split','vertical');await leaf.openFile(a);await app.workspace.revealLeaf(leaf);
 await leaf.openFile(b);await app.workspace.revealLeaf(leaf);await new Promise(r=>setTimeout(r,600));
@@ -26,7 +26,7 @@ items.find(e=>e.textContent.includes('当前笔记：B')).click();
 await new Promise(r=>setTimeout(r,100));await p.dailyNoteWrite;
 let content=await app.vault.read(b);
 check('Selected excerpt and pending draft preserved',content.includes('Unsaved draft must survive')&&content.includes('First excerpt')&&!content.includes('Second excerpt'));
-check('Reader link and original link included',content.includes('obsidian://qiaomu-ai-rss?')&&content.includes('[原文]'));
+check('Reader link and original link included',content.includes('obsidian://stocks-ai-rss?')&&content.includes('[原文]'));
 check('Other note untouched',(await app.vault.read(a))==='First note');
 await p.appendToDailyNote(entry,'Second excerpt','original',b);
 content=await app.vault.read(b);
@@ -49,7 +49,7 @@ check('Popup daily action uses daily-note flow',(await app.vault.read(a)).includ
 check('New captures contain no internal marker',!(await app.vault.read(a)).includes('qrs-article:'));
 }finally{p.noteArticle=noteArticle;p.state.settings.selectionPopup=popupSetting;sel.removeAllRanges();}
 
-app.setting.open();app.setting.openTabById('qiaomu-ai-rss');
+app.setting.open();app.setting.openTabById('stocks-ai-rss');
 check('Service address removed from settings',!app.setting.activeTab.containerEl.textContent.includes('服务地址'));app.setting.close();
 window.__contextQA={results};
 }finally{

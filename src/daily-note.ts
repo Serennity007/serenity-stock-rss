@@ -37,7 +37,7 @@ export function dailyNotePath(settings: DailyNoteSettings, now: DateFormatter = 
 export interface CaptureOptions { vault?: string; article?: string; mode?: Mode; excerpt?: string }
 export function articleNoteUrl(options: CaptureOptions): string {
   const params = new URLSearchParams({ vault: options.vault || '', article: options.article || '', mode: options.mode || 'original' });
-  return `obsidian://qiaomu-ai-rss?${params.toString().replace(/\+/g, '%20')}`;
+  return `obsidian://stocks-ai-rss?${params.toString().replace(/\+/g, '%20')}`;
 }
 export function markdownText(text: string): string { return text.replace(/([\\`*_{}[\]()<>#+.!|~-])/g, '\\$1'); }
 export function dailyNoteLink(entry: Entry, options: CaptureOptions = {}): string {
@@ -48,7 +48,7 @@ export function dailyNoteLink(entry: Entry, options: CaptureOptions = {}): strin
   return `[${title}](<${link}>)` + (options.article && original ? ` · [原文](<${original}>)` : '');
 }
 export function repairArticleLinks(content: string): string {
-  return content.replace(/obsidian:\/\/qiaomu-ai-rss\?[^\s<>)]*/g, url => url.replace(/\+/g, '%20'));
+  return content.replace(/obsidian:\/\/stocks-ai-rss\?[^\s<>)]*/g, url => url.replace(/\+/g, '%20'));
 }
 export function cleanCaptureMarkers(content: string): string {
   return content.replace(/^[ \t]*<!-- qrs-article:[^\r\n]*?-->[ \t]*(?:\r?\n)?/gm, '');
@@ -61,7 +61,7 @@ export function appendDailyNoteLink(content: string, entry: Entry, options: Capt
   // Upgrade an existing capture's header without changing its title or reading-version link.
   const originalSuffix = title.slice(title.indexOf('>)') + 2);
   if (options.article && originalSuffix) {
-    content = content.replace(/^(\[[^\n]*?\]\(<(obsidian:\/\/qiaomu-ai-rss\?[^\n>]+)>\))(?! · \[原文\])/gm, (whole: string, header: string, url: string) => {
+    content = content.replace(/^(\[[^\n]*?\]\(<(obsidian:\/\/stocks-ai-rss\?[^\n>]+)>\))(?! · \[原文\])/gm, (whole: string, header: string, url: string) => {
       try { return new URL(url).searchParams.get('article') === options.article ? header + originalSuffix : whole; } catch { return whole; }
     });
   }

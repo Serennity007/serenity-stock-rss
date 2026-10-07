@@ -1,5 +1,5 @@
 import { Component, setIcon } from 'obsidian';
-import type QiaomuRssPlugin from './main';
+import type StocksRssPlugin from './main';
 import { safeUrl } from './model';
 export interface SourceMark { name: string; site?: string; url?: string; image?: string; kind?: string }
 export function faviconUrl(source: SourceMark): string | null {
@@ -16,7 +16,7 @@ export class SourceIcons extends Component {
   private generation = 0;
   private failed = new Set<string>();
   private pending = new WeakMap<Element, () => void>();
-  constructor(private plugin: QiaomuRssPlugin) { super(); }
+  constructor(private plugin: StocksRssPlugin) { super(); }
   clear() { this.generation++; this.observer?.disconnect(); this.observer = undefined; this.tasks = []; for (const url of this.urls) URL.revokeObjectURL(url); this.urls = []; }
   onunload() { this.clear(); }
   render(parent: HTMLElement, source: SourceMark) {

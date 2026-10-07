@@ -4,15 +4,15 @@ import { webcrypto } from 'node:crypto';
 import { initialState } from '../src/model';
 import { deleteGroup, ensureGroup, migrateLibrary, moveSources, personalSources, renameGroup } from '../src/personal-library';
 import { Subscriptions } from '../src/subscriptions';
-import { baseDiscovery, dedupeDiscovery, searchDiscovery, tidingsItems, tidingsSnapshot } from '../src/discovery-library';
+import { baseDiscovery, catalogItems, catalogSnapshot, dedupeDiscovery, searchDiscovery } from '../src/discovery-library';
 import { importUrl, readImportUrl } from '../src/import-source';
 import { requestUrl } from 'obsidian';
 import { parseFeed } from '../src/feeds';
 beforeAll(() => { Object.defineProperty(window.crypto, 'subtle', { value: webcrypto.subtle, configurable: true }); });
 describe('personal library migration and grouping', () => {
-  const legacy = () => initialState({ settings: { followedPodcasts: ['podscribe-test'], markdownFolders: ['Inbox', 'Notes/one.md'], lastSource: '@group:科技 / AI' }, subscriptions: [{ id: 'local:a', name: 'Example', url: 'https://example.org/rss', group: '科技 / AI' }] });
-  it('registers all three source types without changing curated sources and is idempotent', () => {
-    const state = legacy(); expect(personalSources(state)).toHaveLength(4); expect(state.sources).toEqual([]);
+  const legacy = () => initialState({ settings: { markdownFolders: ['Inbox', 'Notes/one.md'], lastSource: '@group:科技 / AI' }, subscriptions: [{ id: 'local:a', name: 'Example', url: 'https://example.org/rss', group: '科技 / AI' }] });
+  it('registers both source types and is idempotent', () => {
+    const state = legacy(); expect(personalSources(state)).toHaveLength(3);
     const before = JSON.stringify(state); migrateLibrary(state); expect(JSON.stringify(state)).toBe(before);
     expect(state.settings.lastSource).toBe(`@group:${state.sourceMeta['local:a'].groupId}`);
     expect(initialState(JSON.parse(before))).toEqual(state);
@@ -25,23 +25,24 @@ describe('personal library migration and grouping', () => {
   it('moves mixed sources together, deletes only the group, and never reassigns ungrouped items on reload', () => {
     const state = legacy(), id = ensureGroup(state, '一起读'), ids = personalSources(state).map(s => s.id);
     moveSources(state, ids, id); expect(personalSources(state).every(s => s.groupId === id)).toBe(true);
-    deleteGroup(state, id); const loaded = initialState(state); expect(personalSources(loaded)).toHaveLength(4); expect(personalSources(loaded).every(s => s.groupId === '')).toBe(true);
+    deleteGroup(state, id); const loaded = initialState(state); expect(personalSources(loaded)).toHaveLength(3); expect(personalSources(loaded).every(s => s.groupId === '')).toBe(true);
     expect(loaded.settings.markdownFolders).toEqual(['Inbox', 'Notes/one.md']);
   });
   it('rejects future schema instead of silently resetting data', () => { expect(() => initialState({ libraryVersion: 2 })).toThrow(); });
-  it('imports 718 sources without network requests or overwriting existing choices', async () => {
+  it('imports the bundled finance catalog without network requests or overwriting existing choices', async () => {
     const state = initialState(null), transport = vi.fn(), service = new Subscriptions(() => state, async () => {}, transport);
-    const feeds = tidingsItems(tidingsSnapshot).map(f => ({ url: f.url!, name: f.name, group: f.group }));
-    expect(await service.import(feeds)).toBe(718); expect(personalSources(state)).toHaveLength(718);
+    const feeds = catalogItems(catalogSnapshot).map(f => ({ url: f.url!, name: f.name, group: f.group }));
+    expect(feeds.length).toBeGreaterThan(10);
+    expect(await service.import(feeds)).toBe(feeds.length); expect(personalSources(state)).toHaveLength(feeds.length);
     const first = state.subscriptions[0]; await service.edit(first.id, 'My name', '自定义');
     expect(await service.import(feeds)).toBe(0); expect(first.name).toBe('My name'); expect(first.group).toBe('自定义'); expect(transport).not.toHaveBeenCalled();
   });
 });
 describe('discovery catalog and online import', () => {
-  it('searches metadata across directories and deduplicates URL fragments', () => {
-    const items = baseDiscovery(); expect(searchDiscovery(items, 'Anthropic').length).toBeGreaterThan(0); expect(searchDiscovery(items, 'All-In').some(f => f.kind === 'podcast')).toBe(true);
+  it('searches metadata across the finance catalog and deduplicates URL fragments', () => {
+    const items = baseDiscovery(); expect(searchDiscovery(items, 'CNBC').length).toBeGreaterThan(0); expect(searchDiscovery(items, '华尔街见闻').some(f => f.kind === 'cn')).toBe(true);
     const first = items.find(f => f.url)!; expect(dedupeDiscovery([first, { ...first, id: 'duplicate', url: `${first.url}#x` }])).toHaveLength(1);
-    expect(tidingsItems(tidingsSnapshot).every(f => !f.recommended)).toBe(true);
+    expect(catalogItems(catalogSnapshot).every(f => !f.recommended)).toBe(true);
   });
   it('recognizes GitHub file links without leaking credentials', () => {
     expect(importUrl('https://github.com/u/r/blob/main/feeds.opml')).toBe('https://raw.githubusercontent.com/u/r/main/feeds.opml');
@@ -75,7 +76,8 @@ describe('group aliases and catalog dedupe', () => {
   it('folds Podcasts into 播客 and keeps sources', () => {
     const state = initialState();
     state.subscriptionGroups = [{ id: 'a', name: '播客', order: 0 }, { id: 'b', name: 'Podcasts', order: 1 }];
-    state.settings.followedPodcasts = ['p1', 'p2']; state.sourceMeta = { p1: { groupId: 'a', name: '', order: 0 }, p2: { groupId: 'b', name: '', order: 1 } };
+    state.subscriptions = [{ id: 'local:p1', name: 'P1', url: 'https://example.org/p1', group: '播客', entries: [], updatedAt: 0, lastAttemptAt: 0, error: '' }, { id: 'local:p2', name: 'P2', url: 'https://example.org/p2', group: 'Podcasts', entries: [], updatedAt: 0, lastAttemptAt: 0, error: '' }];
+    state.sourceMeta = { 'local:p1': { groupId: 'a', name: '', order: 0 }, 'local:p2': { groupId: 'b', name: '', order: 1 } };
     state.collapsedGroups = ['b']; state.settings.lastSource = '@group:b';
     migrateLibrary(state);
     expect(state.subscriptionGroups.map(g => g.name)).toEqual(['播客']);
@@ -85,26 +87,25 @@ describe('group aliases and catalog dedupe', () => {
   });
   it('renaming onto an existing group merges', () => {
     const state = initialState(); const a = ensureGroup(state, 'AI'), b = ensureGroup(state, '工具');
-    state.settings.followedPodcasts = ['p1']; state.sourceMeta = { p1: { groupId: b, name: '', order: 0 } };
+    state.subscriptions = [{ id: 'local:f1', name: 'F1', url: 'https://example.org/f1', group: '工具', entries: [], updatedAt: 0, lastAttemptAt: 0, error: '' }];
+    state.sourceMeta = { 'local:f1': { groupId: b, name: '', order: 0 } };
     expect(renameGroup(state, b, 'ai')).toBe(a);
     expect(state.subscriptionGroups).toHaveLength(1); expect(personalSources(state)[0].groupId).toBe(a);
   });
-  it('merges http/https feed variants, same-name same-site blogs and podcast mirrors', () => {
+  it('merges http/https feed variants and same-name same-site blogs', () => {
     const base = { description: '', group: '', language: '', kind: 'blogs' as const };
     const items = dedupeDiscovery([
-      { ...base, id: '1', name: '云风的 BLOG', url: 'https://blog.codingnow.com/atom.xml', site: 'https://blog.codingnow.com/', provenance: 'A' },
-      { ...base, id: '2', name: '云风的 BLOG', url: 'http://blog.codingnow.com/atom.xml', site: 'https://blog.codingnow.com/', provenance: 'B' },
-      { ...base, id: '3', name: '阮一峰的网络日志', url: 'https://www.ruanyifeng.com/blog/atom.xml', site: 'https://www.ruanyifeng.com/blog/', provenance: 'A' },
-      { ...base, id: '4', name: '阮一峰的网络日志', url: 'http://feeds.feedburner.com/ruanyifeng', site: 'https://www.ruanyifeng.com/blog/', provenance: 'B' },
-      { ...base, id: 'p', podcastId: 'podscribe-acquired', name: 'Acquired', kind: 'podcast', provenance: '编辑推荐' },
-      { ...base, id: 'y', name: 'Acquired', kind: 'more', url: 'https://www.youtube.com/feeds/videos.xml?channel_id=x', site: 'https://www.youtube.com/channel/x', provenance: 'Tidings' },
+      { ...base, id: '1', name: 'Blog One', url: 'https://blog.one.example/atom.xml', site: 'https://blog.one.example/', provenance: 'A' },
+      { ...base, id: '2', name: 'Blog One', url: 'http://blog.one.example/atom.xml', site: 'https://blog.one.example/', provenance: 'B' },
+      { ...base, id: '3', name: 'Blog Two', url: 'https://www.blog-two.example/feed', site: 'https://www.blog-two.example/', provenance: 'A' },
+      { ...base, id: '4', name: 'Blog Two', url: 'https://feeds.feedburner.com/blog-two', site: 'https://www.blog-two.example/', provenance: 'B' },
       { ...base, id: 'k1', name: 'Kevin Blog', url: 'https://a.example/feed', site: 'https://a.example/', provenance: 'A' },
       { ...base, id: 'k2', name: 'Kevin Blog', url: 'https://b.example/feed', site: 'https://b.example/', provenance: 'B' },
     ]);
-    expect(items.map(i => i.id)).toEqual(['1', '3', 'p', 'k1', 'k2']);
+    expect(items.map(i => i.id)).toEqual(['1', '3', 'k1', 'k2']);
     expect(items[0].provenance).toBe('A · B');
   });
-  it('the combined blogs tab has no duplicate feeds', () => {
+  it('the finance catalog has no duplicate feeds', () => {
     const all = baseDiscovery(); const keys = all.map(f => f.url ? new URL(f.url).href.replace(/^http:/, 'https:') : f.id);
     expect(new Set(keys).size).toBe(keys.length);
   });

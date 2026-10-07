@@ -1,9 +1,9 @@
 const {execFileSync}=require('node:child_process');
 const ev=code=>{const output=execFileSync('obsidian',['vault=Qiaomu RSS QA','eval','code='+code.replace(/\n/g,' ')],{encoding:'utf8'}).trim();return output.startsWith('=> ')?JSON.parse(output.slice(3)):null;};
 ev(`(()=>{window.__searchQA=null;void(async()=>{
-const p=app.plugins.plugins['qiaomu-ai-rss'],results=[];
+const p=app.plugins.plugins['stocks-ai-rss'],results=[];
 const check=(name,ok)=>{if(!ok)throw Error(name);results.push(name)};
-await p.openReader();const v=app.workspace.getLeavesOfType('qiaomu-ai-rss-reader')[0].view;
+await p.openReader();const v=app.workspace.getLeavesOfType('stocks-ai-rss-reader')[0].view;
 const old=v.query;
 const test=(input,name)=>{const button=input.parentElement.querySelector('.qrs-search-clear');check(name+' clear available',!!button);input.value='zz-no-result';input.dispatchEvent(new Event('input',{bubbles:true}));check(name+' visible',getComputedStyle(button).display!=='none');button.click();check(name+' clears and keeps focus',input.value===''&&input.ownerDocument.activeElement===input);check(name+' hidden when empty',getComputedStyle(button).display==='none');check(name+' no tooltip',!button.hasAttribute('title')&&!button.hasAttribute('aria-label'));};
 v.toggleSearch(true);test(v.searchInput,'Article');v.searchInput.value=old;v.searchInput.dispatchEvent(new Event('input',{bubbles:true}));v.toggleSearch(!!old);

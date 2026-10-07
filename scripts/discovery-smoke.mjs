@@ -23,9 +23,9 @@ function run(code) {
 function assert(condition, message) { if (!condition) throw new Error(message); }
 const results = [];
 function record(name, value) { assert(value, name); results.push({ name, passed: true }); }
-const state = 'app.plugins.plugins["qiaomu-ai-rss"].state';
-const plugin = 'app.plugins.plugins["qiaomu-ai-rss"]';
-const view = 'app.workspace.getLeavesOfType("qiaomu-ai-rss-reader")[0].view';
+const state = 'app.plugins.plugins["stocks-ai-rss"].state';
+const plugin = 'app.plugins.plugins["stocks-ai-rss"]';
+const view = 'app.workspace.getLeavesOfType("stocks-ai-rss-reader")[0].view';
 const delay = 'await new Promise(resolve=>setTimeout(resolve,200))';
 const settled = `for(let i=0;i<110&&document.querySelector('.qrs-reader')?.getAttribute('aria-busy')==='true';i++){${delay};}`;
 const closeModals = "for(const b of document.querySelectorAll('.modal-header-button:has(.lucide-x)'))b.click();";
@@ -39,7 +39,7 @@ const before=run(`return JSON.stringify(${state}.subscriptions.map(f=>f.url));`)
 record('Subscribe to an independent blog and stage it in the reader',run(`const button=document.querySelector('.qrs-discovery-card button');if(!button.disabled)button.click();for(let i=0;i<110&&document.querySelector('.qrs-discovery-card button').textContent==='添加中…';i++){${delay};}const feed=${state}.subscriptions.find(f=>f.url==='https://reorx.com/feed.xml');return JSON.stringify(document.querySelector('.qrs-discovery-card button').textContent==='已订阅'&&feed?.entries.length>0&&${state}.settings.lastSource===feed.id&&${view}.source===feed.id&&${view}.entries.length===feed.entries.length);`));
 record('Search has clear empty state',run(`const q=document.querySelector('.qrs-discovery-search');q.value='impossible-blog-987654321';q.dispatchEvent(new Event('input'));return JSON.stringify(document.querySelectorAll('.qrs-discovery-card').length===0&&document.querySelector('.qrs-discovery-grid .qrs-empty').textContent.includes('没有找到'));`));
 record('Start reading shows local feeds and article content',run(`[...document.querySelectorAll('.qrs-discovery-actions button')].find(b=>b.textContent==='开始阅读').click();${delay};document.querySelector('.qrs-entry').click();${delay};return JSON.stringify((document.querySelector('.qrs-prose')?.textContent.length||0)>20&&${view}.bundle.entry.origin==='local');`));
-record('Subscription center keeps both tabs in one dialog',run(`${plugin}.manageSubscriptions();${delay};const c=document.querySelector('.qrs-center');c.querySelector('[data-tab=discover]').click();${delay};return JSON.stringify(document.querySelectorAll('.qrs-center').length===1&&!!c.querySelector('.qrs-discovery-card')&&!app.workspace.getLeavesOfType('qiaomu-ai-rss-discovery').length);`));
+record('Subscription center keeps both tabs in one dialog',run(`${plugin}.manageSubscriptions();${delay};const c=document.querySelector('.qrs-center');c.querySelector('[data-tab=discover]').click();${delay};return JSON.stringify(document.querySelectorAll('.qrs-center').length===1&&!!c.querySelector('.qrs-discovery-card')&&!app.workspace.getLeavesOfType('stocks-ai-rss-discovery').length);`));
 record('Search input uses an inset focus ring within scroll bounds',run(`const input=document.querySelector('.qrs-center .qrs-discovery-search');input.focus();const rect=input.getBoundingClientRect(),container=input.closest('.qrs-center-panel').getBoundingClientRect();${plugin}.center.close();return JSON.stringify(rect.left>=container.left&&rect.top>=container.top);`));
 run(`for(const feed of [...${state}.subscriptions])if(!${JSON.stringify(before)}.includes(feed.url))await ${plugin}.subscriptions.remove(feed.id);${plugin}.refreshDiscovery();return JSON.stringify(true);`);
 mkdirSync('artifacts',{recursive:true});writeFileSync('artifacts/discovery-smoke.json',JSON.stringify({checkedAt:new Date().toISOString(),vault,results},null,2));console.log(JSON.stringify(results,null,2));

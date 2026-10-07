@@ -1,10 +1,10 @@
 {
-  "id": "qiaomu-ai-rss",
-  "name": "Qiaomu AI RSS",
-  "version": "0.26.2",
+  "id": "stocks-ai-rss",
+  "name": "Stocks AI RSS",
+  "version": "1.0.0",
   "minAppVersion": "1.13.0",
-  "description": "Read Qiaomu and personal RSS feeds, then add article links to your Daily Note.",
-  "author": "向阳乔木",
-  "authorUrl": "https://github.com/joeseesun",
+  "description": "Read US & China stock-market RSS feeds in Obsidian, then add article links to your Daily Note.",
+  "author": "Pasteliangzhengtao",
+  "authorUrl": "https://github.com/Serennity007",
   "isDesktopOnly": false
 }

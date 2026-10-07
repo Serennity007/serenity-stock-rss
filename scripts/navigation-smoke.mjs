@@ -7,11 +7,11 @@ const evaluate = code => {
   return JSON.parse(output.slice(3));
 };
 for (let i=0;i<60;i++) {
-  if(evaluate('JSON.stringify(!!app.plugins.plugins["qiaomu-ai-rss"]?.fonts)')) break;
+  if(evaluate('JSON.stringify(!!app.plugins.plugins["stocks-ai-rss"]?.fonts)')) break;
   Atomics.wait(new Int32Array(new SharedArrayBuffer(4)),0,0,500);
 }
 evaluate(`(()=>{window.__qrsNavigationQA=null;void(async()=>{
-const p=app.plugins.plugins['qiaomu-ai-rss'],v=app.workspace.getLeavesOfType('qiaomu-ai-rss-reader')[0].view;
+const p=app.plugins.plugins['stocks-ai-rss'],v=app.workspace.getLeavesOfType('stocks-ai-rss-reader')[0].view;
 const api=p.api, persist=p.persist,entries=v.entries,filter=v.filter,source=v.source,query=v.query;
 const pending=new Map(),results=[];
 const check=(name,ok)=>{if(!ok)throw Error(name);results.push(name);};

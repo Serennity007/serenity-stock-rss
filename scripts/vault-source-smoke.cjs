@@ -5,7 +5,7 @@ function evaluate(code) {
   return out.trim()?JSON.parse(out.slice(3)):null;
 }
 evaluate(String.raw`(()=>{window.__vaultQA=null;void(async()=>{
-const p=app.plugins.plugins['qiaomu-ai-rss'],folder='RSS folder QA 010';
+const p=app.plugins.plugins['stocks-ai-rss'],folder='RSS folder QA 010';
 if(app.vault.getAbstractFileByPath(folder))throw Error('QA fixture already exists');
 const original={...p.state.settings,markdownFolders:[...p.state.settings.markdownFolders]},api=p.api;
 const results=[],check=(name,ok)=>{if(!ok)throw Error(name);results.push(name);};
@@ -14,7 +14,7 @@ await app.vault.create(folder+'/clip.md','---\ntitle: Local clipping\nsource: ht
 await app.vault.create(folder+'/nested/second.md','Second local article');
 await new Promise(r=>setTimeout(r,700));
 try {
-app.setting.open();app.setting.openTabById('qiaomu-ai-rss');
+app.setting.open();app.setting.openTabById('stocks-ai-rss');
 const tab=app.setting.activeTab,doc=tab.containerEl.ownerDocument;
 const row=name=>[...tab.containerEl.querySelectorAll('.setting-item')].find(el=>el.querySelector('.setting-item-name')?.textContent===name);
 check('Popup is disabled by default',p.state.settings.selectionPopup===false);
@@ -34,7 +34,7 @@ await new Promise(r=>setTimeout(r,200));
 const item=[...prompt.querySelectorAll('.suggestion-item')].find(el=>el.textContent.trim()===folder);
 check('Typeahead finds vault folder',!!item);item.click();
 await new Promise(r=>setTimeout(r,200));app.setting.close();
-const v=app.workspace.getLeavesOfType('qiaomu-ai-rss-reader')[0].view;
+const v=app.workspace.getLeavesOfType('stocks-ai-rss-reader')[0].view;
 check('Folder selection immediately activates reader source',v.source==='@vault:'+folder);
 p.api=()=>{throw Error('Vault source tried network API');};
 await v.loadEntries();

@@ -6,7 +6,7 @@ const cli=(...args)=>execFileSync('obsidian',[`vault=${vault}`,...args],{encodin
 const ev=code=>{const out=cli('eval','code='+code.replace(/\n/g,' '));return JSON.parse(out.slice(out.indexOf('=> ')+3));};
 cli('dev:cdp','method=Emulation.clearDeviceMetricsOverride','params={}');
 ev(`(()=>{window.__libraryQA=null;void(async()=>{
-const p=app.plugins.plugins['qiaomu-ai-rss'];if(app.vault.getName()!==${JSON.stringify(vault)})throw Error('Wrong vault');
+const p=app.plugins.plugins['stocks-ai-rss'];if(app.vault.getName()!==${JSON.stringify(vault)})throw Error('Wrong vault');
 const original=structuredClone(p.state),api=p.api,results=[],folder='Library QA '+Date.now();
 const check=(name,ok)=>{if(!ok)throw Error(name);results.push(name);window.__libraryQAStep=name;};
 const wait=ms=>new Promise(r=>setTimeout(r,ms));
@@ -17,7 +17,7 @@ const input=(el,value)=>{el.value=value;el.dispatchEvent(new Event('input',{bubb
 try{
  p.state.settings.remoteImages=false;p.state.collapsedGroups=[];
  await p.openDiscovery();await wait(200);const d={contentEl:p.center.panels.discover.el};
- check('Discovery opens in the center dialog, not a tab',!!document.querySelector('.qrs-center')&&!app.workspace.getLeavesOfType('qiaomu-ai-rss-discovery').length);
+ check('Discovery opens in the center dialog, not a tab',!!document.querySelector('.qrs-center')&&!app.workspace.getLeavesOfType('stocks-ai-rss-discovery').length);
  click(d.contentEl,'返回推荐');check('Discovery starts with six mixed recommendations',d.contentEl.querySelectorAll('.qrs-discovery-card').length===6);
  check('Recommended plus three discovery types',d.contentEl.querySelectorAll('[data-collection]').length===4);
  d.contentEl.querySelector('[data-collection=blogs]').click();
@@ -38,7 +38,7 @@ try{
  await p.followPodcast('podscribe-library-qa','QA Podcast',false);p.api=api;
  p.manageSubscriptions();await wait(300);const lib=p.center.panels.library.el;
  check('Library page contains RSS, podcast, and local folder',lib.textContent.includes('QA One')&&lib.textContent.includes('QA Podcast')&&lib.textContent.includes(folder));
- check('Library tab shares the dialog with discovery',document.querySelectorAll('.qrs-center').length===1&&!lib.classList.contains('qrs-hidden')&&d.contentEl.classList.contains('qrs-hidden')&&!app.workspace.getLeavesOfType('qiaomu-ai-rss-library').length);
+ check('Library tab shares the dialog with discovery',document.querySelectorAll('.qrs-center').length===1&&!lib.classList.contains('qrs-hidden')&&d.contentEl.classList.contains('qrs-hidden')&&!app.workspace.getLeavesOfType('stocks-ai-rss-library').length);
  lib.querySelector('.qrs-library-add').click();await wait(50);[...document.querySelectorAll('.menu-item')].find(e=>e.textContent.includes('新建分组')).click();input(modal().querySelector('input'),'QA Mixed');click(modal(),'保存');await until(()=>p.state.subscriptionGroups.some(g=>g.name==='QA Mixed'));await wait(100);
  const group=p.state.subscriptionGroups.find(g=>g.name==='QA Mixed');
  const manager=lib;
@@ -53,7 +53,7 @@ try{
  check('Group rename keeps stable source membership',Object.values(p.state.sourceMeta).filter(m=>m.groupId===group.id).length===3);
  [...document.querySelectorAll('.qrs-group-header')].find(e=>e.textContent.includes('QA Renamed')).querySelector('[data-qrs-label]').click();await wait(50);menuItem('删除分组').click();click(modal(),'确定');await until(()=>!p.state.subscriptionGroups.some(g=>g.id===group.id));
  check('Deleting group keeps all sources and actual files',p.state.settings.followedPodcasts.includes('podscribe-library-qa')&&p.state.settings.markdownFolders.includes(folder)&&!!app.vault.getAbstractFileByPath(folder+'/note.md'));
- check('Library tab label carries no duplicate count',document.querySelector('.qrs-center [data-tab=library]').textContent==='订阅管理');p.center.close();await p.readSubscriptions();const v=app.workspace.getLeavesOfType('qiaomu-ai-rss-reader')[0].view;
+ check('Library tab label carries no duplicate count',document.querySelector('.qrs-center [data-tab=library]').textContent==='订阅管理');p.center.close();await p.readSubscriptions();const v=app.workspace.getLeavesOfType('stocks-ai-rss-reader')[0].view;
  
  check('Personal reader exposes podcast and folder navigation',v.contentEl.querySelector('.qrs-personal-sources').textContent.includes('QA Podcast')&&v.contentEl.querySelector('.qrs-personal-sources').textContent.includes(folder));
  v.pickChannel();await wait(100);check('Picker groups Qiaomu picks and my subscriptions',[...document.querySelectorAll('.qrs-channel-section')].map(e=>e.textContent).join('|')==='乔木精选|我的订阅'&&!!document.querySelector('[data-channel-id="@qiaomu:微信公众号"]'));

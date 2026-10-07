@@ -1,7 +1,9 @@
 # Contributing
 
-Use feature branches and pull requests. Run `npm ci` then `npm run check`. For changes to the API client, also run the read-only `npm run test:live` against the configured service. Test UI changes in a separate Obsidian vault, including narrow panes, light/dark themes, offline fallback, list thumbnails, and repeated Daily Note actions.
+Stocks AI RSS is a community fork of [Qiaomu AI RSS](https://github.com/joeseesun/qiaomu-ai-rss) (GPL-3.0-only). Contributions to the finance-specific parts are welcome: use feature branches and pull requests. Run `npm ci` then `npm run check` (lint + tests + build). Test UI changes in a separate Obsidian vault, including narrow panes, light/dark themes, offline behaviour, list thumbnails, and repeated Daily Note actions.
 
-Keep runtime code independent of Node.js/Electron so mobile support remains possible. Never execute remote scripts, render external Markdown through executable plugin processors, upload vault content, or bundle credentials. Keep network/account/payment disclosures up to date.
+To add or fix a feed in the bundled catalog, edit `src/data/finance-feeds.json` and verify the feed returns XML over HTTPS before opening a PR. Feeds that only work through a self-hosted RSSHub belong in the README list, not the catalog.
 
-For a release, update `package.json`, `package-lock.json`, `manifest.json` and `versions.json` together. Merge a reviewed feature branch, then create the version tag without a `v` prefix and attach `main.js`, `manifest.json`, and `styles.css` to the release. Keep changes and known limits in CHANGELOG.md.
+Keep runtime code independent of Node.js/Electron so mobile support remains possible. Never execute remote scripts, render external Markdown through executable plugin processors, or upload vault content.
+
+For a release, update `package.json`, `package-lock.json`, `manifest.json` and `versions.json` together, then create the version tag without a `v` prefix — CI attaches `main.js`, `manifest.json`, and `styles.css` to a draft release.

@@ -1,20 +1,10 @@
 // @vitest-environment jsdom
 import { describe, expect, it, vi } from 'vitest';
-import { RssApi } from '../src/api';
 import { AudioDock, audioUrl, bilibiliEmbedUrl, pauseVideos, renderMedia, stopMedia, youtubeEmbedUrl } from '../src/media';
-import { initialState, type Entry } from '../src/model';
+import { type Entry } from '../src/model';
 
 const entry: Entry = { id: 'episode', sourceId: 'podcast', title: 'Episode' };
 describe('media data and source safety', () => {
-  it('retains remote audio through API parsing and persisted state', async () => {
-    const audio = { url: 'https://media.example/episode.m4a', type: 'audio/mp4' };
-    const transport = vi.fn(async () => ({ status: 200, text: JSON.stringify({ entries: [{ ...entry, audio }], hasMore: false }) }));
-    const result = await new RssApi('https://rss.qiaomu.ai', transport).entries('podcast');
-    expect(result.entries[0].audio).toEqual(audio);
-    expect(transport.mock.calls[0][0]).not.toContain('ready=rewrite');
-    const state = initialState({ entries: result.entries });
-    expect(initialState(JSON.parse(JSON.stringify(state))).entries[0].audio).toEqual(audio);
-  });
   it('accepts only HTTPS audio with audio MIME and no credentials', () => {
     expect(audioUrl({ ...entry, audio: { url: 'https://media.example/a.mp3', type: 'audio/mpeg' } })).toBe('https://media.example/a.mp3');
     for (const url of ['javascript:alert(1)', 'http://media.example/a.mp3', 'https://user:pass@media.example/a.mp3']) {
