@@ -402,7 +402,7 @@ class RssSettings extends PluginSettingTab {
     const buckets: Record<string, SettingDefinitionItem[]> = {
       reading: [definitions[0], definitions[4]],
       sources: [definitions[2], definitions[1]],
-      excerpt: [definitions[3]],
+      excerpt: [definitions[3], definitions[6]],
       about: [definitions[5], ...([
         [t('about.reportBug'), t('about.reportBug.desc'), 'https://github.com/Serennity007/stocks-ai-rss/issues/new'],
         [t('about.guide'), t('about.guide.desc'), 'https://github.com/Serennity007/stocks-ai-rss#readme'],

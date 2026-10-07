@@ -97,7 +97,7 @@ export class LibraryPanel extends Component {
     this.kinds.empty();
     const useful = new Set(all.map(item => item.kind)).size > 1 || all.some(item => !!this.feed(item.id)?.error);
     this.kinds.toggleClass('qrs-hidden', !useful); if (!useful) { this.kind = 'all'; return; }
-    for (const kind of ['all', 'rss', 'podcast', 'vault', 'error'] as KindFilter[]) {
+    for (const kind of ['all', 'rss', 'vault', 'error'] as KindFilter[]) {
       const count = kind === 'all' ? all.length : all.filter(item => kind === 'error' ? !!this.feed(item.id)?.error : item.kind === kind).length;
       if (kind !== 'all' && !count) { if (this.kind === kind) this.kind = 'all'; continue; }
       const button = this.kinds.createEl('button', { text: kindLabel(kind), attr: { 'aria-pressed': String(this.kind === kind), 'data-kind': kind } });

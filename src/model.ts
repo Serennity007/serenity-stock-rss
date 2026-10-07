@@ -30,11 +30,6 @@ export const entrySchema = z.object({
 export type Entry = z.infer<typeof entrySchema>;
 export const sourceSchema = z.object({ id: z.string(), name: z.string(), category: optionalText, siteUrl: optionalText, enabled: z.boolean().optional() });
 export type Source = z.infer<typeof sourceSchema>;
-export function podcastDefaultMode(entry: Entry, sources: Source[], followedPodcasts: string[]): Mode | null {
-  if (entry.podcastSlug) return 'original';
-  return sources.some(source => source.id === entry.sourceId && source.category === 'podcast') || followedPodcasts.includes(entry.sourceId)
-    ? 'rewrite' : null;
-}
 export const bundleSchema = z.object({ entry: entrySchema, rewrite: rewriteSchema.nullable(), translation: translationSchema.nullable(), fetchedAt: z.number() });
 export type Bundle = z.infer<typeof bundleSchema>;
 export const pageSchema = z.object({ entries: z.array(entrySchema), hasMore: z.boolean().optional(), nextCursor: z.string().nullish() });
