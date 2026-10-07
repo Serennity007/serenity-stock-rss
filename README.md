@@ -1,3 +1,5 @@
+**[中文](README.md) | [English](README.en.md) | [日本語](README.ja.md)**
+
 <div align="center">
 
 # 📈 Stocks AI RSS
@@ -8,6 +10,7 @@
 [![License: GPL-3.0](https://img.shields.io/badge/License-GPL--3.0--only-blue.svg)](LICENSE)
 ![Obsidian](https://img.shields.io/badge/Obsidian-%E2%89%A51.13.0-purple?logo=obsidian)
 [![Upstream: Qiaomu AI RSS](https://img.shields.io/badge/fork%20of-Qiaomu%20AI%20RSS-orange)](https://github.com/joeseesun/qiaomu-ai-rss)
+![语言](https://img.shields.io/badge/%E8%AF%AD%E8%A8%80-%E4%B8%AD%E6%96%87%20%7C%20EN%20%7C%20JA-orange)
 
 *免费 · 开源 · 无账号 · 纯本地*
 
