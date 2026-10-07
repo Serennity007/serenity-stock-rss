@@ -68,7 +68,7 @@ Two auxiliary collections round it out: **Chinese finance** (华尔街见闻, Si
 US equities anchor the market; AI and semiconductors are the defining industrial narrative of this cycle (and each other's supply chain); gold and BTC are twin mirrors of fiat confidence. Layered with official macro sources, they form a self-consistent research surface. Chinese sources stay as an auxiliary collection because high-quality Chinese content rarely offers RSS.
 
 **Will the catalog be updated?**
-Yes. It's a standalone data file ([finance-feeds.json](src/data/finance-feeds.json), CC0). To add or fix a feed, PR that file with availability verification; a same-named JSON dropped into the plugin folder overrides the bundled catalog.
+Yes. The bundled catalog is a standalone data file ([finance-feeds.json](src/data/finance-feeds.json), CC0). To add or fix a feed, PR that file with availability verification. At runtime you can also override the bundled catalog by dropping a `finance-catalog.json` into the plugin folder (`.obsidian/plugins/stocks-ai-rss/`): the file must match the catalog schema, contain at least one feed, and carry a newer `generated_at` than the bundled snapshot (which uses `YYYY-MM-DD`, e.g. `2026-10-07`; `revision` is compared when `generated_at` is absent). A file that fails schema validation or is not newer is ignored.
 
 **Is my data safe?**
 The plugin has no server of its own. Subscriptions are the feed URLs you add; articles live under `.obsidian/plugins/stocks-ai-rss/` in your vault. Uninstalling never touches your saved notes.

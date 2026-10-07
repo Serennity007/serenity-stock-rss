@@ -28,6 +28,94 @@ describe('personal library migration and grouping', () => {
     deleteGroup(state, id); const loaded = initialState(state); expect(personalSources(loaded)).toHaveLength(3); expect(personalSources(loaded).every(s => s.groupId === '')).toBe(true);
     expect(loaded.settings.markdownFolders).toEqual(['Inbox', 'Notes/one.md']);
   });
+  it('folds pre-1.1 category names into the renamed groups on load', () => {
+    const state = initialState({
+      subscriptionGroups: [{ id: 'g1', name: '美股与全球', order: 0 }, { id: 'g2', name: 'A股与中文财经', order: 1 }],
+      subscriptions: [
+        { id: 'local:a', name: 'A', url: 'https://example.org/a', group: '美股与全球', entries: [], updatedAt: 0, lastAttemptAt: 0, error: '' },
+        { id: 'local:b', name: 'B', url: 'https://example.org/b', group: 'A股与中文财经', entries: [], updatedAt: 0, lastAttemptAt: 0, error: '' },
+      ],
+      sourceMeta: { 'local:a': { groupId: 'g1', name: '', order: 0 }, 'local:b': { groupId: 'g2', name: '', order: 1 } },
+    });
+    migrateLibrary(state);
+    expect(state.subscriptionGroups.map(g => g.name)).toEqual(['美股市场', '中文财经']);
+    expect(state.subscriptions.map(f => f.group)).toEqual(['美股市场', '中文财经']);
+    expect(ensureGroup(state, '美股与全球')).toBe(state.sourceMeta['local:a'].groupId);
+  });
+  it('resolves legacy-name lastSource to the merged group ID for all pre-1.1 category names', () => {
+    const feed = (id: string, group: string) => ({ id, name: id, url: `https://example.org/${id}`, group, entries: [], updatedAt: 0, lastAttemptAt: 0, error: '' });
+    const cases: [string, string][] = [['美股与全球', '美股市场'], ['A股与中文财经', '中文财经'], ['经济与宏观', '宏观经济']];
+    for (const [oldName, newName] of cases) {
+      // Only the legacy-named group exists.
+      let state = initialState({
+        settings: { lastSource: `@group:${oldName}` },
+        subscriptionGroups: [{ id: 'old', name: oldName, order: 0 }],
+        subscriptions: [feed('local:a', oldName)],
+        sourceMeta: { 'local:a': { groupId: 'old', name: '', order: 0 } },
+      });
+      migrateLibrary(state);
+      expect(state.subscriptionGroups.map(g => [g.id, g.name])).toEqual([['old', newName]]);
+      expect(state.settings.lastSource).toBe('@group:old');
+
+      // Only the already-renamed group exists; the legacy lastSource still resolves.
+      state = initialState({
+        settings: { lastSource: `@group:${oldName}` },
+        subscriptionGroups: [{ id: 'kept', name: newName, order: 0 }],
+        subscriptions: [feed('local:a', newName)],
+        sourceMeta: { 'local:a': { groupId: 'kept', name: '', order: 0 } },
+      });
+      migrateLibrary(state);
+      expect(state.settings.lastSource).toBe('@group:kept');
+
+      // Legacy and new groups coexist, legacy first: earliest order wins.
+      state = initialState({
+        settings: { lastSource: `@group:${oldName}` },
+        subscriptionGroups: [{ id: 'old', name: oldName, order: 0 }, { id: 'new', name: newName, order: 1 }],
+        subscriptions: [feed('local:a', oldName), feed('local:b', newName)],
+        sourceMeta: { 'local:a': { groupId: 'old', name: '', order: 0 }, 'local:b': { groupId: 'new', name: '', order: 1 } },
+      });
+      migrateLibrary(state);
+      expect(state.subscriptionGroups.map(g => g.id)).toEqual(['old']);
+      expect(state.settings.lastSource).toBe('@group:old');
+      expect(personalSources(state).every(s => s.groupId === 'old')).toBe(true);
+      expect(state.subscriptions.map(f => f.group)).toEqual([newName, newName]);
+
+      // Same pair with the new group first: the new group's ID wins instead.
+      state = initialState({
+        settings: { lastSource: `@group:${oldName}` },
+        subscriptionGroups: [{ id: 'new', name: newName, order: 0 }, { id: 'old', name: oldName, order: 1 }],
+        subscriptions: [feed('local:a', oldName), feed('local:b', newName)],
+        sourceMeta: { 'local:a': { groupId: 'old', name: '', order: 0 }, 'local:b': { groupId: 'new', name: '', order: 1 } },
+      });
+      migrateLibrary(state);
+      expect(state.subscriptionGroups.map(g => g.id)).toEqual(['new']);
+      expect(state.settings.lastSource).toBe('@group:new');
+      expect(personalSources(state).every(s => s.groupId === 'new')).toBe(true);
+    }
+  });
+  it('keeps user data intact across merge, double migration, and reload', () => {
+    const state = initialState({
+      settings: { lastSource: '@group:美股与全球' },
+      subscriptionGroups: [{ id: 'g1', name: '美股市场', order: 0 }, { id: 'g2', name: '美股与全球', order: 1 }],
+      subscriptions: [
+        { id: 'local:a', name: 'A', url: 'https://example.org/a', group: '美股与全球', entries: [], updatedAt: 0, lastAttemptAt: 0, error: '' },
+        { id: 'local:b', name: 'B', url: 'https://example.org/b', group: '美股市场', entries: [], updatedAt: 0, lastAttemptAt: 0, error: '' },
+      ],
+      sourceMeta: { 'local:a': { groupId: 'g2', name: '自定义A', order: 1 }, 'local:b': { groupId: 'g1', name: '', order: 0 } },
+      collapsedGroups: ['g2'],
+      readIds: ['r1'], favorites: { fav1: { entry: { id: 'fav1', sourceId: 'local:a', title: 'F', origin: 'local' }, rewrite: null, translation: null, fetchedAt: 1 } },
+    });
+    migrateLibrary(state);
+    expect(state.subscriptionGroups).toEqual([{ id: 'g1', name: '美股市场', order: 0 }]);
+    expect(state.collapsedGroups).toEqual(['g1']);
+    expect(state.settings.lastSource).toBe('@group:g1');
+    expect(personalSources(state).map(s => [s.id, s.name, s.groupId])).toEqual([['local:b', 'B', 'g1'], ['local:a', '自定义A', 'g1']]);
+    expect(state.subscriptions.map(f => f.group)).toEqual(['美股市场', '美股市场']);
+    expect(state.readIds).toEqual(['r1']); expect(Object.keys(state.favorites)).toEqual(['fav1']);
+    const snapshot = JSON.stringify(state);
+    migrateLibrary(state); expect(JSON.stringify(state)).toBe(snapshot);
+    expect(JSON.stringify(initialState(JSON.parse(snapshot)))).toBe(JSON.stringify(initialState(state)));
+  });
   it('rejects future schema instead of silently resetting data', () => { expect(() => initialState({ libraryVersion: 2 })).toThrow(); });
   it('imports the bundled finance catalog without network requests or overwriting existing choices', async () => {
     const state = initialState(null), transport = vi.fn(), service = new Subscriptions(() => state, async () => {}, transport);

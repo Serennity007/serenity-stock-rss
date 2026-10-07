@@ -68,7 +68,7 @@
 美股是市场基准面，AI 与半导体是本轮周期最大的产业叙事（且互为上下游），黄金与 BTC 是法币信心的两面镜子——这四类信息叠加宏观官方口径，构成一个自洽的投资研究信息面。中文源保留但降级为辅助，因为高质量中文内容大多没有 RSS。
 
 **源以后会更新吗？**
-会。目录是独立数据文件（[finance-feeds.json](src/data/finance-feeds.json)，CC0），新增/修正源只需 PR 这个文件并附可用性验证；放在插件文件夹里的同名 JSON 会覆盖内置目录。
+会。源码里的目录是独立数据文件（[finance-feeds.json](src/data/finance-feeds.json)，CC0），新增/修正源只需 PR 这个文件并附可用性验证。运行期也可以在插件文件夹（`.obsidian/plugins/stocks-ai-rss/`）放入一份 `finance-catalog.json` 来覆盖内置目录：文件须符合目录 schema、`feeds` 非空，且 `generated_at` 比内置目录新才会被采用（内置数据使用 `YYYY-MM-DD` 日期格式，如 `2026-10-07`；无 `generated_at` 时按 `revision` 比较）。仅放入文件但数据不更新或格式不符时不会生效。
 
 **数据安全吗？**
 插件自身无服务器。订阅的是你自己添加的 feed，文章存在库内 `.obsidian/plugins/stocks-ai-rss/` 下，卸载插件不影响已保存的笔记。

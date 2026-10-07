@@ -4,6 +4,13 @@ import { feedUrl, MAX_SUBSCRIPTIONS, parseFeed, stableId, type FeedInput } from 
 import { subscriptionSchema, type State, type Subscription } from './model';
 import { fail, isLocalizedError, LocalizedError, t } from './i18n';
 export type FeedTransport = (url: string) => Promise<{ status: number; text: string }>;
+const BROWSER_UA = 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36';
+async function defaultTransport(url: string) {
+  const response = await requestUrl({ url, method: 'GET', throw: false });
+  // Some CDNs (e.g. QbitAI) reject requests without a browser UA; retry once with one.
+  if (response.status !== 403) return response;
+  return requestUrl({ url, method: 'GET', throw: false, headers: { 'User-Agent': BROWSER_UA } });
+}
 export class Subscriptions {
   private mutations: Promise<unknown> = Promise.resolve();
   private commit<T>(edit: () => T): Promise<T> {
@@ -15,7 +22,7 @@ export class Subscriptions {
     this.mutations = run; return run;
   }
   private pending = new Map<string, Promise<void>>();
-  constructor(private state: () => State, private persist: () => Promise<void>, private transport: FeedTransport = url => requestUrl({ url, method: 'GET', throw: false })) {}
+  constructor(private state: () => State, private persist: () => Promise<void>, private transport: FeedTransport = defaultTransport) {}
   async fetch(url: string, doc: Document) {
     let timer: number | undefined;
     try {

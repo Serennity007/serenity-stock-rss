@@ -1,5 +1,14 @@
 # Changelog
 
+## 1.1.2
+
+- Resolve a remembered group selection (`lastSource`) written with a pre-1.1 category name (美股与全球 / A股与中文财经 / 经济与宏观) to the merged group ID on load, instead of leaving a stale reference.
+- Keep a valid group selected when the reader view reopens: validity now checks stable group IDs, so empty groups and vault-only groups are no longer dropped to "All subscriptions".
+- Retry a feed request once with a browser User-Agent when the server answers 403 without a body; fixes 量子位 (QbitAI), whose CDN rejects requests without a browser UA.
+- Trim dead CSS (~9.5 KB) and add the image-retry button styles.
+- Docs: correct the runtime catalog-override file name (`finance-catalog.json` in the plugin folder, including schema and `generated_at` freshness requirements) in all three READMEs, and fix the 钛媒体 brand typo in the Japanese README.
+- Sync the package-lock identity (name `stocks-ai-rss`, version) with the rest of the package.
+
 ## 1.1.1
 
 - Add 量子位 (QbitAI) to the AI & LLMs collection — the first Chinese-language source there; the catalog now ships 31 feeds.

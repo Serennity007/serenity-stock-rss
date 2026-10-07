@@ -1,5 +1,12 @@
 # Release notes
 
+## 1.1.2
+
+- Group migration fixes: pre-1.1 category names in the remembered channel resolve to the merged group, and reopening the reader keeps a valid group selection (including empty or vault-only groups).
+- 量子位 (QbitAI) loads again: feed requests that get a 403 are retried once with a browser User-Agent.
+- Dead CSS trimmed (~9.5 KB) and image-retry button styles added.
+- Docs: runtime catalog override is `finance-catalog.json` in the plugin folder (schema + `generated_at` freshness required); Japanese README brand typo fixed.
+
 ## 1.1.1
 
 - Add 量子位 (QbitAI) to the AI & LLMs collection — catalog now ships 31 feeds.

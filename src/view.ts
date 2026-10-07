@@ -175,7 +175,7 @@ export class ReaderView extends ItemView {
     this.closed = false; this.listVersion++; this.articleVersion++; this.clearThumbnails();
     const remembered = this.plugin.state.settings.lastSource;
     const localExists = this.plugin.state.subscriptions.some(feed => feed.id === remembered);
-    const groupExists = remembered.startsWith('@group:') && this.plugin.state.subscriptions.some(feed => feed.group === remembered.slice(7));
+    const groupExists = remembered.startsWith('@group:') && this.plugin.state.subscriptionGroups.some(group => group.id === remembered.slice(7));
     this.focused = false;
     this.source = (remembered === '@local' || this.plugin.state.settings.markdownFolders.some(folder => vaultSourceId(folder) === remembered) || groupExists || localExists) ? remembered : '@local';
     this.bundle = null; this.loading = false;

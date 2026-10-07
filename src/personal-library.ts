@@ -2,7 +2,7 @@ import type { State } from './model';
 import { fail, t } from './i18n';
 export interface PersonalSource { id: string; name: string; kind: 'rss' | 'podcast' | 'vault'; groupId: string; url?: string; site?: string; image?: string; detail: string }
 /** Group names that mean the same thing (catalogs and OPML files use English categories). */
-const groupAliases: Record<string, string> = { podcast: '播客', podcasts: '播客', '播客': '播客', wechat: '公众号', '微信公众号': '公众号', '公众号': '公众号' };
+const groupAliases: Record<string, string> = { podcast: '播客', podcasts: '播客', '播客': '播客', wechat: '公众号', '微信公众号': '公众号', '公众号': '公众号', '美股与全球': '美股市场', 'a股与中文财经': '中文财经', '经济与宏观': '宏观经济' };
 export function groupKey(name: string) { const key = name.trim().toLocaleLowerCase().replace(/\s+/g, ' '); return groupAliases[key] || key; }
 export function canonicalGroupName(raw: string) { const name = raw.trim(); return groupAliases[name.toLocaleLowerCase()] || name; }
 export function ensureGroup(state: State, raw: string): string {
@@ -21,7 +21,7 @@ export function migrateLibrary(state: State) {
   const valid = new Set(state.subscriptionGroups.map(g => g.id));
   for (const meta of Object.values(state.sourceMeta)) if (meta.groupId && !valid.has(meta.groupId)) meta.groupId = '';
   if (state.settings.lastSource.startsWith('@group:')) {
-    const value = state.settings.lastSource.slice(7), group = state.subscriptionGroups.find(g => g.id === value || g.name === value);
+    const value = state.settings.lastSource.slice(7), group = state.subscriptionGroups.find(g => g.id === value) || state.subscriptionGroups.find(g => groupKey(g.name) === groupKey(value));
     if (group) state.settings.lastSource = `@group:${group.id}`;
   }
   if (state.libraryVersion === 0 && state.subscriptionGroups.length > 5 && !state.collapsedGroups.length) state.collapsedGroups = state.subscriptionGroups.map(g => g.id);
@@ -34,10 +34,11 @@ export function mergeDuplicateGroups(state: State) {
     const key = groupKey(group.name), first = keep.get(key);
     if (first) moved.set(group.id, first.id); else { keep.set(key, group); if (canonicalGroupName(group.name) !== group.name.trim()) group.name = canonicalGroupName(group.name); }
   }
-  if (!moved.size) return false;
   for (const meta of Object.values(state.sourceMeta)) meta.groupId = moved.get(meta.groupId) || meta.groupId;
+  // Rewrite persisted group strings even when nothing moved, so renamed categories converge on load.
   const names = new Map([...keep.values()].map(g => [g.id, g.name]));
   for (const feed of state.subscriptions) { const id = state.sourceMeta[feed.id]?.groupId; if (id) feed.group = names.get(id) || feed.group; }
+  if (!moved.size) return false;
   state.subscriptionGroups = groupsInOrder(state).filter(g => !moved.has(g.id)).map((g, order) => ({ ...g, order }));
   state.collapsedGroups = [...new Set(state.collapsedGroups.map(id => moved.get(id) || id))].filter(id => !moved.has(id));
   const last = state.settings.lastSource.startsWith('@group:') ? moved.get(state.settings.lastSource.slice(7)) : undefined;
