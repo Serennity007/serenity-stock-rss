@@ -16,6 +16,8 @@
 
 **This project is a fork of — and was learned from — [Qiaomu AI RSS](https://github.com/joeseesun/qiaomu-ai-rss) by [向阳乔木](https://github.com/joeseesun). The reading experience is the original author's work 🙏**
 
+<img src="docs/images/intro-screenshot.png" alt="Stocks AI RSS reader: subscription list on the left, article reading on the right" width="640" />
+
 </div>
 
 ---

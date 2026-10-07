@@ -16,6 +16,8 @@
 
 **本プロジェクトは [向阳乔木](https://github.com/joeseesun) 氏の [Qiaomu AI RSS](https://github.com/joeseesun/qiaomu-ai-rss) を学んでフォーク・改良したものです。リーディング体験の功績は原作者のものです 🙏**
 
+<img src="docs/images/intro-screenshot.png" alt="Stocks AI RSS リーダー：左にサブスクリプション一覧、右に記事本文" width="640" />
+
 </div>
 
 ---

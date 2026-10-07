@@ -16,6 +16,8 @@
 
 **本项目学习自 [向阳乔木](https://github.com/joeseesun) 的 [Qiaomu AI RSS（乔木 RSS）](https://github.com/joeseesun/qiaomu-ai-rss) 并在其基础上深度改造，阅读体验的功劳属于原作者 🙏**
 
+<img src="docs/images/intro-screenshot.png" alt="Stocks AI RSS 阅读器：左侧订阅列表，右侧中文正文阅读" width="640" />
+
 </div>
 
 ---
