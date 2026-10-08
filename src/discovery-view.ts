@@ -1,7 +1,7 @@
 import { Component, Modal, Notice } from 'obsidian';
 import type StocksRssPlugin from './main';
 import { addSearchClear } from './search-clear';
-import { baseDiscovery, catalogDate, catalogSchema, catalogSnapshot, catalogSourceLabel, dedupeDiscovery, inCollection, searchDiscovery, type DiscoverCollection, type DiscoverSource, type CatalogData } from './discovery-library';
+import { baseDiscovery, catalogDate, catalogNewer, catalogSchema, catalogSnapshot, catalogSourceLabel, dedupeDiscovery, DISCOVER_COLLECTIONS, inCollection, searchDiscovery, type DiscoverCollection, type DiscoverSource, type CatalogData } from './discovery-library';
 import { collectionLabel, kindLabel, t } from './i18n';
 import { SourceIcons } from './source-icons';
 import { groupSelect, OpmlImport } from './subscription-ui';
@@ -89,7 +89,7 @@ export class DiscoveryPanel extends Component {
     form.onsubmit = event => { event.preventDefault(); this.query = this.search.value.trim(); if (/^https?:\/\//i.test(this.query)) void this.previewLink(this.query); else this.refresh(); };
     const categories = page.createDiv('qrs-discovery-collections');
     categories.setAttribute('role', 'group'); categories.setAttribute('aria-label', t('discovery.categories'));
-    for (const [kind, label] of [['home', t('discovery.home')], ...(['us', 'ai', 'semi', 'gold', 'macro', 'cn', 'blogs'] as DiscoverCollection[]).map(c => [c, collectionLabel(c)] as [DiscoverCollection, string])] as ['home' | DiscoverCollection, string][]) {
+    for (const [kind, label] of [['home', t('discovery.home')], ...DISCOVER_COLLECTIONS.map(c => [c, collectionLabel(c)] as [DiscoverCollection, string])] as ['home' | DiscoverCollection, string][]) {
       const button = categories.createEl('button', { text: label, attr: { 'data-collection': kind, 'aria-pressed': 'false' } });
       button.onclick = () => { this.collection = kind; this.limit = 24; this.refresh(); };
     }
@@ -104,7 +104,7 @@ export class DiscoveryPanel extends Component {
     this.note = page.createDiv('qrs-discovery-note');
     this.refresh();
     // A newer catalog dropped into the plugin folder (finance-catalog.json) replaces the bundled snapshot.
-    void this.plugin.app.vault.adapter.read(this.cachePath).then(text => { const parsed = catalogSchema.safeParse(JSON.parse(text) as unknown); if (!this.closed && parsed.success && parsed.data.feeds.length && catalogDate(parsed.data) > catalogDate(this.data)) { this.data = parsed.data; this.local = baseDiscovery(this.data); this.refresh(); } }).catch(() => undefined);
+    void this.plugin.app.vault.adapter.read(this.cachePath).then(text => { const parsed = catalogSchema.safeParse(JSON.parse(text) as unknown); if (!this.closed && parsed.success && parsed.data.feeds.length && catalogNewer(parsed.data, this.data)) { this.data = parsed.data; this.local = baseDiscovery(this.data); this.refresh(); } }).catch(() => undefined);
   }
   private async previewLink(url: string) {
     const serial = ++this.serial; this.status.setText(t('discovery.identifying'));
@@ -125,8 +125,8 @@ export class DiscoveryPanel extends Component {
     if (this.collection !== 'home') { const collection = this.collection; items = items.filter(f => inCollection(f, collection)); }
     if (query) items = searchDiscovery(items, query);
     if (home) {
-      const groups = ['us', 'ai', 'semi', 'gold', 'macro', 'cn', 'blogs'].map(kind => items.filter(f => f.kind === kind));
-      items = [groups[0][0], groups[1][0], groups[2][0], groups[3][0], groups[4][0], groups[5][0], groups[6][0], groups[0][1], groups[1][1], groups[2][1], groups[3][1]].filter((f): f is DiscoverSource => !!f);
+      const groups = DISCOVER_COLLECTIONS.map(kind => items.filter(f => f.kind === kind));
+      items = [...groups.map(g => g[0]), groups[0][1], groups[1][1], groups[2][1], groups[3][1]].filter((f): f is DiscoverSource => !!f);
     }
     this.count.setText(home ? '' : query ? t('discovery.matches', { n: items.length }) : t('discovery.sources', { n: items.length }));
     this.note.empty(); this.note.toggleClass('qrs-hidden', this.collection !== 'blogs' || !!query);

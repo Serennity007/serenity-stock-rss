@@ -1,8 +1,8 @@
 {
   "source": "stocks-ai-rss finance catalog",
-  "revision": 3,
+  "revision": 4,
   "license": "CC0-1.0",
-  "generated_at": "2026-10-07",
+  "generated_at": "2026-10-08",
   "feeds": [
     {
       "id": "cnbc-top",
@@ -313,6 +313,147 @@
       "category": "财经博客",
       "kind": "blogs",
       "language": "en"
+    },
+    {
+      "id": "infoq-china",
+      "title": "InfoQ 中文",
+      "feed_url": "https://www.infoq.cn/feed",
+      "site_url": "https://www.infoq.cn/",
+      "description": "中文技术媒体：大模型工程、算力与云原生落地，AI 产业供应链侧信号。2026-10-08 实测 20 条。",
+      "category": "中文科技",
+      "kind": "cn",
+      "language": "zh"
+    },
+    {
+      "id": "geekpark",
+      "title": "极客公园",
+      "feed_url": "https://www.geekpark.net/rss",
+      "site_url": "https://www.geekpark.net/",
+      "description": "中文创投与科技产业报道：公司融资、产品与创始人访谈。2026-10-08 实测 30 条。",
+      "category": "中文科技",
+      "kind": "cn",
+      "language": "zh"
+    },
+    {
+      "id": "ifanr",
+      "title": "爱范儿",
+      "feed_url": "https://www.ifanr.com/feed",
+      "site_url": "https://www.ifanr.com/",
+      "description": "中文消费科技媒体：硬件、AI 产品与厂商动态，偏产品面。2026-10-08 实测 20 条。",
+      "category": "中文科技",
+      "kind": "cn",
+      "language": "zh"
+    },
+    {
+      "id": "zaikei-main",
+      "title": "財経新聞：主要記事",
+      "feed_url": "https://www.zaikei.co.jp/rss/main.xml",
+      "site_url": "https://www.zaikei.co.jp/",
+      "description": "日本財経新聞：日本株与东证、美债长端与 Fed、半导体与 AI 信贷，日文里密度最高的市场流。2026-10-08 实测 20 条，当天更新。",
+      "category": "日本市場",
+      "kind": "jp",
+      "language": "ja"
+    },
+    {
+      "id": "yahoo-news-business",
+      "title": "Yahoo!ニュース・トピックス（経済）",
+      "feed_url": "https://news.yahoo.co.jp/rss/topics/business.xml",
+      "site_url": "https://news.yahoo.co.jp/topics/business",
+      "description": "Yahoo! Japan 经济头条：只留当天最热的几条，窗口很短，适合看日本舆论在讨论什么公司。2026-10-08 实测 8 条。",
+      "category": "日本市場",
+      "kind": "jp",
+      "language": "ja"
+    },
+    {
+      "id": "fnn-prime",
+      "title": "FNNプライムオンライン",
+      "feed_url": "https://www.fnn.jp/list/feed/rss",
+      "site_url": "https://www.fnn.jp/",
+      "description": "富士新闻网综合流：政治、社会、经济与地方新闻混在一起，経済・ビジネス只是其中一类。2026-10-08 实测 50 条。",
+      "category": "日本ニュース",
+      "kind": "jp",
+      "language": "ja"
+    },
+    {
+      "id": "itmedia-topstories",
+      "title": "ITmedia TOP STORIES",
+      "feed_url": "https://rss.itmedia.co.jp/rss/2.0/topstory.xml",
+      "site_url": "https://www.itmedia.co.jp/",
+      "description": "ITmedia 头条：日本侧的 AI 模型发布、半导体供应链与企业 IT 投资，含 business 版块稿源。2026-10-08 实测 20 条。",
+      "category": "テックとAI",
+      "kind": "jp",
+      "language": "ja"
+    },
+    {
+      "id": "gigazine",
+      "title": "GIGAZINE",
+      "feed_url": "https://gigazine.net/news/rss_2.0/",
+      "site_url": "https://gigazine.net/",
+      "description": "GIGAZINE：日文科技与社会长文，AI 事件、开源模型与产业事故的第一手日文记录。2026-10-08 实测 30 条。",
+      "category": "テックとAI",
+      "kind": "jp",
+      "language": "ja"
+    },
+    {
+      "id": "expansion-economia",
+      "title": "Expansión · Economía",
+      "feed_url": "https://www.expansion.com/rss/economia.xml",
+      "site_url": "https://www.expansion.com/economia",
+      "description": "西班牙《Expansión》经济版：欧元区与西班牙宏观、住房政策、企业监管。2026-10-08 实测 50 条。",
+      "category": "Economía",
+      "kind": "es",
+      "language": "es"
+    },
+    {
+      "id": "expansion-mercados",
+      "title": "Expansión · Mercados",
+      "feed_url": "https://www.expansion.com/rss/mercados.xml",
+      "site_url": "https://www.expansion.com/mercados",
+      "description": "Expansión 市场版：IBEX、债券与美元对比特币的挤压、Fed 会议纪要的西语解读、Euríbor 每日。2026-10-08 实测 51 条。",
+      "category": "Mercados",
+      "kind": "es",
+      "language": "es"
+    },
+    {
+      "id": "elmundo-economia",
+      "title": "El Mundo · Economía",
+      "feed_url": "https://www.elmundo.es/rss/economia.xml",
+      "site_url": "https://www.elmundo.es/economia.html",
+      "description": "El Mundo 经济版：西班牙财政、电价与银行业，选举提前的市场反应写得密。2026-10-08 实测 54 条。",
+      "category": "Economía",
+      "kind": "es",
+      "language": "es"
+    },
+    {
+      "id": "lavanguardia-economia",
+      "title": "La Vanguardia · Economía",
+      "feed_url": "https://www.lavanguardia.com/rss/economia.xml",
+      "site_url": "https://www.lavanguardia.com/economia",
+      "description": "加泰罗尼亚视角的西班牙财经：企业、旅游、能源与住房，条目最多、窗口最长。2026-10-08 实测 100 条。",
+      "category": "Economía",
+      "kind": "es",
+      "language": "es"
+    },
+    {
+      "id": "20minutos-economia",
+      "title": "20minutos · Economía",
+      "feed_url": "https://www.20minutos.es/rss/economia/",
+      "site_url": "https://www.20minutos.es/economia",
+      "description": "偏大众口袋视角：薪酬、房贷、存款利率与消费，看西班牙居民怎么接宏观数据。2026-10-08 实测 45 条。",
+      "category": "Economía",
+      "kind": "es",
+      "language": "es"
+    },
+    {
+      "id": "xataka",
+      "title": "Xataka",
+      "feed_url": "https://www.xataka.com/feedburner.xml",
+      "site_url": "https://www.xataka.com/",
+      "description": "西语科技媒体：消费电子、AI 产品与西班牙电价、运营商，科技面里带能源账单。2026-10-08 实测 26 条。",
+      "category": "Tecnología",
+      "kind": "es",
+      "language": "es"
     }
-  ]
+  ],
+  "note": "Bundled catalog. All feeds verified reachable over a direct connection on 2026-10-08 unless the title says otherwise; item counts are quoted from that check."
 }

@@ -2,18 +2,30 @@ import { z } from 'zod';
 import catalogJson from './data/finance-feeds.json';
 import { feedUrl } from './feeds';
 import { t } from './i18n';
-export type DiscoverKind = 'us' | 'ai' | 'semi' | 'gold' | 'macro' | 'cn' | 'blogs' | 'more';
+export type DiscoverKind = 'us' | 'ai' | 'semi' | 'gold' | 'macro' | 'cn' | 'jp' | 'es' | 'blogs' | 'more';
+export const DISCOVER_COLLECTIONS = ['us', 'ai', 'semi', 'gold', 'macro', 'cn', 'jp', 'es', 'blogs'] as const;
+// Catalog categories are kept in the source's own language, so the chip is a native name too.
+const LANGUAGE_LABELS: Record<string, string> = { en: 'English', zh: '中文', ja: '日本語', es: 'Español' };
 export interface DiscoverSource { id: string; name: string; url?: string; site?: string; image?: string; kind: DiscoverKind; description: string; group: string; language: string; provenance: string; recommended?: boolean; tags?: string[] }
 const feedSchema = z.object({ id: z.string(), title: z.string(), feed_url: z.string(), site_url: z.string().optional(), description: z.string().default(''), category: z.string(), kind: z.string(), language: z.string() });
 export const catalogSchema = z.object({ generated_at: z.string().optional(), revision: z.number().optional(), feeds: z.array(feedSchema).max(5000) });
 export type CatalogData = z.infer<typeof catalogSchema>;
 export const catalogSnapshot: CatalogData = catalogSchema.parse(catalogJson);
 export const catalogDate = (data: CatalogData) => data.generated_at || String(data.revision || '');
+/**
+ * True when `candidate` should replace `current`. Same-day catalogs used to tie and silently keep the
+ * bundled snapshot, which dropped the user's own override; revision breaks that tie.
+ */
+export const catalogNewer = (candidate: CatalogData, current: CatalogData) => {
+  const a = catalogDate(candidate), b = catalogDate(current);
+  if (a !== b) return a > b;
+  return (candidate.revision || 0) > (current.revision || 0);
+};
 export const catalogSourceLabel = () => catalogJson.source;
 export function catalogItems(data: CatalogData): DiscoverSource[] {
-  return data.feeds.flatMap(feed => { try { return [{ id: feed.id, name: feed.title, url: feedUrl(feed.feed_url), site: feed.site_url, description: feed.description, group: feed.category, language: feed.language === 'zh' ? '中文' : '英文', provenance: t('discovery.catalogProvenance'), kind: ['us','ai','semi','gold','macro','cn','blogs'].includes(feed.kind) ? feed.kind as DiscoverKind : 'more' as const }]; } catch { return []; } });
+  return data.feeds.flatMap(feed => { try { return [{ id: feed.id, name: feed.title, url: feedUrl(feed.feed_url), site: feed.site_url, description: feed.description, group: feed.category, language: LANGUAGE_LABELS[feed.language] || feed.language, provenance: t('discovery.catalogProvenance'), kind: DISCOVER_COLLECTIONS.includes(feed.kind as typeof DISCOVER_COLLECTIONS[number]) ? feed.kind as DiscoverKind : 'more' as const }]; } catch { return []; } });
 }
-export type DiscoverCollection = 'us' | 'ai' | 'semi' | 'gold' | 'macro' | 'cn' | 'blogs';
+export type DiscoverCollection = typeof DISCOVER_COLLECTIONS[number];
 export function inCollection(item: DiscoverSource, collection: DiscoverCollection) { return collection === 'blogs' ? item.kind === 'blogs' || item.kind === 'more' : item.kind === collection; }
 export function baseDiscovery(data = catalogSnapshot): DiscoverSource[] {
   return dedupeDiscovery(catalogItems(data));

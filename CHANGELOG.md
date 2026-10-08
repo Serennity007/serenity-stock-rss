@@ -1,5 +1,14 @@
 # Changelog
 
+## 1.1.3
+
+- Discovery gains two language collections — **日本語** (5 feeds) and **Español** (6 feeds) — alongside the existing Chinese one. Every added feed was verified over a direct connection on 2026-10-08 and returned same-day items; the counts quoted in each description come from that check.
+- Categories in the new sections keep the source language (日本市場 / 日本ニュース / テックとAI / Economía / Mercados / Tecnología), so the subscription group a feed lands in is spelled natively rather than translated.
+- The language chip no longer collapses everything to 英文: sources read 中文 / English / 日本語 / Español. Japanese and Spanish feeds had been mislabelled as English.
+- The catalog gate now compares `generated_at` **and** `revision`, so a same-day local override (`finance-catalog.json`) is no longer silently dropped in favour of the bundled snapshot.
+- Bundled catalog revision 4: 31 → 45 feeds (InfoQ 中文 / 極客公园 / 愛範兒 join 中文科技).
+- Deliberately not added: 日経・NHK・産経・毎日 — no RSS endpoint could be verified from this machine or through the fetch tool, so shipping them would mean shipping unverified URLs.
+
 ## 1.1.2
 
 - Resolve a remembered group selection (`lastSource`) written with a pre-1.1 category name (美股与全球 / A股与中文财经 / 经济与宏观) to the merged group ID on load, instead of leaving a stale reference.

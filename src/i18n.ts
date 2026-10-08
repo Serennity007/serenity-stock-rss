@@ -386,6 +386,8 @@ export const M = [
   ["discovery.kind.semi", "半导体", "Semiconductors", "半導體", "半導体", "반도체", "Semiconductores", "Semi-conducteurs", "Halbleiter"],
   ["discovery.kind.gold", "黄金与加密货币", "Gold & crypto", "黃金與加密貨幣", "金・暗号資産", "금·암호화폐", "Oro y cripto", "Or et crypto", "Gold & Krypto"],
   ["discovery.kind.macro", "宏观经济", "Macro", "宏觀經濟", "マクロ経済", "거시 경제", "Macroeconomía", "Macroéconomie", "Makroökonomie"],
+  ["discovery.kind.jp", "日文财经", "Japanese finance", "日文財經", "日本語のソース", "일본어 소스", "Fuente en japonés", "Source en japonais", "Japanischsprachige Quelle"],
+  ["discovery.kind.es", "西语财经", "Spanish finance", "西語財經", "スペイン語のソース", "스페인어 소스", "Fuente en español", "Source en espagnol", "Spanischsprachige Quelle"],
   ["discovery.collection.us", "美股市场", "US equities", "美股市場", "米国株", "미국 주식", "Acciones de EE. UU.", "Actions US", "US-Aktien"],
   ["discovery.collection.cn", "中文财经", "Chinese finance", "中文財經", "中国金融", "중국 금융", "Finanzas de China", "Finance chinoise", "China-Finanzen"],
   ["discovery.collection.ai", "AI 与大模型", "AI & LLMs", "AI 與大模型", "AI・大規模モデル", "AI·대규모 모델", "IA y LLM", "IA et LLM", "KI & LLMs"],
@@ -393,6 +395,8 @@ export const M = [
   ["discovery.collection.gold", "黄金与加密货币", "Gold & crypto", "黃金與加密貨幣", "金・暗号資産", "금·암호화폐", "Oro y cripto", "Or et crypto", "Gold & Krypto"],
   ["discovery.collection.macro", "宏观经济", "Macro economy", "宏觀經濟", "マクロ経済", "거시 경제", "Macroeconomía", "Macroéconomie", "Makrowirtschaft"],
   ["discovery.collection.blogs", "财经博客", "Finance blogs", "財經博客", "金融ブログ", "금융 블로그", "Blogs financieros", "Blogs financiers", "Finanzblogs"],
+  ["discovery.collection.jp", "日文财经", "Japanese finance", "日文財經", "日本語の金融", "일본 금융", "Finanzas en japonés", "Finance en japonais", "Finanzen auf Japanisch"],
+  ["discovery.collection.es", "西语财经", "Spanish finance", "西語財經", "スペイン語の金融", "스페인어 금융", "Finanzas en español", "Finance en espagnol", "Finanzen auf Spanisch"],
   ["discovery.editorPick", "编辑推荐", "Editor’s pick", "編輯推薦", "編集部のおすすめ", "에디터 추천", "Recomendación editorial", "Choix de la rédaction", "Redaktionelle Empfehlung"],
   ["discovery.manualAdd", "手动添加", "Added manually", "手動新增", "手動追加", "수동 추가", "Añadido manualmente", "Ajouté manuellement", "Manuell hinzugefügt"],
   ["preview.title", "预览订阅", "Preview subscription", "預覽訂閱", "購読プレビュー", "구독 미리 보기", "Vista previa de suscripción", "Aperçu de l’abonnement", "Abo-Vorschau"],
@@ -491,7 +495,7 @@ export function dividerLabel(divider: string): string {
   return key ? t(key) : divider;
 }
 
-const KIND_KEYS: Record<string, MessageKey> = { us: 'discovery.kind.us', ai: 'discovery.kind.ai', semi: 'discovery.kind.semi', gold: 'discovery.kind.gold', macro: 'discovery.kind.macro', cn: 'discovery.kind.cn', blogs: 'discovery.kind.blogs', more: 'discovery.kind.more' };
+const KIND_KEYS: Record<string, MessageKey> = { us: 'discovery.kind.us', ai: 'discovery.kind.ai', semi: 'discovery.kind.semi', gold: 'discovery.kind.gold', macro: 'discovery.kind.macro', cn: 'discovery.kind.cn', jp: 'discovery.kind.jp', es: 'discovery.kind.es', blogs: 'discovery.kind.blogs', more: 'discovery.kind.more' };
 
 /** Display label for a discovery source kind. */
 export function kindLabel(kind: string): string {
@@ -499,7 +503,7 @@ export function kindLabel(kind: string): string {
   return key ? t(key) : kind;
 }
 
-const COLLECTION_KEYS: Record<string, MessageKey> = { us: 'discovery.collection.us', ai: 'discovery.collection.ai', semi: 'discovery.collection.semi', gold: 'discovery.collection.gold', macro: 'discovery.collection.macro', cn: 'discovery.collection.cn', blogs: 'discovery.collection.blogs' };
+const COLLECTION_KEYS: Record<string, MessageKey> = { us: 'discovery.collection.us', ai: 'discovery.collection.ai', semi: 'discovery.collection.semi', gold: 'discovery.collection.gold', macro: 'discovery.collection.macro', cn: 'discovery.collection.cn', jp: 'discovery.collection.jp', es: 'discovery.collection.es', blogs: 'discovery.collection.blogs' };
 
 /** Display label for a discovery collection tab. */
 export function collectionLabel(collection: string): string {

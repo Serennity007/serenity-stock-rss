@@ -4,7 +4,7 @@
 
 # 📈 Stocks AI RSS
 
-**美股 · AI · 半导体 · 黄金 · BTC——五大主题财经资讯，直接流进你的 Obsidian**
+**美股 · AI · 半导体 · 黄金 · BTC——五大主题 + 中/日/西三个语言栏目，直接流进你的 Obsidian**
 
 [![Release](https://img.shields.io/github/v/release/Serennity007/serenity-stock-rss?logo=github)](https://github.com/Serennity007/serenity-stock-rss/releases)
 [![License: GPL-3.0](https://img.shields.io/badge/License-GPL--3.0--only-blue.svg)](LICENSE)
@@ -12,7 +12,7 @@
 [![Upstream: Qiaomu AI RSS](https://img.shields.io/badge/fork%20of-Qiaomu%20AI%20RSS-orange)](https://github.com/joeseesun/qiaomu-ai-rss)
 ![语言](https://img.shields.io/badge/%E8%AF%AD%E8%A8%80-%E4%B8%AD%E6%96%87%20%7C%20EN%20%7C%20JA-orange)
 
-*免费 · 开源 · 无账号 · 纯本地 · 31 个内置源*
+*免费 · 开源 · 无账号 · 纯本地 · 45 个内置源*
 
 **本项目学习自 [向阳乔木](https://github.com/joeseesun) 的 [Qiaomu AI RSS（乔木 RSS）](https://github.com/joeseesun/qiaomu-ai-rss) 并在其基础上深度改造，阅读体验的功劳属于原作者 🙏**
 
@@ -24,9 +24,9 @@
 
 投资决策靠信息质量。但今天的信息流是这样的：AI 突发在 X 上、半导体深度在付费研报里、BTC 消息在十几个群轮播、黄金行情得盯着行情软件——**看完就散，永远进不了你的知识库**。
 
-**Stocks AI RSS** 把这件事收拢进 Obsidian：**31 个逐个实测直连可用的财经源**，按五大主题组织，刷到有价值的文章一键变成 Markdown 笔记或日记摘录。基于 [Qiaomu AI RSS](https://github.com/joeseesun/qiaomu-ai-rss) 的成熟阅读体验改造——那位作者把「RSS 阅读 → 存笔记」这条链路做到了极致，本仓库站在他的肩膀上把它带向投资研究场景。
+**Stocks AI RSS** 把这件事收拢进 Obsidian：**45 个逐个实测直连可用的财经源**，按五大主题加中/日/西三个语言栏目组织，刷到有价值的文章一键变成 Markdown 笔记或日记摘录。基于 [Qiaomu AI RSS](https://github.com/joeseesun/qiaomu-ai-rss) 的成熟阅读体验改造——那位作者把「RSS 阅读 → 存笔记」这条链路做到了极致，本仓库站在他的肩膀上把它带向投资研究场景。
 
-## 🔥 五大主题，一键订阅
+## 🔥 五大主题 + 三个语言栏目，一键订阅
 
 | 主题 | 内置源 | 你会刷到什么 |
 | --- | --- | --- |
@@ -35,8 +35,10 @@
 | 💾 **半导体**（4 源） | SemiAnalysis · Tom's Hardware · SemiWiki · EE Times | 算力产业链、制程工艺、芯片设计 |
 | 🪙 **黄金与加密货币**（6 源） | MINING.com · FXStreet · The Block · Cointelegraph · Bitcoin Magazine · Decrypt | 金价供给端、BTC 行情、机构采用与监管 |
 | 🏛️ **宏观经济**（3 源） | CNBC Economy · 美联储官方 · SEC 官方 | FOMC 决议、就业通胀数据、监管规则 |
+| 🇯🇵 **日本語**（5 源） | 財経新聞 · Yahoo!ニュース（経済） · FNN · ITmedia · GIGAZINE | 日本株与东证的日文口径、美债长端与 Fed 的日本视角、日本 AI 与半导体供应链 |
+| 🇪🇸 **Español**（6 源） | Expansión ×2 · El Mundo · La Vanguardia · 20minutos · Xataka | IBEX、欧债与电价、西班牙住房政策与企业新闻 |
 
-另有 **中文财经**（华尔街见闻、新浪财经、钛媒体）与 **财经博客**（Ben Carlson、Josh Brown）两个辅助分类，共 **31 源**。想加雪球、财联社这类无官方 RSS 的站点？自建 [RSSHub](https://docs.rsshub.app/) 后把链接粘进探索页即可。
+另有 **中文财经**（华尔街见闻、新浪财经、钛媒体）、**中文科技**（InfoQ 中文、极客公园、爱范儿）与 **财经博客**（Ben Carlson、Josh Brown）三个辅助分类，共 **45 源**。语言栏目的分类名保持原文写法（日本市場／Economía／Mercados），订阅后落成的分组名就是这些原文，不翻译成中文。想加雪球、财联社这类无官方 RSS 的站点？自建 [RSSHub](https://docs.rsshub.app/) 后把链接粘进探索页即可。
 
 ## ✨ 为什么它值得常驻你的 Obsidian
 

@@ -1,7 +1,7 @@
 {
   "name": "stocks-ai-rss",
-  "version": "1.1.2",
-  "description": "Five-theme finance RSS for Obsidian: US equities, AI, semiconductors, gold & crypto, macro. 31 hand-verified feeds, fully local.",
+  "version": "1.1.3",
+  "description": "Nine-section finance RSS for Obsidian: US equities, AI, semiconductors, gold & crypto, macro, plus Chinese, Japanese and Spanish sections. 45 hand-verified feeds, fully local.",
   "license": "GPL-3.0-only",
   "private": true,
   "scripts": {

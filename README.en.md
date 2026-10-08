@@ -4,7 +4,7 @@
 
 # 📈 Stocks AI RSS
 
-**US stocks · AI · Semiconductors · Gold · BTC — five market themes flowing straight into your Obsidian**
+**US stocks · AI · Semiconductors · Gold · BTC — five market themes plus Chinese, Japanese and Spanish sections, straight into your Obsidian**
 
 [![Release](https://img.shields.io/github/v/release/Serennity007/serenity-stock-rss?logo=github)](https://github.com/Serennity007/serenity-stock-rss/releases)
 [![License: GPL-3.0](https://img.shields.io/badge/License-GPL--3.0--only-blue.svg)](LICENSE)
@@ -12,7 +12,7 @@
 [![Upstream: Qiaomu AI RSS](https://img.shields.io/badge/fork%20of-Qiaomu%20AI%20RSS-orange)](https://github.com/joeseesun/qiaomu-ai-rss)
 ![Languages](https://img.shields.io/badge/Languages-%E4%B8%AD%E6%96%87%20%7C%20EN%20%7C%20JA-orange)
 
-*Free · Open source · No account · Fully local · 31 bundled feeds*
+*Free · Open source · No account · Fully local · 45 bundled feeds*
 
 **This project is a fork of — and was learned from — [Qiaomu AI RSS](https://github.com/joeseesun/qiaomu-ai-rss) by [向阳乔木](https://github.com/joeseesun). The reading experience is the original author's work 🙏**
 
@@ -24,9 +24,9 @@
 
 Investment decisions are only as good as the information behind them. But today the flow looks like this: AI breaking news on X, semiconductor deep-dives behind paywalls, BTC rumors broadcast across a dozen group chats, gold quotes buried in trading apps — **consumed once, remembered nowhere, never entering your knowledge base**.
 
-**Stocks AI RSS** closes that loop inside Obsidian: **31 finance feeds, each hand-verified to work over direct HTTPS**, organized into five market themes — and any article worth keeping becomes a Markdown note or a daily-note excerpt in one click. Built on the reading experience of [Qiaomu AI RSS](https://github.com/joeseesun/qiaomu-ai-rss): its author perfected the "read RSS → save to notes" loop, and this fork carries it into investment research.
+**Stocks AI RSS** closes that loop inside Obsidian: **45 finance feeds, each hand-verified to work over direct HTTPS**, organized into five market themes and three language sections — and any article worth keeping becomes a Markdown note or a daily-note excerpt in one click. Built on the reading experience of [Qiaomu AI RSS](https://github.com/joeseesun/qiaomu-ai-rss): its author perfected the "read RSS → save to notes" loop, and this fork carries it into investment research.
 
-## 🔥 Five themes, one-click subscribe
+## 🔥 Five themes and three language sections, one-click subscribe
 
 | Theme | Bundled feeds | What you'll read |
 | --- | --- | --- |
@@ -35,8 +35,10 @@ Investment decisions are only as good as the information behind them. But today 
 | 💾 **Semiconductors** (4) | SemiAnalysis · Tom's Hardware · SemiWiki · EE Times | Compute supply chain, process nodes, chip design |
 | 🪙 **Gold & crypto** (6) | MINING.com · FXStreet · The Block · Cointelegraph · Bitcoin Magazine · Decrypt | Gold supply side, BTC markets, institutional adoption & regulation |
 | 🏛️ **Macro** (3) | CNBC Economy · Federal Reserve · SEC | FOMC decisions, jobs & inflation data, rulemaking |
+| 🇯🇵 **Japanese finance** (5) | 財経新聞 · Yahoo!ニュース（経済） · FNN · ITmedia · GIGAZINE | The Japanese read on the TOPIX/Nikkei tape, US long yields and the Fed, Japan's AI & chip supply chain |
+| 🇪🇸 **Spanish finance** (6) | Expansión ×2 · El Mundo · La Vanguardia · 20minutos · Xataka | IBEX, European debt and power prices, Spain's housing policy and corporate news |
 
-Two auxiliary collections round it out: **Chinese finance** (华尔街见闻, Sina Finance, TMTPost) and **finance blogs** (Ben Carlson, Josh Brown) — **31 feeds** in total. Want Xueqiu or Cailianshe (no official RSS)? Self-host [RSSHub](https://docs.rsshub.app/) and paste the link into the discovery panel.
+Three auxiliary collections round it out: **Chinese finance** (华尔街见闻, Sina Finance, TMTPost), **Chinese tech** (InfoQ 中文, GeekPark, ifanr) and **finance blogs** (Ben Carlson, Josh Brown) — **45 feeds** in total. Language sections keep their categories in the source language (日本市場 / Economía / Mercados), so the subscription group a feed lands in is spelled natively rather than translated. Want Xueqiu or Cailianshe (no official RSS)? Self-host [RSSHub](https://docs.rsshub.app/) and paste the link into the discovery panel.
 
 ## ✨ Why it earns a place in your vault
 
