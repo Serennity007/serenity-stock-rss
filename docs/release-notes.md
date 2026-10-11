@@ -1,5 +1,10 @@
 # Release notes
 
+## 1.1.5
+
+- 中文财经 group: 新浪财经 replaced by 界面新闻. The Sina feed answers 200 with valid RSS but has served zero items and a 2018 `pubDate` for years, so it never appeared in the reader.
+- Catalog still ships 45 feeds; no other source changed.
+
 ## 1.1.4
 
 - Reader view type is now `stocks-ai-rss-reader`; a pane left in your workspace from the previous build closes itself on startup instead of showing an unknown view.

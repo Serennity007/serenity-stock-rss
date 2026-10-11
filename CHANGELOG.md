@@ -1,5 +1,10 @@
 # Changelog
 
+## 1.1.5
+
+- Bundled catalog revision 5: **新浪财经 replaced by 界面新闻**. `rss.sina.com.cn/roll/finance/hot_roll.xml` still answers 200 with a well-formed RSS channel, but it has carried zero `<item>` elements and a `pubDate` frozen at Sun, 23 Sep 2018 for years, so the source never produced an article. 界面新闻's main RSS verified 2026-10-11 with 30 items over direct HTTPS.
+- CONTRIBUTING now requires items and a recent `pubDate` during verification, not just "returns XML" — the weaker check is what let a dead-but-valid feed through.
+
 ## 1.1.4
 
 - Docs and UI text no longer describe the plugin as a fork: the upstream source and copyright notice now lives in one block at the end of [LICENSE](LICENSE), which the build also embeds in `main.js`.
