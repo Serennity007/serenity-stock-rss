@@ -76,10 +76,10 @@ The plugin has no server of its own. Subscriptions are the feed URLs you add; ar
 
 | | Typical online RSS plugin | Stocks AI RSS |
 | --- | --- | --- |
-| Content | Online curated service + personal feeds | Personal feeds + bundled five-theme catalog |
-| Chinese AI rewrite/translation | Yes (server-generated) | No, original text only |
-| Podcast transcripts, link-collection lab | Yes | Removed |
-| Network dependency | Curated content needs the service | Only the feeds you subscribe to |
+| Content | Online curated service + personal feeds | Personal feeds + bundled finance catalog (45 feeds) |
+| Chinese AI rewrite/translation | Sometimes (server-generated) | No, original text only |
+| Podcast transcripts, link-collection lab | Sometimes | No |
+| Network dependency | Needs the platform service | Only the feeds you subscribe to |
 
 ## 🛠️ Development
 
