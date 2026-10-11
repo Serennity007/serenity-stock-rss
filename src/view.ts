@@ -19,7 +19,7 @@ import { AudioDock, pauseVideos, renderMedia, stopMedia, videoEmbedUrl } from '.
 import { articleNoteKey, readingFontSchema, readingThemeSchema, safeUrl, titleOf, type ChannelState, type Bundle, type Entry, type Mode } from './model';
 import { relativeTime, t } from './i18n';
 import { fontName } from './fonts';
-export const VIEW_TYPE = 'qiaomu-ai-rss-reader';
+export const VIEW_TYPE = 'stocks-ai-rss-reader';
 type Filter = 'all' | 'unread' | 'favorites';
 export class ReaderView extends ItemView {
   private channelPicker?: ChannelPicker;

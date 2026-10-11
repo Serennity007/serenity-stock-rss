@@ -407,7 +407,6 @@ class RssSettings extends PluginSettingTab {
         [t('about.reportBug'), t('about.reportBug.desc'), 'https://github.com/Serennity007/serenity-stock-rss/issues/new'],
         [t('about.guide'), t('about.guide.desc'), 'https://github.com/Serennity007/serenity-stock-rss#readme'],
         ['GitHub', '@Serennity007', 'https://github.com/Serennity007'],
-        [t('about.upstream'), 'Qiaomu AI RSS (GPL-3.0)', 'https://github.com/joeseesun/qiaomu-ai-rss'],
       ]).map(([name, label, href]) => ({ name, render: (setting: import('obsidian').Setting) => {
         setting.controlEl.createEl('a', { text: label, href, attr: { target: '_blank', rel: 'noopener noreferrer' } });
       } })), { name: t('about.license'), desc: t('about.license.desc') }],

@@ -1,6 +1,6 @@
 const {execFileSync}=require('node:child_process');
 const fs=require('node:fs');
-const evaluate=code=>{const s=execFileSync('obsidian',['vault=Qiaomu RSS QA','eval','code='+code.replace(/\n/g,' ')],{encoding:'utf8'});return s.trim()?JSON.parse(s.slice(3)):null;};
+const evaluate=code=>{const s=execFileSync('obsidian',['vault=Stocks RSS QA','eval','code='+code.replace(/\n/g,' ')],{encoding:'utf8'});return s.trim()?JSON.parse(s.slice(3)):null;};
 for(let i=0;i<60;i++){if(evaluate('JSON.stringify(!!app.plugins.plugins["stocks-ai-rss"]?.images)'))break;Atomics.wait(new Int32Array(new SharedArrayBuffer(4)),0,0,500);}
 evaluate(String.raw`(()=>{window.__imageDragQA=null;void(async()=>{
 const p=app.plugins.plugins['stocks-ai-rss'],folder='Image drag QA '+Date.now();
@@ -23,7 +23,7 @@ for(const destination of [folder+'/Attachments','./assets','./assets']){
 app.vault.setConfig('attachmentFolderPath',destination);
 const dt=new DataTransfer();img.dispatchEvent(new DragEvent('dragstart',{bubbles:true,dataTransfer:dt}));
 check('Drag contains image bytes instead of Blob URL: '+destination,dt.files.length===1&&dt.files[0].type==='image/png'&&!dt.getData('text/uri-list'));
-const nativeDrop=new DataTransfer();nativeDrop.setData('application/x-qiaomu-rss-image',dt.getData('application/x-qiaomu-rss-image'));
+const nativeDrop=new DataTransfer();nativeDrop.setData('application/x-stocks-rss-image',dt.getData('application/x-stocks-rss-image'));
 const cm=leaf.view.containerEl.querySelector('.cm-content'),rect=cm.getBoundingClientRect();
 cm.dispatchEvent(new DragEvent('drop',{bubbles:true,cancelable:true,dataTransfer:nativeDrop,clientX:rect.left+40,clientY:rect.top+30}));
 const expected=destination.startsWith('./')?folder+'/assets/':destination+'/';

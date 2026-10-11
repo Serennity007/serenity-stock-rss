@@ -1,7 +1,7 @@
 const {execFileSync}=require('node:child_process');
 const fs=require('node:fs');
 function evaluate(code) {
-  const out=execFileSync('obsidian',['vault=Qiaomu RSS QA','eval','code='+code.replace(/\n/g,' ')],{encoding:'utf8',timeout:30000});
+  const out=execFileSync('obsidian',['vault=Stocks RSS QA','eval','code='+code.replace(/\n/g,' ')],{encoding:'utf8',timeout:30000});
   return out.trim()?JSON.parse(out.slice(3)):null;
 }
 evaluate(String.raw`(()=>{window.__vaultQA=null;void(async()=>{

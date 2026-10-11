@@ -1,5 +1,5 @@
 const {execFileSync}=require('node:child_process');const fs=require('node:fs');
-const vault=process.env.RSS_TEST_VAULT||'qiaomu-public-install.NmoBsq';
+const vault=process.env.RSS_TEST_VAULT||'stocks-public-install.NmoBsq';
 const cli=(...args)=>execFileSync('obsidian',[`vault=${vault}`,...args],{encoding:'utf8',timeout:30000});
 const ev=code=>JSON.parse(cli('eval','code='+code.replace(/\n/g,' ')).replace(/^=> /,''));
 ev(`(()=>{window.__discoveryLive=null;void(async()=>{for(const b of document.querySelectorAll('.modal-header-button'))b.click();const p=app.plugins.plugins['stocks-ai-rss'];await p.openDiscovery();const d={contentEl:p.center.panels.discover.el},results=[];

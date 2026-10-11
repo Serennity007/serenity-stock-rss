@@ -1,6 +1,6 @@
 const {execFileSync}=require('node:child_process');
 const fs=require('node:fs');
-const evaluate=code=>{const s=execFileSync('obsidian',['vault='+(process.env.RSS_TEST_VAULT||'qiaomu-public-install.NmoBsq'),'eval','code='+code.replace(/\n/g,' ')],{encoding:'utf8',timeout:30000});return s.trim()?JSON.parse(s.slice(3)):null;};
+const evaluate=code=>{const s=execFileSync('obsidian',['vault='+(process.env.RSS_TEST_VAULT||'stocks-public-install.NmoBsq'),'eval','code='+code.replace(/\n/g,' ')],{encoding:'utf8',timeout:30000});return s.trim()?JSON.parse(s.slice(3)):null;};
 for(let i=0;i<40;i++){if(evaluate('JSON.stringify(!!app.plugins.plugins["stocks-ai-rss"]?.images)'))break;Atomics.wait(new Int32Array(new SharedArrayBuffer(4)),0,0,500);}
 evaluate(String.raw`(()=>{window.__mobileSourcesQA=null;void(async()=>{
 const p=app.plugins.plugins['stocks-ai-rss'],settings={...p.state.settings,markdownFolders:[...p.state.settings.markdownFolders]},folder='Mobile Sources QA '+Date.now();
@@ -9,7 +9,7 @@ await app.vault.createFolder(folder);const file=await app.vault.create(folder+'/
 await p.openReader();const v=app.workspace.getLeavesOfType('stocks-ai-rss-reader')[0].view,originalBundle=v.bundle;
 const mobile=document.body.hasClass('is-mobile');
 try{
-check('Reader command has explicit product name',app.commands.commands['stocks-ai-rss:open-reader'].name.includes('打开乔木 RSS 阅读器'));
+check('Reader command has explicit product name',app.commands.commands['stocks-ai-rss:open-reader'].name.includes('打开 Stocks RSS 阅读器'));
 p.state.settings.selectionPopup=true;
 v.showSavedArticle({entry:{id:'qa-mobile-selection',sourceId:'qa',title:'Touch selection',content:'<p>Choose just these words.</p>'},rewrite:null,translation:null,fetchedAt:Date.now()},'original');
 v.reader.querySelector('[data-qrs-label="更多文章操作"]').click();[...document.querySelectorAll('.menu-item')].find(e=>e.textContent.includes('阅读设置')).click();

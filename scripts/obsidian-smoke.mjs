@@ -1,6 +1,6 @@
 import { execFileSync } from 'node:child_process';
 import { mkdirSync, writeFileSync } from 'node:fs';
-const vault = process.env.RSS_TEST_VAULT || 'Qiaomu RSS QA';
+const vault = process.env.RSS_TEST_VAULT || 'Stocks RSS QA';
 function evaluate(code) {
   const output = execFileSync('obsidian', [`vault=${vault}`, 'eval', `code=${code}`], { encoding: 'utf8', timeout: 30000 });
   if (!output.trim()) return null;
@@ -30,7 +30,7 @@ const delay = 'await new Promise(resolve=>setTimeout(resolve,200))';
 const settled = `for(let i=0;i<110&&document.querySelector('.qrs-reader')?.getAttribute('aria-busy')==='true';i++){${delay};}`;
 record('Native plugin loaded with 100 real entries', run(`${view}.selectSource('',false);return JSON.stringify(${state}.entries.length===100);`));
 record('Article thumbnails use local Blob URLs', run(`for(let i=0;i<40&&document.querySelectorAll('.qrs-entry-thumb img[src^="blob:"]').length===0;i++){${delay};}return JSON.stringify(${state}.entries.some(e=>e.image)&&document.querySelectorAll('.qrs-entry-thumb img[src^="blob:"]').length>0);`));
-record('Channel picker groups sources with icons and clean names', run(`${view}.pickChannel();const modal=document.querySelector('.qrs-channel-picker'),sections=[...modal.querySelectorAll('.qrs-channel-section')].map(e=>e.textContent),rows=[...modal.querySelectorAll('.qrs-channel-option')];const ok=sections.includes('乔木频道')&&rows.length>10&&rows.every(row=>!!row.querySelector('.qrs-channel-mark'))&&rows.every(row=>!row.querySelector('.qrs-channel-name').textContent.includes(' / '))&&modal.querySelectorAll('[aria-label],[title]').length===0;rows[0].click();return JSON.stringify(ok);`));
+record('Channel picker groups sources with icons and clean names', run(`${view}.pickChannel();const modal=document.querySelector('.qrs-channel-picker'),sections=[...modal.querySelectorAll('.qrs-channel-section')].map(e=>e.textContent),rows=[...modal.querySelectorAll('.qrs-channel-option')];const ok=sections.includes('我的订阅')&&rows.length>10&&rows.every(row=>!!row.querySelector('.qrs-channel-mark'))&&rows.every(row=>!row.querySelector('.qrs-channel-name').textContent.includes(' / '))&&modal.querySelectorAll('[aria-label],[title]').length===0;rows[0].click();return JSON.stringify(ok);`));
 record('Open article and render rewrite', run(`document.querySelector('.qrs-entry').click(); ${settled} return JSON.stringify((document.querySelector('.qrs-prose')?.textContent.length||0)>100);`));
 record('Favorite persists', run(`const b=document.querySelector('[data-qrs-label="收藏文章"]'); if(b)b.click(); ${delay}; return JSON.stringify(Object.keys(${state}.favorites).length>0);`));
 record('Favorite filter', run(`document.querySelector('[data-filter="favorites"]').click(); return JSON.stringify(document.querySelectorAll('.qrs-entry').length>0);`));

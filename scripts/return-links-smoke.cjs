@@ -1,5 +1,5 @@
 const { execFileSync } = require('node:child_process');
-const evaluate = code => JSON.parse(execFileSync('obsidian', ['vault=Qiaomu RSS QA', 'eval', 'code=' + code.replace(/\n/g, ' ')], { encoding: 'utf8' }).trim().slice(3));
+const evaluate = code => JSON.parse(execFileSync('obsidian', ['vault=Stocks RSS QA', 'eval', 'code=' + code.replace(/\n/g, ' ')], { encoding: 'utf8' }).trim().slice(3));
 evaluate(`(()=>{window.__returnQA=null;void(async()=>{
 const p=app.plugins.plugins['stocks-ai-rss'],id=Object.keys(p.state.savedArticles)[0],bundle=p.state.savedArticles[id],results=[];
 const check=(name,value)=>{if(!value)throw Error(name);results.push(name)};

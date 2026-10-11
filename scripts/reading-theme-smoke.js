@@ -1,4 +1,4 @@
-// Async function body for qiaomu-obsidian-dev/scripts/host_eval.py; QA vault only.
+// Async function body for rss-obsidian-dev/scripts/host_eval.py; QA vault only.
 const p = app.plugins.plugins['stocks-ai-rss'];
 const results = [];
 const check = (name, ok) => { if (!ok) throw Error(name); results.push(name); };

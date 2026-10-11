@@ -5,7 +5,7 @@ import { imageMime, type LocalImages } from './images';
 import { safeUrl } from './model';
 import { t } from './i18n';
 
-const dragType = 'application/x-qiaomu-rss-image';
+const dragType = 'application/x-stocks-rss-image';
 let activeDrag: { id: string; file: File } | undefined;
 
 export function registerImageDrops(plugin: Plugin) {

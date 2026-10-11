@@ -46,7 +46,7 @@ export class SubscriptionCenter extends Modal {
 }
 
 // The former standalone pages. Saved workspaces may still restore them; they close themselves.
-export const RETIRED_VIEW_TYPES = ['qiaomu-ai-rss-discovery', 'qiaomu-ai-rss-library'];
+export const RETIRED_VIEW_TYPES = ['qiaomu-ai-rss-discovery', 'qiaomu-ai-rss-library', 'qiaomu-ai-rss-reader'];
 export class RetiredView extends ItemView {
   constructor(leaf: WorkspaceLeaf, private type: string) { super(leaf); }
   getViewType() { return this.type; }

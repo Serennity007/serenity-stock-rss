@@ -25,5 +25,5 @@ subsetter = subset.Subsetter(options=options)
 subsetter.populate(unicodes=characters)
 subsetter.subset(font)
 font.flavor = 'woff2'
-font.save('fonts/QiaomuReadingFangsong.woff2')
-print(f'{len(font.getBestCmap())} codepoints, {Path("fonts/QiaomuReadingFangsong.woff2").stat().st_size} bytes')
+font.save('fonts/StocksReadingFangsong.woff2')
+print(f'{len(font.getBestCmap())} codepoints, {Path("fonts/StocksReadingFangsong.woff2").stat().st_size} bytes')

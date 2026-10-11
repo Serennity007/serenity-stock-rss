@@ -1,6 +1,6 @@
 import {execFileSync} from 'node:child_process';
 import {mkdirSync, writeFileSync} from 'node:fs';
-const vault=process.env.RSS_TEST_VAULT || 'Qiaomu RSS QA';
+const vault=process.env.RSS_TEST_VAULT || 'Stocks RSS QA';
 const command=(...args)=>execFileSync('obsidian',[`vault=${vault}`,...args],{encoding:'utf8',timeout:30000});
 const evaluate=code=>JSON.parse(command('eval',`code=JSON.stringify((()=>{if(app.vault.getName()!==${JSON.stringify(vault)})throw Error('Wrong vault');${code}})())`).replace(/^=> /,''));
 const cdp=(method,params)=>command('dev:cdp',`method=${method}`,`params=${JSON.stringify(params)}`);

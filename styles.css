@@ -269,10 +269,10 @@ never to the summary grey. */
 .is-mobile .qrs-selection-popup button { width:44px; height:44px; }
 
 /* The reader provides its own compact navigation and actions. */
-.workspace-leaf-content[data-type="qiaomu-ai-rss-reader"] > .view-header { display: none; }
+.workspace-leaf-content[data-type="stocks-ai-rss-reader"] > .view-header { display: none; }
 /* With the host header hidden,
 reserve the status-bar inset but not its former header height. */
-.is-phone .mod-root .workspace-leaf-content[data-type="qiaomu-ai-rss-reader"] > .view-content { margin-top:max(var(--safe-area-inset-top,0px),env(safe-area-inset-top,0px)); }
+.is-phone .mod-root .workspace-leaf-content[data-type="stocks-ai-rss-reader"] > .view-content { margin-top:max(var(--safe-area-inset-top,0px),env(safe-area-inset-top,0px)); }
 .is-phone .qrs-sidebar-toolbar .qrs-channel { min-height:44px; }
 .is-phone .qrs-sidebar-toolbar .qrs-icon { width:44px; height:44px; }
 
@@ -675,7 +675,7 @@ including its detached reading popups.
 
 /* Hide note metadata only while this plugin owns the active view; no Home dependency. */
 body:has(.workspace-leaf.mod-active > .workspace-leaf-content:is(
-  [data-type="qiaomu-ai-rss-reader"]
+  [data-type="stocks-ai-rss-reader"]
 )) .status-bar {
   display: none;
 }

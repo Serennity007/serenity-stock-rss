@@ -1,6 +1,6 @@
 const {execFileSync}=require('node:child_process');
 const fs=require('node:fs');
-const vault=process.env.RSS_TEST_VAULT||'qiaomu-public-install.NmoBsq';
+const vault=process.env.RSS_TEST_VAULT||'stocks-public-install.NmoBsq';
 if(vault==='rockfish')throw Error('Use a disposable vault for mutation fixtures');
 const cli=(...args)=>execFileSync('obsidian',[`vault=${vault}`,...args],{encoding:'utf8',timeout:30000});
 const ev=code=>{const out=cli('eval','code='+code.replace(/\n/g,' '));return JSON.parse(out.slice(out.indexOf('=> ')+3));};
@@ -56,7 +56,7 @@ try{
  check('Library tab label carries no duplicate count',document.querySelector('.qrs-center [data-tab=library]').textContent==='订阅管理');p.center.close();await p.readSubscriptions();const v=app.workspace.getLeavesOfType('stocks-ai-rss-reader')[0].view;
  
  check('Personal reader exposes podcast and folder navigation',v.contentEl.querySelector('.qrs-personal-sources').textContent.includes('QA Podcast')&&v.contentEl.querySelector('.qrs-personal-sources').textContent.includes(folder));
- v.pickChannel();await wait(100);check('Picker groups Qiaomu picks and my subscriptions',[...document.querySelectorAll('.qrs-channel-section')].map(e=>e.textContent).join('|')==='乔木精选|我的订阅'&&!!document.querySelector('[data-channel-id="@qiaomu:微信公众号"]'));
+ v.pickChannel();await wait(100);check('Picker lists my subscriptions',[...document.querySelectorAll('.qrs-channel-section')].map(e=>e.textContent).join('|')==='我的订阅'&&!!document.querySelector('[data-channel-id="@upstream:微信公众号"]'));
  const before=v.source;document.querySelector('.qrs-channel-manage').click();await wait(200);check('Manage button opens the center and preserves reading channel',!!document.querySelector('.qrs-center')&&!document.querySelector('.qrs-channel-picker')&&v.source===before);p.center.close();
  await p.openReader();v.showSavedArticle({entry:{id:'qa-title',sourceId:'qa',origin:'local',title:'Original title link',link:'https://example.org/original',content:'<p>Article</p>'},rewrite:null,translation:null,fetchedAt:Date.now()},'original');
  check('Article title links to original',v.contentEl.querySelector('h1 a')?.href==='https://example.org/original');

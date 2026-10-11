@@ -1,5 +1,5 @@
 const {execFileSync}=require('node:child_process');const fs=require('node:fs');
-const vault=process.env.RSS_TEST_VAULT||'qiaomu-public-install.NmoBsq';const cmd=(...a)=>execFileSync('obsidian',[`vault=${vault}`,...a],{encoding:'utf8',timeout:30000});const ev=c=>JSON.parse(cmd('eval','code=JSON.stringify((()=>{'+c+'})())').replace(/^=> /,''));const cdp=(m,p)=>cmd('dev:cdp','method='+m,'params='+JSON.stringify(p));const pause=()=>Atomics.wait(new Int32Array(new SharedArrayBuffer(4)),0,0,150);const results=[];
+const vault=process.env.RSS_TEST_VAULT||'stocks-public-install.NmoBsq';const cmd=(...a)=>execFileSync('obsidian',[`vault=${vault}`,...a],{encoding:'utf8',timeout:30000});const ev=c=>JSON.parse(cmd('eval','code=JSON.stringify((()=>{'+c+'})())').replace(/^=> /,''));const cdp=(m,p)=>cmd('dev:cdp','method='+m,'params='+JSON.stringify(p));const pause=()=>Atomics.wait(new Int32Array(new SharedArrayBuffer(4)),0,0,150);const results=[];
 fs.mkdirSync('artifacts',{recursive:true});
 const original=ev('return document.body.className;');
 function check(name,code){const value=ev(code);if(!value)throw Error(name);results.push(name);}

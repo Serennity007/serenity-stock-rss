@@ -1,5 +1,5 @@
 const {execFileSync}=require('node:child_process');
-const evalCode=code=>{const out=execFileSync('obsidian',['vault=Qiaomu RSS QA','eval','code='+code.replace(/\n/g,' ')],{encoding:'utf8'});return JSON.parse(out.slice(3));};
+const evalCode=code=>{const out=execFileSync('obsidian',['vault=Stocks RSS QA','eval','code='+code.replace(/\n/g,' ')],{encoding:'utf8'});return JSON.parse(out.slice(3));};
 evalCode(String.raw`(()=>{void(async()=>{
 const p=app.plugins.plugins['stocks-ai-rss'];await p.openReader();
 const v=app.workspace.getLeavesOfType('stocks-ai-rss-reader')[0].view;

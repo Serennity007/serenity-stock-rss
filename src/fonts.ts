@@ -1,4 +1,4 @@
-import fangsong from '../fonts/QiaomuReadingFangsong.woff2';
+import fangsong from '../fonts/StocksReadingFangsong.woff2';
 import type { ReadingFont } from './model';
 import { t, type MessageKey } from './i18n';
 
