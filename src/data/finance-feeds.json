@@ -1,8 +1,8 @@
 {
   "source": "stocks-ai-rss finance catalog",
-  "revision": 4,
+  "revision": 5,
   "license": "CC0-1.0",
-  "generated_at": "2026-10-08",
+  "generated_at": "2026-10-11",
   "feeds": [
     {
       "id": "cnbc-top",
@@ -275,11 +275,11 @@
       "language": "zh"
     },
     {
-      "id": "sina-finance",
-      "title": "新浪财经",
-      "feed_url": "https://rss.sina.com.cn/roll/finance/hot_roll.xml",
-      "site_url": "https://finance.sina.com.cn/",
-      "description": "新浪财经热点滚动：A股行情、政策与公司新闻。",
+      "id": "jiemian-news",
+      "title": "界面新闻",
+      "feed_url": "https://a.jiemian.com/index.php?m=article&a=rss",
+      "site_url": "https://www.jiemian.com/",
+      "description": "界面新闻主 RSS：财经、公司与产业报道为主，混有少量综合新闻。",
       "category": "中文财经",
       "kind": "cn",
       "language": "zh"

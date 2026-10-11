@@ -35,14 +35,14 @@ Investment decisions are only as good as the information behind them. But today 
 | 🇯🇵 **Japanese finance** (5) | 財経新聞 · Yahoo!ニュース（経済） · FNN · ITmedia · GIGAZINE | The Japanese read on the TOPIX/Nikkei tape, US long yields and the Fed, Japan's AI & chip supply chain |
 | 🇪🇸 **Spanish finance** (6) | Expansión ×2 · El Mundo · La Vanguardia · 20minutos · Xataka | IBEX, European debt and power prices, Spain's housing policy and corporate news |
 
-Three auxiliary collections round it out: **Chinese finance** (华尔街见闻, Sina Finance, TMTPost), **Chinese tech** (InfoQ 中文, GeekPark, ifanr) and **finance blogs** (Ben Carlson, Josh Brown) — **45 feeds** in total. Language sections keep their categories in the source language (日本市場 / Economía / Mercados), so the subscription group a feed lands in is spelled natively rather than translated. Want Xueqiu or Cailianshe (no official RSS)? Self-host [RSSHub](https://docs.rsshub.app/) and paste the link into the discovery panel.
+Three auxiliary collections round it out: **Chinese finance** (华尔街见闻, Jiemian News, TMTPost), **Chinese tech** (InfoQ 中文, GeekPark, ifanr) and **finance blogs** (Ben Carlson, Josh Brown) — **45 feeds** in total. Language sections keep their categories in the source language (日本市場 / Economía / Mercados), so the subscription group a feed lands in is spelled natively rather than translated. Want Xueqiu or Cailianshe (no official RSS)? Self-host [RSSHub](https://docs.rsshub.app/) and paste the link into the discovery panel.
 
 ## ✨ Why it earns a place in your vault
 
 - ✍️ **The last mile from information to knowledge** — save any article as Markdown (images localized, so notes survive link rot), or append a selected paragraph straight into today's daily note with the source link attached
 - 📊 **Institutional-grade sources next to the tape** — SemiAnalysis and Interconnects sit in the same reader as breaking-news feeds; no more app-hopping between the tape and the deep dives
 - 🗂️ **Organize it your way** — subscription groups, OPML import/export, vault folders as reading sources (your clipped research notes become readable)
-- 📖 **Typography tuned for long reads** — 7 themes, 8 fonts (bundled Zhuque Fangsong subset), adjustable size/line-height/column width, J/K keyboard flow
+- 📖 **Typography tuned for long reads** — 7 themes, 4 preset fonts (including the bundled Zhuque Fangsong subset) plus any device font by name, adjustable size/line-height/column width, J/K keyboard flow
 - 🔒 **Fully local** — no accounts, no telemetry; read state, favorites and cache stay in your vault. The plugin has no server dependency — it keeps working even if this repo disappears
 
 ## 🚀 Install
