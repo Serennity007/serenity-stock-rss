@@ -1,6 +1,6 @@
 # Contributing
 
-Stocks AI RSS is a community fork of [Qiaomu AI RSS](https://github.com/joeseesun/qiaomu-ai-rss) (GPL-3.0-only). Contributions to the finance-specific parts are welcome: use feature branches and pull requests. Run `npm ci` then `npm run check` (lint + tests + build). Test UI changes in a separate Obsidian vault, including narrow panes, light/dark themes, offline behaviour, list thumbnails, and repeated Daily Note actions.
+Stocks AI RSS is an Obsidian plugin released under GPL-3.0-only (upstream source notice: [LICENSE](LICENSE)). Contributions to the finance-specific parts are welcome: use feature branches and pull requests. Run `npm ci` then `npm run check` (lint + tests + build). Test UI changes in a separate Obsidian vault, including narrow panes, light/dark themes, offline behaviour, list thumbnails, and repeated Daily Note actions.
 
 To add or fix a feed in the bundled catalog, edit `src/data/finance-feeds.json` and verify the feed returns XML over HTTPS before opening a PR. Feeds that only work through a self-hosted RSSHub belong in the README list, not the catalog.
 

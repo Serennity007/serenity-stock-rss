@@ -672,3 +672,17 @@ may consider it more useful to permit linking proprietary applications with
 the library.  If this is what you want to do, use the GNU Lesser General
 Public License instead of this License.  But first, please read
 <https://www.gnu.org/licenses/why-not-lgpl.html>.
+
+
+---
+
+以下为附加声明，不属于上方 GPL 许可证正文。
+Additional notices below; they are not part of the GPL text above.
+
+## 上游来源与版权声明 / Upstream source and copyright notice
+
+本仓库的软件基于 [向阳乔木 (@joeseesun)](https://github.com/joeseesun) 的 [Qiaomu AI RSS](https://github.com/joeseesun/qiaomu-ai-rss) v0.26.2 改造，按 GPL-3.0-only 分发。上游代码的版权归原作者所有；本仓库的修改部分版权归仓库作者 Pasteliangzhengtao 所有。上游项目早期以 MIT 发布，该许可文本保留在 [LICENSES/previous-MIT.txt](LICENSES/previous-MIT.txt)。内置阅读字体子集源自 [朱雀仿宋](https://github.com/TrionesType/zhuque)（SIL OFL 1.1，Copyright (c) 2023 Zhejiang JadeFoci Techonology Co. LTD），许可证见 [fonts/OFL.txt](fonts/OFL.txt)。其余第三方声明见 [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md)。
+
+This software is derived from Qiaomu AI RSS v0.26.2 by 向阳乔木 (@joeseesun) — https://github.com/joeseesun/qiaomu-ai-rss — and is conveyed under GPL-3.0-only. The upstream code remains copyright its author; the modifications in this repository are copyright Pasteliangzhengtao. The upstream project's earlier MIT notice is preserved in LICENSES/previous-MIT.txt. The bundled reading font subset derives from Zhuque Fangsong (SIL OFL 1.1, Copyright (c) 2023 Zhejiang JadeFoci Techonology Co. LTD), license text in fonts/OFL.txt. Further third-party notices: THIRD_PARTY_NOTICES.md.
+
+本リポジトリのソフトウェアは 向阳乔木 (@joeseesun) 氏の Qiaomu AI RSS v0.26.2（ https://github.com/joeseesun/qiaomu-ai-rss ）を改変したもので、GPL-3.0-only で配布しています。上流コードの著作権は原作者に、本リポジトリの変更部分はリポジトリ作者 Pasteliangzhengtao に帰属します。上流プロジェクト初期の MIT ライセンス文は LICENSES/previous-MIT.txt に保存しています。同梱の閲覧用フォントサブセットは朱雀仿宋（SIL OFL 1.1、Copyright (c) 2023 Zhejiang JadeFoci Techonology Co. LTD）から派生したもので、ライセンス文は fonts/OFL.txt を参照してください。その他の第三者表示は THIRD_PARTY_NOTICES.md を参照してください。

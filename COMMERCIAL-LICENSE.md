@@ -1,14 +1,10 @@
 # 商业授权 / Commercial licensing
 
-本项目提供 GPL-3.0-only 开源授权，允许个人和企业免费商业使用，只要遵守其条件。商业身份、内部使用或收费本身不产生向作者付费的义务。
+本项目以 GPL-3.0-only 发布。个人和企业都可以免费商用，包括修改与再分发，只要遵守 GPL 的条件（随附源码、保留许可证与声明）即可。商业身份、内部使用或收费本身不产生向作者付费的义务。
 
-如果你的分发方式无法遵守 GPL，例如希望分发包含本项目代码的闭源衍生产品，可联系向阳乔木讨论单独的商业授权：
+本仓库的作者只能就自己拥有或获准再授权的权利达成协议，无权替上游代码或第三方素材（字体、图标等）改变许可证。因此：
 
-- X：[向阳乔木 @vista8](https://x.com/vista8)
-- GitHub：[@joeseesun](https://github.com/joeseesun)
+- 需要 GPL 之外的授权（例如闭源分发），须先确认涉及的全部权利归属，并分别向上游作者与各第三方权利人取得许可；本文件不构成此类授权。
+- 过去已发布版本的授权不因本文件的变更而撤销。
 
-商业授权范围、费用、期限与支持服务以双方另行签署的书面协议为准。本文件是联系说明，本身不授予商业例外，也不向 GPL 增加收费或用途限制。
-
-作者只能就自己拥有或获准再授权的权利达成协议。第三方代码、字体、素材和外部贡献的许可证与版权声明继续有效；任何商业方案都须先确认所需权利。过去已发布版本的授权不因本次变更而撤销。
-
-Commercial use is allowed under GPL-3.0-only without paying the author when its conditions are met. For permissions beyond GPL, contact the author to negotiate a separate written agreement. This document grants no exception. Any agreement is limited to rights the author owns or is authorized to license; third-party licenses and previously granted rights remain in force.
+The repository author can only license rights they own or are authorized to sublicense. GPL-3.0 already permits free commercial use, modification and redistribution under its conditions; anything beyond that needs clearance from the upstream authors and every third-party rightsholder. This document grants no such permission, and rights already conveyed in past releases are not withdrawn.

@@ -9,12 +9,9 @@
 [![Release](https://img.shields.io/github/v/release/Serennity007/serenity-stock-rss?logo=github)](https://github.com/Serennity007/serenity-stock-rss/releases)
 [![License: GPL-3.0](https://img.shields.io/badge/License-GPL--3.0--only-blue.svg)](LICENSE)
 ![Obsidian](https://img.shields.io/badge/Obsidian-%E2%89%A51.13.0-purple?logo=obsidian)
-[![Upstream: Qiaomu AI RSS](https://img.shields.io/badge/fork%20of-Qiaomu%20AI%20RSS-orange)](https://github.com/joeseesun/qiaomu-ai-rss)
 ![语言](https://img.shields.io/badge/%E8%AF%AD%E8%A8%80-%E4%B8%AD%E6%96%87%20%7C%20EN%20%7C%20JA-orange)
 
 *免费 · 开源 · 无账号 · 纯本地 · 45 个内置源*
-
-**本项目学习自 [向阳乔木](https://github.com/joeseesun) 的 [Qiaomu AI RSS（乔木 RSS）](https://github.com/joeseesun/qiaomu-ai-rss) 并在其基础上深度改造，阅读体验的功劳属于原作者 🙏**
 
 <img src="docs/images/intro-screenshot.png" alt="Stocks AI RSS 阅读器：左侧订阅列表，右侧中文正文阅读" width="640" />
 
@@ -24,7 +21,7 @@
 
 投资决策靠信息质量。但今天的信息流是这样的：AI 突发在 X 上、半导体深度在付费研报里、BTC 消息在十几个群轮播、黄金行情得盯着行情软件——**看完就散，永远进不了你的知识库**。
 
-**Stocks AI RSS** 把这件事收拢进 Obsidian：**45 个逐个实测直连可用的财经源**，按五大主题加中/日/西三个语言栏目组织，刷到有价值的文章一键变成 Markdown 笔记或日记摘录。基于 [Qiaomu AI RSS](https://github.com/joeseesun/qiaomu-ai-rss) 的成熟阅读体验改造——那位作者把「RSS 阅读 → 存笔记」这条链路做到了极致，本仓库站在他的肩膀上把它带向投资研究场景。
+**Stocks AI RSS** 把这件事收拢进 Obsidian：**45 个逐个实测直连可用的财经源**，按五大主题加中/日/西三个语言栏目组织，刷到有价值的文章一键变成 Markdown 笔记或日记摘录。阅读器把「RSS 阅读 → 存笔记」这条链路完全在本机跑通：长文排版、字体与主题可调、J/K 键盘流，不依赖任何服务器。
 
 ## 🔥 五大主题 + 三个语言栏目，一键订阅
 
@@ -62,7 +59,7 @@
 2. 放入 `<vault>/.obsidian/plugins/stocks-ai-rss/`
 3. 设置 → 第三方插件 → 启用 **Stocks AI RSS**
 
-> 与上游 [Qiaomu AI RSS](https://github.com/joeseesun/qiaomu-ai-rss)（Obsidian 官方插件库可装）ID 不同，可同时安装共存。
+> 插件 ID 为 `stocks-ai-rss`，与库里其他 RSS 插件互不冲突，可同时安装。
 
 ## ❓ FAQ
 
@@ -75,11 +72,11 @@
 **数据安全吗？**
 插件自身无服务器。订阅的是你自己添加的 feed，文章存在库内 `.obsidian/plugins/stocks-ai-rss/` 下，卸载插件不影响已保存的笔记。
 
-**和上游的区别？**
+**和常见 RSS 插件的区别？**
 
-| | 上游 Qiaomu AI RSS | 本分支 |
+| | 常见在线 RSS 插件 | Stocks AI RSS |
 | --- | --- | --- |
-| 内容来源 | 乔木精选（在线服务）+ 个人订阅 | 个人订阅 + 内置五大主题目录 |
+| 内容来源 | 在线精选服务 + 个人订阅 | 个人订阅 + 内置五大主题目录 |
 | 中文 AI 改写/翻译 | 有（服务器生成） | 无，始终原文 |
 | 播客转录、链接收录实验室 | 有 | 移除 |
 | 网络依赖 | 精选内容需联网 | 仅抓取你订阅的 feed |
@@ -95,9 +92,8 @@ npm run check   # eslint + vitest + tsc + esbuild
 
 ## 🙏 致谢
 
-- [向阳乔木 (@joeseesun)](https://github.com/joeseesun) 的 [Qiaomu AI RSS](https://github.com/joeseesun/qiaomu-ai-rss)——本项目基于其 v0.26.2 改造，阅读器体验几乎全部来自上游的出色设计
 - 内置朱雀仿宋字体子集基于 [朱雀仿宋](https://github.com/TrionesType/zhuque)（SIL OFL 1.1）
 
 ## 📄 许可
 
-[GPL-3.0-only](LICENSE)。上游代码版权归 向阳乔木 所有；本分支的修改部分归仓库作者。第三方声明见 [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md)。
+[GPL-3.0-only](LICENSE)。上游来源与版权声明、第三方素材声明统一写在 [LICENSE](LICENSE) 末尾与 [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md)。

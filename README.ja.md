@@ -9,12 +9,9 @@
 [![Release](https://img.shields.io/github/v/release/Serennity007/serenity-stock-rss?logo=github)](https://github.com/Serennity007/serenity-stock-rss/releases)
 [![License: GPL-3.0](https://img.shields.io/badge/License-GPL--3.0--only-blue.svg)](LICENSE)
 ![Obsidian](https://img.shields.io/badge/Obsidian-%E2%89%A51.13.0-purple?logo=obsidian)
-[![Upstream: Qiaomu AI RSS](https://img.shields.io/badge/fork%20of-Qiaomu%20AI%20RSS-orange)](https://github.com/joeseesun/qiaomu-ai-rss)
 ![言語](https://img.shields.io/badge/%E8%A8%80%E8%AA%9E-%E4%B8%AD%E6%96%87%20%7C%20EN%20%7C%20JA-orange)
 
 *無料 · オープンソース · アカウント不要 · 完全ローカル · 内蔵フィード 45 件*
-
-**本プロジェクトは [向阳乔木](https://github.com/joeseesun) 氏の [Qiaomu AI RSS](https://github.com/joeseesun/qiaomu-ai-rss) を学んでフォーク・改良したものです。リーディング体験の功績は原作者のものです 🙏**
 
 <img src="docs/images/intro-screenshot.png" alt="Stocks AI RSS リーダー：左にサブスクリプション一覧、右に記事本文" width="640" />
 
@@ -24,7 +21,7 @@
 
 投資判断は情報の質で決まります。しかし現状はこうです：AI の速報は X に、半導体の深掘りは有料レポートに、BTC の噂は無数のグループチャットに、金相場はトレーディングアプリの中——**読んだそばから散り、ナレッジベースには何も残らない**。
 
-**Stocks AI RSS** はそのループを Obsidian の中で完結させます。**HTTPS 直接接続を 1 件ずつ検証した 45 の金融フィード**を 5 テーマ＋言語別 3 コレクションに整理し、価値のある記事はワンクリックで Markdown ノートに、気になる一節はデイリーノートに保存。[Qiaomu AI RSS](https://github.com/joeseesun/qiaomu-ai-rss) の成熟したリーディング体験をベースに——「RSS を読む → ノートに残す」を極めたその設計の上に、投資リサーチ向けの姿へと作り替えました。
+**Stocks AI RSS** はそのループを Obsidian の中で完結させます。**HTTPS 直接接続を 1 件ずつ検証した 45 の金融フィード**を 5 テーマ＋言語別 3 コレクションに整理し、価値のある記事はワンクリックで Markdown ノートに、気になる一節はデイリーノートに保存。「RSS を読む → ノートに残す」の流れはすべてローカルで完結します。長文の組版、フォントとテーマの調整、J/K キーボード操作に対応し、サーバーに依存しません。
 
 ## 🔥 5 テーマと言語別 3 コレクション、ワンクリック購読
 
@@ -62,7 +59,7 @@
 2. `<vault>/.obsidian/plugins/stocks-ai-rss/` に配置
 3. 設定 → コミュニティプラグイン → **Stocks AI RSS** を有効化
 
-> 上流の [Qiaomu AI RSS](https://github.com/joeseesun/qiaomu-ai-rss)（Obsidian 公式ストアで入手可能）と ID が異なるため、併用可能です。
+> プラグイン ID は `stocks-ai-rss` で、他の RSS プラグインと競合せず併用できます。
 
 ## ❓ FAQ
 
@@ -75,11 +72,11 @@
 **データは安全？**
 プラグイン自身にサーバーはありません。サブスクリプションはユーザーが追加したフィード URL で、記事は保管庫内の `.obsidian/plugins/stocks-ai-rss/` に保存されます。アンインストールしても保存済みノートには影響しません。
 
-**上流との違いは？**
+**他の RSS プラグインとの違いは？**
 
-| | 上流 Qiaomu AI RSS | 本フォーク |
+| | 一般的なオンライン RSS プラグイン | Stocks AI RSS |
 | --- | --- | --- |
-| コンテンツ | Qiaomu 厳選（オンライン）+ 個人フィード | 個人フィード + 内蔵 5 テーマカタログ |
+| コンテンツ | オンライン厳選サービス + 個人フィード | 個人フィード + 内蔵 5 テーマカタログ |
 | 中国語 AI リライト/翻訳 | あり（サーバー生成） | なし、原文のみ |
 | ポッドキャスト文字起こし、リンク収集ラボ | あり | 削除 |
 | ネットワーク依存 | 厳選コンテンツは要オンライン | 購読したフィードのみ |
@@ -95,9 +92,8 @@ npm run check   # eslint + vitest + tsc + esbuild
 
 ## 🙏 謝辞
 
-- [向阳乔木 (@joeseesun)](https://github.com/joeseesun) 氏の [Qiaomu AI RSS](https://github.com/joeseesun/qiaomu-ai-rss) — 本プロジェクトは v0.26.2 のフォークで、リーディング体験のほとんどは上流の優れた設計によるものです。
 - 同梱の朱雀仿宋フォントサブセットは [朱雀仿宋](https://github.com/TrionesType/zhuque)（SIL OFL 1.1）に基づきます。
 
 ## 📄 ライセンス
 
-[GPL-3.0-only](LICENSE)。上流コードの著作権は 向阳乔木 氏に帰属し、本フォークの変更部分はリポジトリ作者に帰属します。サードパーティ表記：[THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md)。
+[GPL-3.0-only](LICENSE)。上流ソースの出典表示と著作権表記、サードパーティ表記は [LICENSE](LICENSE) 末尾および [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md) にまとめました。

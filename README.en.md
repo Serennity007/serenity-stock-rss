@@ -9,12 +9,9 @@
 [![Release](https://img.shields.io/github/v/release/Serennity007/serenity-stock-rss?logo=github)](https://github.com/Serennity007/serenity-stock-rss/releases)
 [![License: GPL-3.0](https://img.shields.io/badge/License-GPL--3.0--only-blue.svg)](LICENSE)
 ![Obsidian](https://img.shields.io/badge/Obsidian-%E2%89%A51.13.0-purple?logo=obsidian)
-[![Upstream: Qiaomu AI RSS](https://img.shields.io/badge/fork%20of-Qiaomu%20AI%20RSS-orange)](https://github.com/joeseesun/qiaomu-ai-rss)
 ![Languages](https://img.shields.io/badge/Languages-%E4%B8%AD%E6%96%87%20%7C%20EN%20%7C%20JA-orange)
 
 *Free · Open source · No account · Fully local · 45 bundled feeds*
-
-**This project is a fork of — and was learned from — [Qiaomu AI RSS](https://github.com/joeseesun/qiaomu-ai-rss) by [向阳乔木](https://github.com/joeseesun). The reading experience is the original author's work 🙏**
 
 <img src="docs/images/intro-screenshot.png" alt="Stocks AI RSS reader: subscription list on the left, article reading on the right" width="640" />
 
@@ -24,7 +21,7 @@
 
 Investment decisions are only as good as the information behind them. But today the flow looks like this: AI breaking news on X, semiconductor deep-dives behind paywalls, BTC rumors broadcast across a dozen group chats, gold quotes buried in trading apps — **consumed once, remembered nowhere, never entering your knowledge base**.
 
-**Stocks AI RSS** closes that loop inside Obsidian: **45 finance feeds, each hand-verified to work over direct HTTPS**, organized into five market themes and three language sections — and any article worth keeping becomes a Markdown note or a daily-note excerpt in one click. Built on the reading experience of [Qiaomu AI RSS](https://github.com/joeseesun/qiaomu-ai-rss): its author perfected the "read RSS → save to notes" loop, and this fork carries it into investment research.
+**Stocks AI RSS** closes that loop inside Obsidian: **45 finance feeds, each hand-verified to work over direct HTTPS**, organized into five market themes and three language sections — and any article worth keeping becomes a Markdown note or a daily-note excerpt in one click. The "read RSS → save to notes" loop runs entirely on your machine: long-form typography, adjustable fonts and themes, J/K keyboard flow, no server in the loop.
 
 ## 🔥 Five themes and three language sections, one-click subscribe
 
@@ -62,7 +59,7 @@ Three auxiliary collections round it out: **Chinese finance** (华尔街见闻, 
 2. Put them into `<vault>/.obsidian/plugins/stocks-ai-rss/`
 3. Settings → Community plugins → enable **Stocks AI RSS**
 
-> Coexists with upstream [Qiaomu AI RSS](https://github.com/joeseesun/qiaomu-ai-rss) (available in the official Obsidian store) — the plugin IDs differ.
+> Plugin ID is `stocks-ai-rss`, so it never clashes with other RSS plugins in your vault.
 
 ## ❓ FAQ
 
@@ -75,11 +72,11 @@ Yes. The bundled catalog is a standalone data file ([finance-feeds.json](src/dat
 **Is my data safe?**
 The plugin has no server of its own. Subscriptions are the feed URLs you add; articles live under `.obsidian/plugins/stocks-ai-rss/` in your vault. Uninstalling never touches your saved notes.
 
-**How does it differ from upstream?**
+**How does it differ from other RSS plugins?**
 
-| | Upstream Qiaomu AI RSS | This fork |
+| | Typical online RSS plugin | Stocks AI RSS |
 | --- | --- | --- |
-| Content | Qiaomu curated picks (online) + personal feeds | Personal feeds + bundled five-theme catalog |
+| Content | Online curated service + personal feeds | Personal feeds + bundled five-theme catalog |
 | Chinese AI rewrite/translation | Yes (server-generated) | No, original text only |
 | Podcast transcripts, link-collection lab | Yes | Removed |
 | Network dependency | Curated content needs the service | Only the feeds you subscribe to |
@@ -95,9 +92,8 @@ PRs welcome for new feeds and improvements — see [CONTRIBUTING.md](CONTRIBUTIN
 
 ## 🙏 Acknowledgements
 
-- [向阳乔木 (@joeseesun)](https://github.com/joeseesun)'s [Qiaomu AI RSS](https://github.com/joeseesun/qiaomu-ai-rss) — this project is a fork of v0.26.2; nearly all of the reading experience comes from upstream's excellent design.
 - The bundled Zhuque Fangsong font subset is based on [Zhuque Fangsong](https://github.com/TrionesType/zhuque) (SIL OFL 1.1).
 
 ## 📄 License
 
-[GPL-3.0-only](LICENSE). Upstream code is copyright 向阳乔木; the changes in this fork are copyright the repository author. Third-party notices: [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md).
+[GPL-3.0-only](LICENSE). The upstream source and copyright notice, plus third-party notices, live at the end of [LICENSE](LICENSE) and in [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md).

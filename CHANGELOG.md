@@ -37,17 +37,17 @@ Five market themes: the bundled catalog grows from 16 to 30 hand-verified feeds 
 
 ## 1.0.0
 
-First Stocks AI RSS release — a finance fork of [Qiaomu AI RSS](https://github.com/joeseesun/qiaomu-ai-rss) at v0.26.2, kept under GPL-3.0-only. Upstream changelog below.
+First Stocks AI RSS release — a finance-focused reader built on the upstream GPL-3.0 reader project at v0.26.2 (source and copyright notice: [LICENSE](LICENSE)). Upstream changelog below.
 
 - Rebrand to Stocks AI RSS (`stocks-ai-rss`); deep links become `obsidian://stocks-ai-rss`.
 - Bundle a hand-verified finance catalog (16 feeds): CNBC, MarketWatch, WSJ, Seeking Alpha, Fortune, Federal Reserve, SEC, 华尔街见闻, 新浪财经, 钛媒体 and finance blogs. The discovery panel now has US / Chinese / blogs collections.
-- Remove the upstream server-dependent features: Qiaomu curated picks, AI rewrite & translation, podcast transcripts, the link-collection lab, WeChat/podcast catalog search and the Qiaomu Agent/Home plugin bridges. Subscribing, reading, favorites, saving to notes, PDF/OPML export are fully local.
+- Remove the upstream server-dependent features: the curated picks service, AI rewrite & translation, podcast transcripts, the link-collection lab, WeChat/podcast catalog search and the upstream Agent/Home plugin bridges. Subscribing, reading, favorites, saving to notes, PDF/OPML export are fully local.
 - Reading mode is always the original text; the mode selector is gone.
 - Fixed a discovery dedupe regression where same-name blogs from different sites merged.
 
 ## 0.26.0
 
-- Add a Reader community section beside Qiaomu picks. Reader submissions now live there instead of inside the combined picks list, and the site administrator can show or hide the channel.
+- Add a Reader community section beside the editorial picks. Reader submissions now live there instead of inside the combined picks list, and the site administrator can show or hide the channel.
 - Narrow the community channel by where a link comes from (YouTube, Bilibili, WeChat, articles). The platform is read from the link; submitters choose nothing.
 - Play Bilibili video links in the reader with Bilibili's own embed.
 - Administrators can delete a server article from the article menu, and deleted articles disappear from lists and caches. SVG article images are sanitized and shown as PNG.
@@ -59,13 +59,13 @@ First Stocks AI RSS release — a finance fork of [Qiaomu AI RSS](https://github
 
 ## 0.23.0
 
-- Appear on Qiaomu Home (乔木Home), the Obsidian start page, through the Qiaomu Home Protocol (version 1): the newest unread articles with the unread count, an "Add feed" quick action, and article search over local and saved articles. Opening an item from Home opens that article in the reader.
-- Home reads only articles already on this device; it never triggers a feed refresh. Without Qiaomu Home nothing changes.
+- Appear on the upstream Home add-on's Obsidian start page, through its Home protocol (version 1): the newest unread articles with the unread count, an "Add feed" quick action, and article search over local and saved articles. Opening an item from Home opens that article in the reader.
+- Home reads only articles already on this device; it never triggers a feed refresh. Without the Home add-on nothing changes.
 
 ## 0.22.0
 
-- Share the open article with Qiaomu Agent through the Qiaomu Context Protocol (read-only, version 1). The agent sees the article in the version being read (original, rewrite or translation) and can use it without saving Markdown first.
-- When Qiaomu Agent is installed and enabled, the selection popup and the article context menu gain Ask AI (sparkles icon), which hands the article and the selected passage to the agent. Without the agent nothing changes: no extra button, no prompt to install.
+- Share the open article with the upstream Agent add-on through its Context Protocol (read-only, version 1). The agent sees the article in the version being read (original, rewrite or translation) and can use it without saving Markdown first.
+- When the Agent add-on is installed and enabled, the selection popup and the article context menu gain Ask AI (sparkles icon), which hands the article and the selected passage to the agent. Without the agent nothing changes: no extra button, no prompt to install.
 
 ## 0.21.0
 
@@ -82,18 +82,18 @@ First Stocks AI RSS release — a finance fork of [Qiaomu AI RSS](https://github
 - Search the bundled 718-source Tidings catalog and existing catalogs; preview feeds and recent episodes before following. Preserve discovery context after subscribing.
 - Unify RSS, OPML imports, podcasts and vault paths in My subscriptions with stable groups, rename/reorder/delete, multi-select moves and safe unsubscribe.
 - Import OPML from files, text or URLs with selectable searchable previews and duplicate protection. Support up to 2000 RSS subscriptions with bounded refresh batches.
-- Restructure the channel picker into 乔木精选 (全部精选 plus built-in group filters such as 微信公众号 and 小宇宙 that merge their channels' latest articles) and 我的订阅 (全部订阅, reading a whole group in one click, expandable groups, ungrouped sources).
+- Restructure the channel picker into 上游精选 (全部精选 plus built-in group filters such as 微信公众号 and 小宇宙 that merge their channels' latest articles) and 我的订阅 (全部订阅, reading a whole group in one click, expandable groups, ungrouped sources).
 - Add a 管理订阅 button beside the picker search that opens the 订阅中心 dialog with 订阅管理 and 发现订阅 tabs: search, type/error filters, collapsible groups with select-all, sticky bulk actions (move, refresh, unsubscribe), per-feed refresh/copy URL, update status, OPML import/export and catalog discovery in one place. Retire the standalone Discover/My subscriptions tabs and close them when a saved workspace restores them.
 - Merge the blog and "more" catalogs into 独立博客和其他 with URL and site/title deduplication. Merge alias groups such as Podcasts and 播客, and merge groups renamed onto an existing name.
 - Simplify Discover: drop language/topic filters and the manual catalog update; the bundled catalog ships with plugin updates and provenance moves to a small footnote. Redesign 订阅管理 around one toolbar row (search, type filter, a single 添加 menu holding discovery, local content, new group and OPML import/export); quiet group labels with inline empty-group hints; framed source icons; per-source update time, unread count and read errors on the right, swapped for refresh and manage actions on hover; checkboxes revealed on hover or while selecting, with a bottom bulk-action bar. New local sources stay ungrouped instead of creating a 本地文件 group. Indent picker groups and sources below 全部精选/全部订阅.
 - 全部精选 mixes each featured Xiaoyuzhou show's latest episode into the timeline by publish date instead of pinning them above newer articles; an episode older than the loaded page waits until older pages load.
 - Fix the discovery panel staying on top after switching back to 订阅管理.
 - The reader toolbar trades the font button for 存为笔记 (file-plus); once an article is saved in the current version the button becomes 打开已存笔记 (file-check) and the ⋯ menu offers 另存一份笔记. Saved-note links follow renames and folder moves. 阅读设置 moves to the top of the ⋯ menu.
-- Save as Markdown writes straight into a vault folder (设置 → 保存与导出 → 文章保存文件夹, default `Qiaomu RSS/文章`) through Obsidian's vault API, so it also works on mobile; images follow Obsidian's attachment location and link style, repeat saves become `(2)`, and the notice links to the new note. PDF export keeps the system dialog but reopens where the last PDF was saved.
+- Save as Markdown writes straight into a vault folder (设置 → 保存与导出 → 文章保存文件夹, default `RSS/文章`) through Obsidian's vault API, so it also works on mobile; images follow Obsidian's attachment location and link style, repeat saves become `(2)`, and the notice links to the new note. PDF export keeps the system dialog but reopens where the last PDF was saved.
 - Tighten the article list: hide the repeated source name inside a single channel, prefer cached Chinese rewrites for excerpts, drop WeChat bylines, hide untranslated excerpts under Chinese titles (titles get up to three lines), larger 12/13/15px meta, excerpt and title text, a gutter unread dot, and 56px thumbnails.
 - Adopt a black, white and gray palette across the reader, dialogs, discovery, library and settings instead of Obsidian's purple accent; redesign the source preview dialog.
 - Add cached source favicons with text fallback, source links on article headings, and compact mobile-compatible discovery and management.
-- Preserve legacy data with a migration backup; keep personal subscriptions separate from editorial Qiaomu Picks.
+- Preserve legacy data with a migration backup; keep personal subscriptions separate from the editorial picks.
 
 ## 0.18.2 — 2026-09-07
 
@@ -134,7 +134,7 @@ First Stocks AI RSS release — a finance fork of [Qiaomu AI RSS](https://github
 
 ## 0.14.0 — 2026-09-07
 
-- Name the reader command 打开乔木 RSS 阅读器.
+- Name the reader command 打开 RSS 阅读器.
 - Apply and save typography immediately; dismiss on outside taps, without Done or Reset buttons.
 - Preserve mobile native long-press selection and show capture actions after selection-handle changes.
 - Use Obsidian native searchable channel suggestions with readable selection and hover colors.
@@ -144,7 +144,7 @@ First Stocks AI RSS release — a finance fork of [Qiaomu AI RSS](https://github
 
 - Enable the selection popup by default with separate Daily Note and current-note icon actions and tooltips.
 - Stop writing internal capture comments. Clean legacy comments when notes open or become active, and group excerpts using article links.
-- Default new reading preferences and the reset action to bundled Zhuque Fangsong; use a Lucide tree for Qiaomu selections. Existing saved preferences remain respected.
+- Default new reading preferences and the reset action to bundled Zhuque Fangsong; use a Lucide tree for the upstream selections. Existing saved preferences remain respected.
 
 ## 0.12.0 — 2026-09-07
 
@@ -162,7 +162,7 @@ First Stocks AI RSS release — a finance fork of [Qiaomu AI RSS](https://github
 - Default selection popup off and add an immediate settings toggle, independent of text dragging.
 - Add original-source links alongside Daily Note reader-return links.
 - Expose font, size, line-height and measure in settings; anchor the reader panel to the sticky toolbar.
-- Read selected vault Markdown folders and descendants with native folder typeahead, Markdown rendering, attachments and internal links. Local sources never call the Qiaomu API.
+- Read selected vault Markdown folders and descendants with native folder typeahead, Markdown rendering, attachments and internal links. Local sources never call the upstream API.
 
 ## 0.9.1 — 2026-09-07
 
@@ -212,7 +212,7 @@ First Stocks AI RSS release — a finance fork of [Qiaomu AI RSS](https://github
 ## 0.4.0 — 2026-09-07
 
 - Open a newly added discovery subscription in the reader automatically and remember that channel across reloads.
-- Keep Qiaomu Blog as a built-in service channel and remove its duplicate discovery subscription card.
+- Keep the upstream blog channel as a built-in service channel and remove its duplicate discovery subscription card.
 
 ## 0.3.0 — 2026-09-07
 
@@ -225,12 +225,12 @@ First Stocks AI RSS release — a finance fork of [Qiaomu AI RSS](https://github
 
 - Add vault-local RSS/Atom subscriptions, name/group editing, and unsubscribe while retaining favorites and notes.
 - Preview and deduplicate OPML imports; export personal subscriptions into the vault.
-- Read personal originals with the existing image cache, read/favorite filters and note export, without Qiaomu API requests.
-- Preserve subscription data when switching Qiaomu service origins; bound feed caches and retain articles after refresh failures.
+- Read personal originals with the existing image cache, read/favorite filters and note export, without upstream API requests.
+- Preserve subscription data when switching upstream service origins; bound feed caches and retain articles after refresh failures.
 
 ## 0.1.0 — 2026-09-07
 
-- Native Qiaomu RSS reader with channel history, local search and read/favorite filters.
+- Native RSS reader with channel history, local search and read/favorite filters.
 - Original, Chinese rewrite and translation reading modes using published API assets.
 - Vault-local read state, favorite article snapshots and recent article cache.
 - Safe Markdown export with provenance and preservation of existing notes.
