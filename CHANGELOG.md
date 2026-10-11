@@ -1,5 +1,14 @@
 # Changelog
 
+## 1.1.4
+
+- Docs and UI text no longer describe the plugin as a fork: the upstream source and copyright notice now lives in one block at the end of [LICENSE](LICENSE), which the build also embeds in `main.js`.
+- Reader view type renamed to `stocks-ai-rss-reader`. The previous id is registered as a retired view, so a saved workspace closes the stale pane instead of restoring an unknown view.
+- The About tab drops the upstream link row; the eight-language changelog and license strings describe this plugin only.
+- Bundled font file renamed to `StocksReadingFangsong.woff2` — the font, its SIL OFL 1.1 license and the `QRS Fangsong` face name are unchanged.
+- `origin` drops a schema value this fork never wrote; `COMMERCIAL-LICENSE.md` no longer routes GPL-except requests to the upstream author, since this repository cannot license code it does not own.
+- Ships the 1.1.3 work (日本語 / Español discovery collections, catalog 31 → 45 feeds) that was never published as a release.
+
 ## 1.1.3
 
 - Discovery gains two language collections — **日本語** (5 feeds) and **Español** (6 feeds) — alongside the existing Chinese one. Every added feed was verified over a direct connection on 2026-10-08 and returned same-day items; the counts quoted in each description come from that check.

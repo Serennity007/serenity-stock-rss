@@ -1,5 +1,12 @@
 # Release notes
 
+## 1.1.4
+
+- Reader view type is now `stocks-ai-rss-reader`; a pane left in your workspace from the previous build closes itself on startup instead of showing an unknown view.
+- Upstream attribution moved out of the READMEs and out of the plugin's About/settings text into a single notice block at the end of LICENSE.
+- Bundled reading font file renamed; the font, its SIL OFL 1.1 license and the embedded notices are unchanged.
+- Includes the unreleased 1.1.3 work: 日本語 and Español discovery collections, and the catalog growing to 45 hand-verified feeds.
+
 ## 1.1.2
 
 - Group migration fixes: pre-1.1 category names in the remembered channel resolve to the merged group, and reopening the reader keeps a valid group selection (including empty or vault-only groups).
